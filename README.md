@@ -2,7 +2,7 @@
 
 A baby shower webapp for **Myles Bryant White**, son of Beau & Abby White — arriving **October 14th, 2026**.
 
-Shower: **Saturday, August 15th, 2026, at dusk** · Grandma Karmie's garden, Orem, Utah.
+Shower: **Saturday, August 15th, 2026, at dusk** · Grandma's garden, Orem, Utah.
 
 Theme: **Story Garden** — a boyish garden meets children's books. Blue gingham, terracotta pots, greenhouse plants, string lights at dusk, and a library that grows one gift at a time.
 
