@@ -1,0 +1,825 @@
+<meta charset="utf-8">
+<title>The Story Garden — Dusk in the Greenhouse</title>
+<style>
+  :root{
+    --night:#1F2D26;
+    --spruce:#2E4636;
+    --spruce-panel:#283B30;
+    --cream:#F6F1E7;
+    --cream-soft:#C9C0AC;
+    --cream-faint:rgba(246,241,231,.35);
+    --hairline:rgba(246,241,231,.22);
+    --terracotta:#C4693B;
+    --terracotta-deep:#A3552E;
+    --amber:#E8B54D;
+    --blue:#7D96B0;
+    --display:"Big Caslon","Playfair Display","Hoefler Text",Georgia,serif;
+    --body:"Seravek","Avenir Next",Avenir,"Gill Sans",sans-serif;
+    --italic:"Baskerville","Hoefler Text",Georgia,serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--night);color:var(--cream);
+    font-family:var(--body);font-size:16.5px;line-height:1.7;
+  }
+  .wrap{max-width:960px;margin:0 auto;padding:0 32px}
+  .label{
+    font-size:12.5px;letter-spacing:.32em;text-transform:uppercase;
+    color:var(--amber);
+  }
+  h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance}
+  .whisper{font-family:var(--italic);font-style:italic;color:var(--cream-soft);font-size:19px}
+
+  .hero{position:relative;overflow:hidden;
+    background:linear-gradient(180deg,#3A3A56 0%,#4A4256 18%,#5C4A50 32%,var(--spruce) 62%,var(--night) 100%);
+    padding:96px 0 0;
+  }
+  .hero .wrap{position:relative;z-index:2}
+  .hero h1{
+    font-size:clamp(52px,9vw,92px);line-height:.98;letter-spacing:.01em;
+    max-width:8ch;margin:26px 0 22px;
+  }
+  .hero .sub{font-size:19px;color:var(--cream-soft);max-width:44ch}
+  .hero-details{
+    margin-top:44px;border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline);
+    padding:20px 0;display:flex;gap:44px;flex-wrap:wrap;
+  }
+  .hero-details div{min-width:150px}
+  .hero-details .k{font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--cream-faint);display:block;margin-bottom:5px}
+  .hero-details .v{font-family:var(--display);font-size:18px}
+  .btn{
+    display:inline-block;font-family:var(--body);font-size:13.5px;
+    letter-spacing:.26em;text-transform:uppercase;
+    color:var(--night);background:var(--amber);border:1px solid var(--amber);
+    padding:16px 36px;margin-top:36px;text-decoration:none;cursor:pointer;
+    transition:background .2s ease,color .2s ease;
+  }
+  .btn:hover{background:transparent;color:var(--amber)}
+  .btn:focus-visible{outline:2px solid var(--cream);outline-offset:3px}
+  .btn.ghost{background:transparent;color:var(--cream);border-color:var(--cream-faint)}
+  .btn.ghost:hover{border-color:var(--amber);color:var(--amber)}
+
+  .hero-scene{display:block;width:100%;margin-top:56px;position:relative;z-index:1}
+
+  .firefly{position:absolute;width:4px;height:4px;border-radius:50%;
+    background:var(--amber);box-shadow:0 0 8px 2px rgba(232,181,77,.5);
+    opacity:0;animation:drift 10s ease-in-out infinite;z-index:1;
+  }
+  .firefly:nth-of-type(2){animation-delay:3s;animation-duration:12s}
+  .firefly:nth-of-type(3){animation-delay:6s;animation-duration:14s}
+  .firefly:nth-of-type(4){animation-delay:1.5s;animation-duration:11s}
+  .firefly:nth-of-type(5){animation-delay:8s;animation-duration:13s}
+  @keyframes drift{
+    0%{transform:translate(0,0);opacity:0}
+    20%{opacity:.9}
+    50%{transform:translate(46px,-70px);opacity:.3}
+    80%{opacity:.85}
+    100%{transform:translate(-24px,-130px);opacity:0}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .firefly{animation:none;opacity:.5}
+  }
+
+  .lights{display:block;width:100%;height:54px;margin:0}
+
+  section.chapter{padding:78px 0 84px;border-top:1px solid var(--hairline)}
+  .chapter .head{display:grid;grid-template-columns:120px 1fr;gap:24px;margin-bottom:48px}
+  .chapter .num{font-family:var(--display);font-size:20px;color:var(--amber)}
+  .chapter h2{font-size:clamp(30px,4.6vw,40px);line-height:1.12}
+  .chapter p.lede{color:var(--cream-soft);max-width:56ch;margin:16px 0 0}
+
+  .particulars{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0}
+  .particulars .cell{padding:26px 28px;border-left:1px solid var(--hairline)}
+  .particulars .cell:first-child{border-left:none;padding-left:0}
+  .particulars h3{font-size:21px;margin-bottom:12px;color:var(--cream)}
+  .particulars p{margin:8px 0;font-size:15.5px;color:var(--cream-soft)}
+  .particulars .whisper{font-size:17px;color:var(--blue)}
+
+  .shelf-panel{background:var(--spruce-panel);border:1px solid var(--hairline);padding:40px 34px 34px}
+  .shelf{display:flex;align-items:flex-end;justify-content:center;gap:6px;flex-wrap:wrap}
+  .spine{
+    writing-mode:vertical-rl;font-family:var(--display);font-size:13px;
+    letter-spacing:.05em;padding:14px 4px;width:36px;min-height:158px;
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    border:1px solid rgba(31,45,38,.6);color:var(--cream);
+  }
+  .spine small{font-family:var(--body);font-size:10px;opacity:.75;letter-spacing:.08em}
+  .spine.s-terra{background:var(--terracotta-deep)}
+  .spine.s-blue{background:#4E6478}
+  .spine.s-moss{background:#4A5D3E}
+  .spine.s-night{background:#1A241F}
+  .spine.s-amber{background:#A67B2C}
+  .spine.s-tall{min-height:180px}
+  .spine.s-short{min-height:142px}
+  .spine.claimed{opacity:.4}
+  .shelf-board{height:8px;background:var(--terracotta-deep);max-width:660px;margin:0 auto;border:1px solid rgba(31,45,38,.6)}
+  .shelf-caption{text-align:center;margin-top:16px;font-size:14.5px;color:var(--cream-faint)}
+
+  .claim-row{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-top:34px;align-items:flex-end}
+  input[type=text],textarea{
+    font-family:var(--body);font-size:16px;color:var(--cream);
+    background:transparent;border:none;border-bottom:1px solid var(--cream-faint);
+    padding:10px 2px;min-width:230px;border-radius:0;
+  }
+  input[type=text]:focus,textarea:focus{outline:none;border-bottom-color:var(--amber)}
+  ::placeholder{color:rgba(246,241,231,.4);font-style:italic}
+  .claim-row .btn{margin-top:0}
+  .confirm{display:none;text-align:center;margin-top:20px}
+  .confirm.show{display:block}
+  .confirm.whisper{color:var(--amber)}
+
+  .rsvp-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px 44px;max-width:720px}
+  .rsvp-grid .full{grid-column:1/-1}
+  .rsvp-grid label{
+    display:block;font-size:12px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--cream-faint);margin-bottom:6px;
+  }
+  .rsvp-grid input[type=text],.rsvp-grid textarea{width:100%;min-width:0}
+  .rsvp-grid textarea{min-height:58px;resize:vertical}
+  @media (max-width:620px){.rsvp-grid{grid-template-columns:1fr}}
+
+  .evening-list{border-top:1px solid var(--hairline)}
+  .evening-list .row{
+    display:grid;grid-template-columns:120px 1fr 1.4fr;gap:24px;
+    padding:30px 0;border-bottom:1px solid var(--hairline);align-items:baseline;
+  }
+  .evening-list .num{font-family:var(--display);font-size:18px;color:var(--amber)}
+  .evening-list h3{font-size:23px}
+  .evening-list p{margin:0;color:var(--cream-soft);font-size:15.5px}
+  @media (max-width:620px){
+    .evening-list .row{grid-template-columns:60px 1fr}
+    .evening-list p{grid-column:2}
+    .chapter .head{grid-template-columns:60px 1fr}
+  }
+
+  .dawn{
+    background:linear-gradient(180deg,var(--night) 0%,#4A4256 12%,#8A6A6C 26%,#D9A87C 42%,var(--cream) 68%);
+    color:var(--spruce);padding:120px 0 90px;text-align:center;
+  }
+  .dawn .label{color:var(--terracotta-deep)}
+  .dawn h2{font-size:clamp(32px,5vw,44px);color:var(--spruce);margin-top:16px}
+  .dawn p.lede{font-family:var(--italic);font-style:italic;color:#6B6558;max-width:50ch;margin:16px auto 0;font-size:18px}
+  .garden-row{display:flex;justify-content:center;gap:52px;margin:52px 0 12px;flex-wrap:wrap}
+  .garden-row figure{margin:0}
+  .garden-row figcaption{
+    font-size:12px;letter-spacing:.24em;text-transform:uppercase;
+    margin-top:12px;color:#6B6558;
+  }
+  .garden-row .fig-note{font-family:var(--italic);font-style:italic;text-transform:none;letter-spacing:0;font-size:16px;color:var(--terracotta-deep);display:block;margin-top:2px}
+  .dawn .btn{background:var(--spruce);border-color:var(--spruce);color:var(--cream)}
+  .dawn .btn:hover{background:transparent;color:var(--spruce)}
+
+  .colophon{
+    text-align:center;padding:44px 32px 54px;background:var(--cream);
+    color:#8C8474;font-size:14.5px;border-top:1px solid rgba(46,70,54,.2);
+  }
+  .colophon .whisper{display:block;margin-top:10px;font-size:20px;color:var(--terracotta-deep)}
+
+  @media (max-width:560px){
+    .hero{padding-top:64px}
+    section.chapter{padding:60px 0 64px}
+    .particulars .cell{border-left:none;padding-left:0;border-top:1px solid var(--hairline)}
+    .particulars .cell:first-child{border-top:none}
+  }
+
+  .know-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px}
+  @media (max-width:680px){.know-grid{grid-template-columns:1fr}}
+  .know-title{font-family:var(--display);font-weight:400;font-size:21px;margin:0 0 16px;color:var(--cream)}
+  .know-list{margin:0}
+  .know-list div{display:flex;justify-content:space-between;gap:18px;padding:14px 2px;border-bottom:1px solid var(--hairline)}
+  .know-list dt{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--cream-faint);margin:0;padding-top:5px}
+  .know-list dd{font-family:var(--display);font-size:19px;margin:0;text-align:right}
+  .predict label{display:block;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--cream-faint);margin:20px 0 2px}
+  .predict input{width:100%;min-width:0}
+  .hair-row{display:flex;gap:12px;margin-top:10px}
+  .hair-btn{flex:1;font-family:var(--body);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;background:transparent;color:var(--cream-soft);border:1px solid var(--cream-faint);padding:12px 8px;cursor:pointer}
+  .hair-btn.sel{border-color:var(--amber);color:var(--amber)}
+
+  .reg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px}
+  .reg-card{background:var(--spruce-panel);border:1px solid var(--hairline);padding:30px 26px;display:flex;flex-direction:column}
+  .reg-card h3{font-size:22px;margin-bottom:10px}
+  .reg-card p{font-size:15px;color:var(--cream-soft);margin:0 0 6px}
+  .reg-card .btn{margin-top:auto;padding:13px 20px;font-size:12px;align-self:flex-start}
+  .venmo-handle{font-family:var(--display);font-size:20px;color:var(--amber);margin:6px 0 10px}
+
+  .sono-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:22px}
+  .sono{background:#0E1712;border:1px solid var(--hairline);padding:18px 18px 16px;text-align:center;margin:0}
+  .sono svg{width:100%;height:auto;display:block}
+  .sono figcaption{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--cream-faint);margin-top:12px}
+  .sono .whisper{display:block;font-size:16px;margin-top:3px;text-transform:none;letter-spacing:0}
+
+  .babies-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:22px}
+  .baby-frame{border:1px solid var(--hairline);background:var(--spruce-panel);padding:28px 18px 20px;text-align:center;margin:0}
+  .baby-frame.imagined{border:1px dashed var(--amber)}
+  .baby-frame figcaption{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--cream-faint);margin-top:14px}
+  .baby-frame .whisper{display:block;font-size:15.5px;margin-top:3px;text-transform:none;letter-spacing:0}
+
+  .feature{margin:56px 0 0}
+  .feature h3{font-family:var(--display);font-weight:400;font-size:27px;margin:0 0 8px;color:var(--cream)}
+  .feature>p{color:var(--cream-soft);max-width:58ch;margin:0 0 24px;font-size:15.5px}
+  .gb-new{border:1px dashed var(--cream-faint);padding:26px;display:flex;gap:22px;flex-wrap:wrap;align-items:flex-end}
+  .gb-drop{width:110px;height:110px;border:1px dashed var(--amber);display:flex;align-items:center;justify-content:center;text-align:center;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);cursor:pointer;flex:none;padding:8px}
+  .gb-fields{flex:1;min-width:220px}
+  .gb-entries{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:24px}
+  .gb-entry{background:var(--spruce-panel);border:1px solid var(--hairline);padding:18px 20px;display:flex;gap:14px;align-items:flex-start}
+  .gb-entry svg{flex:none}
+  .gb-entry p{margin:0;font-size:15px;color:var(--cream-soft)}
+  .gb-entry .who{display:block;margin-top:8px;font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--cream-faint)}
+
+  .adv-card{border-left:2px solid var(--amber);border-radius:0;padding:4px 0 4px 22px;margin:26px 0}
+  .adv-card blockquote{margin:0;font-family:var(--italic);font-style:italic;font-size:19px;color:var(--cream)}
+  .adv-card .who{font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--cream-faint);margin-top:7px}
+  .adv-comments{margin-top:14px;padding-left:14px;border-left:1px solid var(--hairline)}
+  .adv-comments p{margin:6px 0;font-size:14.5px;color:var(--cream-soft)}
+  .adv-comments .c-who{color:var(--cream-faint);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;margin-left:8px}
+  .c-row{display:flex;gap:12px;margin-top:10px;align-items:flex-end}
+  .c-row input{flex:1;min-width:120px}
+  .btn.small{padding:11px 18px;font-size:11.5px;margin-top:0}
+  .adv-new{border:1px dashed var(--cream-faint);padding:24px;margin-top:32px}
+  .adv-new textarea{width:100%;min-width:0;min-height:56px;resize:vertical}
+  .adv-new label{display:block;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--cream-faint);margin-bottom:8px}
+
+  .quiz-lock{border:1px solid var(--hairline);background:var(--spruce-panel);padding:36px 26px;text-align:center}
+  .quiz-lock input{text-align:center;min-width:220px}
+  .quiz{display:none;margin-top:6px}
+  .quiz.open{display:block}
+  .quiz-q{border:1px solid var(--hairline);padding:26px 26px 24px;margin-top:20px;background:var(--spruce-panel)}
+  .quiz-q h4{font-family:var(--display);font-weight:400;font-size:21px;margin:0 0 16px;color:var(--cream)}
+  .q-btns{display:flex;gap:12px}
+  .q-btn{flex:1;font-family:var(--body);font-size:13px;letter-spacing:.2em;text-transform:uppercase;background:transparent;color:var(--cream);border:1px solid var(--cream-faint);padding:13px;cursor:pointer}
+  .q-btn:hover{border-color:var(--amber)}
+  .q-btn.voted{border-color:var(--amber);color:var(--amber)}
+  .q-btn.correct{background:var(--amber);color:var(--night);border-color:var(--amber)}
+  .tally{display:none;margin-top:18px}
+  .tally.show{display:block}
+  .t-row{display:flex;align-items:center;gap:12px;margin-top:8px}
+  .t-row .t-name{width:52px;font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--cream-soft);flex:none}
+  .t-bar{height:8px;background:var(--amber);opacity:.85;width:0;transition:width .4s ease}
+  .t-row .t-n{font-size:13px;color:var(--cream-soft)}
+  .reveal{display:inline-block;margin-top:16px;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);background:none;border:none;cursor:pointer;padding:0 0 2px;border-bottom:1px solid var(--amber)}
+</style>
+
+<section class="hero">
+  <span class="firefly" style="left:16%;top:44%"></span>
+  <span class="firefly" style="left:72%;top:38%"></span>
+  <span class="firefly" style="left:55%;top:56%"></span>
+  <span class="firefly" style="left:33%;top:60%"></span>
+  <span class="firefly" style="left:86%;top:50%"></span>
+
+  <div class="wrap">
+    <p class="label">Myles Bryant White · arriving this October</p>
+    <h1>The Story Garden</h1>
+    <p class="sub">A baby shower for Abby, held in the garden at dusk — when the greenhouse glows and the fireflies come out to read over your shoulder.</p>
+
+    <div class="hero-details">
+      <div><span class="k">The evening</span><span class="v">Saturday, August 15th</span></div>
+      <div><span class="k">The hour</span><span class="v">Seven o'clock</span></div>
+      <div><span class="k">The garden</span><span class="v">Grandma Karmie's, Orem</span></div>
+      <div><span class="k">In your hands</span><span class="v">A children's book</span></div>
+    </div>
+
+    <p class="whisper" style="margin-top:30px">bring a book instead of a card — and a sweater for when the sun goes down</p>
+
+    <a class="btn" href="#rsvp">Reply to the invitation</a>
+  </div>
+
+  <svg class="hero-scene" viewBox="0 0 960 300" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+    <circle cx="812" cy="64" r="26" fill="#F6F1E7" opacity=".85"/>
+    <circle cx="804" cy="58" r="26" fill="#3A3A56" opacity=".55"/>
+    <g stroke="#F6F1E7" stroke-opacity=".4" stroke-width="2" fill="none">
+      <path d="M300 300 V150 L480 70 L660 150 V300"/>
+      <path d="M300 150 H660"/>
+      <path d="M345 300 V150 M390 300 V150 M435 300 V150 M480 300 V150 M525 300 V150 M570 300 V150 M615 300 V150"/>
+      <path d="M340 132 L480 70 L620 132"/>
+      <path d="M480 70 V150"/>
+    </g>
+    <g fill="#E8B54D">
+      <rect x="392" y="156" width="41" height="66" opacity=".28"/>
+      <rect x="437" y="156" width="41" height="98" opacity=".38"/>
+      <rect x="482" y="156" width="41" height="80" opacity=".24"/>
+      <rect x="527" y="156" width="41" height="110" opacity=".33"/>
+    </g>
+    <g fill="#16211B">
+      <path d="M60 300 C66 250 58 236 74 214 C86 240 82 254 84 300 Z"/>
+      <path d="M96 300 C108 262 130 250 152 248 C136 272 124 288 112 300 Z"/>
+      <path d="M170 300 C168 266 176 244 194 228 C200 254 192 280 186 300 Z"/>
+      <path d="M760 300 C766 252 758 238 774 218 C786 244 782 258 784 300 Z"/>
+      <path d="M800 300 C812 264 834 252 856 250 C840 274 828 290 816 300 Z"/>
+      <path d="M878 300 C876 268 884 248 900 234 C906 258 898 282 892 300 Z"/>
+      <path d="M690 300 h50 l-6 -34 h-38 Z"/>
+      <path d="M215 300 h44 l-5 -30 h-34 Z"/>
+    </g>
+  </svg>
+</section>
+
+<svg class="lights" viewBox="0 0 960 54" preserveAspectRatio="none" aria-hidden="true">
+  <path d="M0 10 Q240 44 480 22 T960 14" stroke="rgba(246,241,231,.3)" stroke-width="1.5" fill="none"/>
+  <g fill="#E8B54D">
+    <circle cx="120" cy="30" r="4"/><circle cx="120" cy="30" r="8" opacity=".22"/>
+    <circle cx="300" cy="36" r="4"/><circle cx="300" cy="36" r="8" opacity=".22"/>
+    <circle cx="480" cy="26" r="4"/><circle cx="480" cy="26" r="8" opacity=".22"/>
+    <circle cx="660" cy="24" r="4"/><circle cx="660" cy="24" r="8" opacity=".22"/>
+    <circle cx="840" cy="20" r="4"/><circle cx="840" cy="20" r="8" opacity=".22"/>
+  </g>
+</svg>
+
+<section class="chapter">
+  <div class="wrap">
+    <div class="head">
+      <span class="num">I.</span>
+      <div><h2>The particulars</h2></div>
+    </div>
+    <div class="particulars">
+      <div class="cell">
+        <h3>When</h3>
+        <p>Saturday, August 15th, 2026, at seven in the evening.</p>
+        <p>Supper first, games while the light goes gold, dessert when the string lights take over.</p>
+      </div>
+      <div class="cell">
+        <h3>Where</h3>
+        <p>Among the terracotta pots and greenhouse plants at Grandma Karmie's garden, Orem.</p>
+        <p class="whisper">follow the glow — you'll find us</p>
+      </div>
+      <div class="cell">
+        <h3>What to bring</h3>
+        <p>A children's book in place of a card, inscribed to him on the flyleaf.</p>
+        <p>Claim your title below so no story is planted twice.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter">
+  <div class="wrap">
+    <div class="head">
+      <span class="num">II.</span>
+      <div>
+        <h2>What we already know — and what we don't</h2>
+        <p class="lede">Some of the story is already written. The rest is yours to guess — predictions seal at the end of the night and open the day he arrives.</p>
+      </div>
+    </div>
+    <div class="know-grid">
+      <div>
+        <h3 class="know-title">Already written</h3>
+        <dl class="know-list">
+          <div><dt>His name</dt><dd>Myles Bryant White</dd></div>
+          <div><dt>Arriving</dt><dd>October, 2026</dd></div>
+          <div><dt>His people</dt><dd>Abby &amp; Beau</dd></div>
+          <div><dt>His library</dt><dd>Growing by the week</dd></div>
+        </dl>
+      </div>
+      <div class="predict">
+        <h3 class="know-title">Still a mystery — cast your predictions</h3>
+        <label for="p-date">The day he actually arrives</label>
+        <input type="text" id="p-date" placeholder="October 9th, fashionably late">
+        <label for="p-weight">His weight</label>
+        <input type="text" id="p-weight" placeholder="7 lb 8 oz">
+        <label for="p-length">His length</label>
+        <input type="text" id="p-length" placeholder="20 inches">
+        <label>Hair, or no hair</label>
+        <div class="hair-row">
+          <button class="hair-btn" type="button">A full head of it</button>
+          <button class="hair-btn" type="button">Smooth as a peach</button>
+        </div>
+        <button class="btn ghost" id="pred-btn" style="margin-top:26px">Seal my predictions</button>
+        <p class="confirm whisper" id="pred-confirm" style="text-align:left">sealed until October — no peeking</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter">
+  <div class="wrap">
+    <div class="head">
+      <span class="num">III.</span>
+      <div>
+        <h2>His first library</h2>
+        <p class="lede">Every guest plants one book on this shelf. By the evening of the shower a whole library will have grown — and one day he'll know exactly who gave him each story.</p>
+      </div>
+    </div>
+
+    <div class="shelf-panel">
+      <div class="shelf" id="shelf">
+        <div class="spine s-moss s-tall claimed" title="Claimed">The Carrot Seed <small>· claimed</small></div>
+        <div class="spine s-terra">The Curious Garden</div>
+        <div class="spine s-blue s-short claimed" title="Claimed">Goodnight Moon <small>· claimed</small></div>
+        <div class="spine s-night">Miss Rumphius</div>
+        <div class="spine s-amber s-short">A Seed Is Sleepy</div>
+        <div class="spine s-blue s-tall">Up in the Garden</div>
+        <div class="spine s-terra s-short claimed" title="Claimed">The Tiny Seed <small>· claimed</small></div>
+        <div class="spine s-night s-tall">And Then It's Spring</div>
+        <div class="spine s-blue">Errol's Garden</div>
+        <div class="spine s-terra">We Are the Gardeners</div>
+        <div class="spine s-moss">Planting a Rainbow</div>
+      </div>
+      <div class="shelf-board"></div>
+    </div>
+    <p class="shelf-caption">eleven stories planted so far — three already claimed</p>
+
+    <div class="claim-row">
+      <input type="text" placeholder="Your name" aria-label="Your name">
+      <input type="text" placeholder="The book you'll bring" aria-label="The book you will bring" id="claim-title">
+      <button class="btn ghost" id="claim-btn">Claim this book</button>
+    </div>
+    <p class="confirm whisper" id="claim-confirm">added to the shelf — he'll love it</p>
+  </div>
+</section>
+
+<section class="chapter">
+  <div class="wrap">
+    <div class="head">
+      <span class="num">IV.</span>
+      <div>
+        <h2>The registry</h2>
+        <p class="lede">The library takes care of the stories. For everything else — three ways, none required. Your presence is the present, truly.</p>
+      </div>
+    </div>
+    <div class="reg-grid">
+      <div class="reg-card">
+        <h3>Amazon</h3>
+        <p>The long list — nursery bits, bottles, the practical everythings.</p>
+        <button class="btn ghost" type="button">Open the Amazon registry</button>
+      </div>
+      <div class="reg-card">
+        <h3>Target</h3>
+        <p>The short list — the clothes he'll outgrow by Thanksgiving.</p>
+        <button class="btn ghost" type="button">Open the Target registry</button>
+      </div>
+      <div class="reg-card">
+        <h3>The group gift</h3>
+        <p>We're pooling for the glider — the chair where half his library will be read aloud. Any amount, via Venmo.</p>
+        <p class="venmo-handle">@Abby-White</p>
+        <button class="btn" type="button">Chip in on Venmo</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter">
+  <div class="wrap">
+    <div class="head">
+      <span class="num">V.</span>
+      <div>
+        <h2>Before he was famous</h2>
+        <p class="lede">First portraits of Myles Bryant White, taken from the inside. The real scans drop in here — these are stand-ins.</p>
+      </div>
+    </div>
+    <div class="sono-row">
+      <figure class="sono">
+        <svg viewBox="0 0 220 150" aria-hidden="true">
+          <path d="M110 10 L34 128 A160 90 0 0 0 186 128 Z" fill="#1C2B22"/>
+          <g fill="#F6F1E7">
+            <circle cx="80" cy="70" r="1.4" opacity=".25"/><circle cx="132" cy="52" r="1.2" opacity=".2"/><circle cx="150" cy="96" r="1.5" opacity=".3"/><circle cx="66" cy="104" r="1.3" opacity=".22"/><circle cx="104" cy="40" r="1.2" opacity=".2"/><circle cx="120" cy="118" r="1.4" opacity=".25"/>
+          </g>
+          <g fill="none" stroke="#F6F1E7" stroke-opacity=".75" stroke-width="1.5">
+            <circle cx="94" cy="82" r="9"/>
+            <ellipse cx="119" cy="93" rx="17" ry="11"/>
+          </g>
+        </svg>
+        <figcaption>Twelve weeks<span class="whisper">the first hello</span></figcaption>
+      </figure>
+      <figure class="sono">
+        <svg viewBox="0 0 220 150" aria-hidden="true">
+          <path d="M110 10 L34 128 A160 90 0 0 0 186 128 Z" fill="#1C2B22"/>
+          <g fill="#F6F1E7">
+            <circle cx="76" cy="60" r="1.4" opacity=".25"/><circle cx="140" cy="48" r="1.2" opacity=".2"/><circle cx="154" cy="100" r="1.5" opacity=".3"/><circle cx="62" cy="98" r="1.3" opacity=".22"/><circle cx="108" cy="36" r="1.2" opacity=".2"/><circle cx="126" cy="120" r="1.4" opacity=".25"/>
+          </g>
+          <g fill="none" stroke="#F6F1E7" stroke-opacity=".75" stroke-width="1.5">
+            <circle cx="90" cy="76" r="10"/>
+            <ellipse cx="118" cy="92" rx="20" ry="12"/>
+            <path d="M132 82 q10 -8 12 -16"/>
+          </g>
+        </svg>
+        <figcaption>Twenty weeks<span class="whisper">already practicing his wave</span></figcaption>
+      </figure>
+      <figure class="sono">
+        <svg viewBox="0 0 220 150" aria-hidden="true">
+          <path d="M110 10 L34 128 A160 90 0 0 0 186 128 Z" fill="none" stroke="#F6F1E7" stroke-opacity=".3" stroke-dasharray="5 6"/>
+          <text x="110" y="88" text-anchor="middle" fill="#E8B54D" font-size="12" letter-spacing="3" font-family="Seravek,Avenir,sans-serif">AUGUST'S SITTING</text>
+        </svg>
+        <figcaption>Coming soon<span class="whisper">one more portrait before he arrives</span></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="chapter">
+  <div class="wrap">
+    <div class="head">
+      <span class="num">VI.</span>
+      <div>
+        <h2>Once upon two babies</h2>
+        <p class="lede">Two babies grew up, met, and made a third. The source material below — and, once both baby photos arrive, an AI-composed guess at how the sequel looks.</p>
+      </div>
+    </div>
+    <div class="babies-row">
+      <figure class="baby-frame">
+        <svg width="110" height="110" viewBox="0 0 110 110" aria-hidden="true">
+          <circle cx="55" cy="60" r="32" fill="none" stroke="#C9C0AC" stroke-width="1.5"/>
+          <circle cx="44" cy="56" r="2.2" fill="#C9C0AC"/><circle cx="66" cy="56" r="2.2" fill="#C9C0AC"/>
+          <path d="M46 72 Q55 80 64 72" fill="none" stroke="#C9C0AC" stroke-width="1.5"/>
+          <path d="M48 28 C46 18 58 14 58 24 C58 14 70 18 68 28" fill="none" stroke="#C9C0AC" stroke-width="1.5"/>
+        </svg>
+        <figcaption>Abby, once upon a time<span class="whisper">her baby photo goes here</span></figcaption>
+      </figure>
+      <figure class="baby-frame imagined">
+        <svg width="110" height="110" viewBox="0 0 110 110" aria-hidden="true">
+          <circle cx="55" cy="60" r="32" fill="none" stroke="#E8B54D" stroke-width="1.5" stroke-dasharray="4 5"/>
+          <text x="55" y="71" text-anchor="middle" font-size="30" fill="#E8B54D" font-family="Georgia,serif">?</text>
+          <path d="M55 28 V17 M55 17 C50 10 43 13 46 19 M55 17 C60 10 67 13 64 19" fill="none" stroke="#7BA05B" stroke-width="1.5"/>
+        </svg>
+        <figcaption>Myles, as imagined<span class="whisper">the computer's guess at the sequel</span></figcaption>
+      </figure>
+      <figure class="baby-frame">
+        <svg width="110" height="110" viewBox="0 0 110 110" aria-hidden="true">
+          <circle cx="55" cy="60" r="32" fill="none" stroke="#C9C0AC" stroke-width="1.5"/>
+          <circle cx="44" cy="56" r="2.2" fill="#C9C0AC"/><circle cx="66" cy="56" r="2.2" fill="#C9C0AC"/>
+          <path d="M46 72 Q55 80 64 72" fill="none" stroke="#C9C0AC" stroke-width="1.5"/>
+          <path d="M48 28 q2 -10 8 -8 M58 25 q4 -9 10 -5" fill="none" stroke="#C9C0AC" stroke-width="1.5"/>
+        </svg>
+        <figcaption>Beau, once upon a time<span class="whisper">his baby photo goes here</span></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="rsvp">
+  <div class="wrap">
+    <div class="head">
+      <span class="num">VII.</span>
+      <div>
+        <h2>Reply, if you please</h2>
+        <p class="lede">Kindly reply by the first of August.</p>
+      </div>
+    </div>
+
+    <div class="rsvp-grid">
+      <div><label for="r-name">Your name</label><input type="text" id="r-name" placeholder="Margaret Ellison"></div>
+      <div><label for="r-party">Who's coming with you</label><input type="text" id="r-party" placeholder="Just me — or me and my two littles"></div>
+      <div><label for="r-food">Anything you can't eat</label><input type="text" id="r-food" placeholder="Walnuts, sadly"></div>
+      <div><label for="r-addr">Your mailing address</label><input type="text" id="r-addr" placeholder="So a thank-you note can find you"></div>
+      <div class="full"><button class="btn" id="rsvp-btn">Send our reply</button></div>
+    </div>
+    <p class="confirm whisper" id="rsvp-confirm" style="text-align:left">received, with delight — see you at dusk</p>
+  </div>
+</section>
+
+<section class="chapter">
+  <div class="wrap">
+    <div class="head">
+      <span class="num">VIII.</span>
+      <div>
+        <h2>On the evening itself</h2>
+        <p class="lede">A little plant stake at each table opens these pages on your phone. Between supper and dessert, the evening lives here:</p>
+      </div>
+    </div>
+
+    <div class="feature">
+      <h3>The guest book — a selfie and a line</h3>
+      <p>Before dessert, sign the book: one photo under the string lights and a message for the family album. Entries appear below as the evening goes.</p>
+      <div class="gb-new">
+        <div class="gb-drop" id="gb-drop" role="button" tabindex="0">add your selfie</div>
+        <div class="gb-fields">
+          <label style="display:block;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--cream-faint);margin-bottom:6px" for="gb-msg">Your line for the album</label>
+          <input type="text" id="gb-msg" placeholder="The tiny socks undid me completely" style="width:100%;min-width:0">
+          <button class="btn small ghost" id="gb-btn" style="margin-top:16px">Sign the guest book</button>
+        </div>
+      </div>
+      <p class="confirm whisper" id="gb-confirm" style="text-align:left">signed — see you in the album</p>
+      <div class="gb-entries">
+        <div class="gb-entry">
+          <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="20" fill="none" stroke="#C9C0AC" stroke-width="1.3"/><circle cx="16" cy="20" r="1.6" fill="#C9C0AC"/><circle cx="28" cy="20" r="1.6" fill="#C9C0AC"/><path d="M16 28 Q22 33 28 28" fill="none" stroke="#C9C0AC" stroke-width="1.3"/></svg>
+          <p>"The greenhouse at golden hour — Myles, your people throw a beautiful party."<span class="who">Aunt Susan · 8:42 pm</span></p>
+        </div>
+        <div class="gb-entry">
+          <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="20" fill="none" stroke="#C9C0AC" stroke-width="1.3"/><circle cx="16" cy="20" r="4" fill="none" stroke="#C9C0AC" stroke-width="1.2"/><circle cx="28" cy="20" r="4" fill="none" stroke="#C9C0AC" stroke-width="1.2"/><path d="M20 20 h4 M17 28 Q22 32 27 28" fill="none" stroke="#C9C0AC" stroke-width="1.2"/></svg>
+          <p>"Claimed The Curious Garden. Prepare to hear it four hundred times, kid."<span class="who">Ruth &amp; Ellen · 8:15 pm</span></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature">
+      <h3>Advice for the new mama</h3>
+      <p>Leave Abby a note of hard-won wisdom — and second another guest's advice in the comments.</p>
+      <div id="adv-wall">
+        <div class="adv-card">
+          <blockquote>"Sleep when the baby sleeps" is a lovely lie. Sleep whenever you possibly can, wherever you land.</blockquote>
+          <div class="who">Margaret E.</div>
+          <div class="adv-comments">
+            <p>Seconded. Twice.<span class="c-who">— Ruth</span></p>
+            <div class="c-row"><input type="text" placeholder="Add your two cents" aria-label="Comment on this advice"><button class="btn small ghost c-post" type="button">Post</button></div>
+          </div>
+        </div>
+        <div class="adv-card">
+          <blockquote>Read to him even when he's too little to care. Especially then — he's learning your voice.</blockquote>
+          <div class="who">Aunt Susan</div>
+          <div class="adv-comments">
+            <div class="c-row"><input type="text" placeholder="Add your two cents" aria-label="Comment on this advice"><button class="btn small ghost c-post" type="button">Post</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="adv-new">
+        <label for="adv-text">Your advice</label>
+        <textarea id="adv-text" placeholder="What do you know now that you wish you'd known then?"></textarea>
+        <div class="c-row" style="margin-top:12px"><input type="text" id="adv-name" placeholder="Your name"><button class="btn small" id="adv-btn" type="button">Post your advice</button></div>
+      </div>
+    </div>
+
+    <div class="feature">
+      <h3>Beau or Abby?</h3>
+      <p>Locked until game time. When the host gives the word — and the password — answer on your phone. The room's running totals appear under each question before the truth comes out.</p>
+      <div class="quiz-lock" id="quiz-lock">
+        <p class="label" style="margin:0 0 18px">Locked until game time</p>
+        <input type="text" id="quiz-pw" placeholder="The password">
+        <div><button class="btn small" id="quiz-unlock" type="button" style="margin-top:18px">Unlock the quiz</button></div>
+        <p class="whisper" style="margin-top:16px;font-size:16px">for this mockup, the password is "fireflies"</p>
+        <p class="confirm whisper" id="quiz-wrong">not yet — wait for the host</p>
+      </div>
+      <div class="quiz" id="quiz">
+        <div class="quiz-q" data-a="25" data-b="13" data-ans="a">
+          <h4>Who was the bigger baby?</h4>
+          <div class="q-btns">
+            <button class="q-btn" data-side="a" type="button">Abby</button>
+            <button class="q-btn" data-side="b" type="button">Beau</button>
+          </div>
+          <div class="tally">
+            <div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div>
+            <div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div>
+          </div>
+          <div><button class="reveal" type="button">Host — reveal the answer</button></div>
+        </div>
+        <div class="quiz-q" data-a="9" data-b="29" data-ans="b">
+          <h4>Who will handle the 2 a.m. feedings?</h4>
+          <div class="q-btns">
+            <button class="q-btn" data-side="a" type="button">Abby</button>
+            <button class="q-btn" data-side="b" type="button">Beau</button>
+          </div>
+          <div class="tally">
+            <div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div>
+            <div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div>
+          </div>
+          <div><button class="reveal" type="button">Host — reveal the answer</button></div>
+        </div>
+        <div class="quiz-q" data-a="18" data-b="18" data-ans="b">
+          <h4>Who cried first at the ultrasound?</h4>
+          <div class="q-btns">
+            <button class="q-btn" data-side="a" type="button">Abby</button>
+            <button class="q-btn" data-side="b" type="button">Beau</button>
+          </div>
+          <div class="tally">
+            <div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div>
+            <div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div>
+          </div>
+          <div><button class="reveal" type="button">Host — reveal the answer</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="evening-list" style="margin-top:64px">
+      <div class="row">
+        <span class="num">i.</span>
+        <h3>A page for his story</h3>
+        <p>Write him one page — a wish, a memory, a blessing. Every page becomes a printed book he'll grow up reading.</p>
+      </div>
+      <div class="row">
+        <span class="num">ii.</span>
+        <h3>The photo drop</h3>
+        <p>Everyone's photos land in one shared album, looping on the screen by the dessert table while the evening happens.</p>
+      </div>
+      <div class="row">
+        <span class="num">iii.</span>
+        <h3>The recording nook</h3>
+        <p>Twenty seconds of your voice, saved for him. Tell him what the garden smelled like the night before he was famous.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dawn">
+  <div class="wrap">
+    <p class="label">Epilogue — the sun comes up in October</p>
+    <h2>This book doesn't end at the party</h2>
+    <p class="lede">When he arrives, the predictions unseal, the library becomes his reading list — and these pages quietly become his family's own. Every milestone plants something new in the garden.</p>
+
+    <div class="garden-row">
+      <figure>
+        <svg width="54" height="64" viewBox="0 0 54 64" aria-hidden="true"><path d="M17 63 H37 L34 46 H20 Z" fill="none" stroke="#A3552E" stroke-width="1.5"/><path d="M27 46 V34" stroke="#587741" stroke-width="1.5" fill="none"/><path d="M27 38 C21 36 18 31 18 26 C24 27 27 31 27 38 Z" fill="none" stroke="#587741" stroke-width="1.5"/></svg>
+        <figcaption>first smile<span class="fig-note">a seedling</span></figcaption>
+      </figure>
+      <figure>
+        <svg width="54" height="64" viewBox="0 0 54 64" aria-hidden="true"><path d="M17 63 H37 L34 46 H20 Z" fill="none" stroke="#A3552E" stroke-width="1.5"/><path d="M27 46 V20" stroke="#587741" stroke-width="1.5" fill="none"/><path d="M27 34 C20 32 16 26 16 20 C23 21 27 26 27 34 Z M27 28 C34 26 38 20 38 14 C31 15 27 20 27 28 Z" fill="none" stroke="#587741" stroke-width="1.5"/></svg>
+        <figcaption>first word<span class="fig-note">a stem</span></figcaption>
+      </figure>
+      <figure>
+        <svg width="54" height="64" viewBox="0 0 54 64" aria-hidden="true"><path d="M17 63 H37 L34 46 H20 Z" fill="none" stroke="#A3552E" stroke-width="1.5"/><path d="M27 46 V16" stroke="#587741" stroke-width="1.5" fill="none"/><path d="M27 36 C20 34 16 28 16 22 C23 23 27 28 27 36 Z" fill="none" stroke="#587741" stroke-width="1.5"/><circle cx="27" cy="12" r="6" fill="none" stroke="#C4693B" stroke-width="1.5"/><circle cx="27" cy="12" r="2" fill="#C4693B"/></svg>
+        <figcaption>first steps<span class="fig-note">a bloom</span></figcaption>
+      </figure>
+    </div>
+
+    <a class="btn" href="#rsvp">Begin at the beginning — RSVP</a>
+  </div>
+</section>
+
+<footer class="colophon">
+  string lights by the strand · fireflies by August · the greenhouse glows at eight<br>
+  a mockup for Karmel &amp; Abby — every name, date, and detail is editable
+  <span class="whisper">a story is planted</span>
+</footer>
+
+<script>
+  document.getElementById('claim-btn').addEventListener('click',function(){
+    var title=document.getElementById('claim-title').value.trim();
+    if(title){
+      var s=document.createElement('div');
+      s.className='spine s-moss claimed';
+      s.textContent=title;
+      document.getElementById('shelf').appendChild(s);
+    }
+    document.getElementById('claim-confirm').classList.add('show');
+  });
+  document.getElementById('rsvp-btn').addEventListener('click',function(){
+    document.getElementById('rsvp-confirm').classList.add('show');
+  });
+  document.querySelectorAll('.hair-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.hair-btn').forEach(function(o){o.classList.remove('sel')});
+      btn.classList.add('sel');
+    });
+  });
+  document.getElementById('pred-btn').addEventListener('click',function(){
+    document.getElementById('pred-confirm').classList.add('show');
+  });
+  document.getElementById('gb-drop').addEventListener('click',function(){
+    this.textContent='selfie added';
+    this.style.color='#F6F1E7';
+    this.style.borderColor='#F6F1E7';
+  });
+  document.getElementById('gb-btn').addEventListener('click',function(){
+    document.getElementById('gb-confirm').classList.add('show');
+  });
+  document.getElementById('adv-btn').addEventListener('click',function(){
+    var t=document.getElementById('adv-text').value.trim();
+    if(!t)return;
+    var name=document.getElementById('adv-name').value.trim()||'You';
+    var card=document.createElement('div');card.className='adv-card';
+    var q=document.createElement('blockquote');q.textContent=t;
+    var w=document.createElement('div');w.className='who';w.textContent=name;
+    var cm=document.createElement('div');cm.className='adv-comments';
+    cm.innerHTML='<div class="c-row"><input type="text" placeholder="Add your two cents" aria-label="Comment on this advice"><button class="btn small ghost c-post" type="button">Post</button></div>';
+    card.appendChild(q);card.appendChild(w);card.appendChild(cm);
+    document.getElementById('adv-wall').prepend(card);
+    document.getElementById('adv-text').value='';
+  });
+  document.addEventListener('click',function(e){
+    if(!e.target.classList.contains('c-post'))return;
+    var row=e.target.parentElement;
+    var inp=row.querySelector('input');
+    var v=inp.value.trim();
+    if(!v)return;
+    var p=document.createElement('p');
+    p.textContent=v+' ';
+    var s=document.createElement('span');s.className='c-who';s.textContent='— you';
+    p.appendChild(s);
+    row.parentElement.insertBefore(p,row);
+    inp.value='';
+  });
+  document.getElementById('quiz-unlock').addEventListener('click',function(){
+    var v=document.getElementById('quiz-pw').value.trim().toLowerCase();
+    if(v==='fireflies'){
+      document.getElementById('quiz').classList.add('open');
+      document.getElementById('quiz-lock').style.display='none';
+    }else{
+      document.getElementById('quiz-wrong').classList.add('show');
+    }
+  });
+  document.querySelectorAll('.quiz-q').forEach(function(q){
+    var a=parseInt(q.getAttribute('data-a'),10);
+    var b=parseInt(q.getAttribute('data-b'),10);
+    function paint(){
+      var total=(a+b)||1;
+      q.querySelector('.t-a').style.width=Math.round(a/total*70)+'%';
+      q.querySelector('.t-b').style.width=Math.round(b/total*70)+'%';
+      q.querySelector('.n-a').textContent=a;
+      q.querySelector('.n-b').textContent=b;
+    }
+    q.querySelectorAll('.q-btn').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        if(q.getAttribute('data-voted'))return;
+        q.setAttribute('data-voted','1');
+        if(btn.getAttribute('data-side')==='a'){a++}else{b++}
+        btn.classList.add('voted');
+        paint();
+        q.querySelector('.tally').classList.add('show');
+      });
+    });
+    q.querySelector('.reveal').addEventListener('click',function(){
+      var ans=q.getAttribute('data-ans');
+      q.querySelectorAll('.q-btn').forEach(function(btn){
+        if(btn.getAttribute('data-side')===ans)btn.classList.add('correct');
+      });
+      this.style.display='none';
+    });
+  });
+</script>
