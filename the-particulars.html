@@ -13,6 +13,10 @@
 </header>
 <div class="gingham gingham-band" role="presentation"></div>
 
+<svg class="defs-svg" aria-hidden="true"><defs>
+  <filter id="wcS" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="17" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
+</defs></svg>
+
 <section class="chapter">
   <div class="wrap">
     <header>
@@ -22,7 +26,7 @@
     </header>
 
     <div class="gift-scene" aria-hidden="true" style="margin-bottom:40px">
-      <svg viewBox="0 0 900 300">
+      <svg viewBox="0 0 900 300" style="overflow:visible">
         <defs>
           <pattern id="ging2" width="18" height="18" patternUnits="userSpaceOnUse">
             <rect width="18" height="18" fill="#FFFDF6"/>
@@ -30,6 +34,7 @@
             <rect width="18" height="9" fill="#4F6584" opacity=".5"/>
           </pattern>
         </defs>
+        <g filter="url(#wcS)" opacity=".92">
         <path d="M20 24 Q225 56 450 36 T880 26" stroke="rgba(34,48,74,.3)" stroke-width="1.5" fill="none"/>
         <g fill="#E9C46A">
           <circle cx="110" cy="40" r="4"/><circle cx="110" cy="40" r="8" opacity=".25"/>
@@ -94,6 +99,7 @@
         <path d="M818 186 L848 272 L788 272 Z" fill="url(#ging2)" stroke="rgba(34,48,74,.3)"/>
         <g stroke="#8A6B42" stroke-width="3">
           <path d="M150 272 V292 M750 272 V292"/>
+        </g>
         </g>
       </svg>
     </div>
