@@ -21,7 +21,8 @@ A multi-page storybook: **`index.html`** is the cover — bunting, balloon clust
   10. `the-evening.html` — night-of party mode: selfie guest book, advice wall with comments, password-gated "Beau or Abby?" live quiz
   11. `guest-list.html` — hosts-only CRM (statuses, filters, books claimed, thank-you tracking)
   12. `epilogue.html` — The story is just beginning… (after October 14th this becomes the family site)
-- **`assets/`** — shared `styles.css` + `site.js` (countdown, growth tracker, quiz, CRM — all feature-guarded so any page can load them).
+- **`slideshow.html`** — the big screen: open on the TV/projector by the dessert table; it loops the group album (photos + storybook quote cards) all evening. Guests add photos from `the-evening.html` and they join the loop (live sync needs the backend, below).
+- **`assets/`** — shared `styles.css` + `site.js` (countdown, growth tracker, quiz, CRM, album — all feature-guarded so any page can load them). `assets/photos/` holds baby Abby & baby Beau.
 - **`design-studies/`** — the three earlier design-direction studies plus the previous single-page version (`story-garden-onepage.html`), kept for reference.
 
 ## Status

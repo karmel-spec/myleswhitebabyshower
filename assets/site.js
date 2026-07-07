@@ -50,6 +50,25 @@
     });
   }
 
+  if($('al-drop')){
+    $('al-drop').addEventListener('click',function(){
+      this.textContent='photo added';
+      this.style.color='#F9F5EA';
+      this.style.borderColor='#F9F5EA';
+    });
+    $('al-btn').addEventListener('click',function(){
+      var cap=$('al-cap').value.trim()||'from tonight, under the string lights';
+      var fig=document.createElement('figure');
+      fig.className='album-tile empty';
+      var s=document.createElement('span');
+      s.textContent='"'+cap+'" — your photo syncs to the screen';
+      fig.appendChild(s);
+      var firstEmpty=document.querySelector('#album .album-tile.empty');
+      if(firstEmpty){firstEmpty.replaceWith(fig)}else{$('album').appendChild(fig)}
+      $('al-cap').value='';
+    });
+  }
+
   if($('gb-drop')){
     $('gb-drop').addEventListener('click',function(){
       this.textContent='selfie added';
