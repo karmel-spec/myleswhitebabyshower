@@ -8,20 +8,21 @@ Theme: **Story Garden** — a boyish garden meets children's books. Blue gingham
 
 ## What's here
 
-- **`index.html`** — the full site mockup in the approved brand (cream watercolor-storybook; navy, dusty blue, sage, butter yellow, natural wood). Eleven chapters:
-  1. A new chapter begins — the particulars
-  2. The story so far — dating → wedding film → honeymoon → ultrasound → gender reveal → live countdown to October 14th
-  3. Every story begins with love — what we know + guest predictions (sealed until he arrives)
-  4. He grows by the week — auto-computing growth tracker (size, length, weight, what's new this week)
-  5. Books for Baby — claim-a-book library shelf (bring a book instead of a card)
-  6. The gift table — illustrated garden gift table: Amazon + Target registries, Venmo group gift
-  7. Before he was famous — ultrasound gallery
-  8. Once upon two babies — Abby & Beau baby photos + AI-imagined Myles
-  9. Help us write the first pages — RSVP (collects addresses for thank-yous)
-  10. Let the adventures begin — night-of party mode: selfie guest book, advice wall with comments, password-gated "Beau or Abby?" live quiz
-  11. The guest list — hosts-only CRM (statuses, filters, books claimed, thank-you tracking)
-  - Epilogue — the story is just beginning… (after October 14th this becomes the family site: milestone garden, reading log)
-- **`design-studies/`** — the three earlier design-direction studies (pressed pages, storybook picnic, dusk in the greenhouse), kept for reference.
+A multi-page storybook: **`index.html`** is the cover — bunting, balloon cluster, moon and stars, the live countdown to October 14th, and a table of contents styled like a real book's (dotted leaders, page numbers, a teddy reading over the heading). Each chapter is its own page, linked prev/next like turning pages:
+  1. `the-particulars.html` — A new chapter begins (with the long gingham-table scene)
+  2. `our-story.html` — The story so far: dating → wedding film → honeymoon → ultrasound → gender reveal → countdown
+  3. `what-we-know.html` — Every story begins with love: what's written + guest predictions (sealed until he arrives)
+  4. `growing.html` — He grows by the week: auto-computing growth tracker (size, length, weight, what's new)
+  5. `books-for-baby.html` — claim-a-book library shelf (bring a book instead of a card)
+  6. `gift-table.html` — illustrated garden gift table: Amazon + Target registries, Venmo group gift
+  7. `portraits.html` — Before he was famous: ultrasound gallery
+  8. `two-babies.html` — Abby & Beau baby photos + AI-imagined Myles
+  9. `rsvp.html` — Help us write the first pages (collects addresses for thank-yous)
+  10. `the-evening.html` — night-of party mode: selfie guest book, advice wall with comments, password-gated "Beau or Abby?" live quiz
+  11. `guest-list.html` — hosts-only CRM (statuses, filters, books claimed, thank-you tracking)
+  12. `epilogue.html` — The story is just beginning… (after October 14th this becomes the family site)
+- **`assets/`** — shared `styles.css` + `site.js` (countdown, growth tracker, quiz, CRM — all feature-guarded so any page can load them).
+- **`design-studies/`** — the three earlier design-direction studies plus the previous single-page version (`story-garden-onepage.html`), kept for reference.
 
 ## Status
 

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chapter eleven · The guest list — The Story Garden</title>
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<header class="site-bar">
+  <a class="site-mark" href="index.html">The Story Garden</a>
+  <a class="toc-link" href="index.html#contents">Table of contents</a>
+</header>
+<div class="gingham gingham-band" role="presentation"></div>
+
+<section class="chapter wash-blue">
+  <div class="wrap">
+    <header>
+      <p class="eyebrow">Chapter eleven</p>
+      <h2>The guest <span class="script">list</span></h2>
+      <div><span class="hosts-chip">Hosts only — Karmel &amp; Abby</span></div>
+      <p class="lede">The quiet chapter guests never see: who's invited, who's coming, who claimed which book, and whose thank-you note is done. Upload your list — a CSV, a spreadsheet, even a photo of a handwritten one — and it lands here.</p>
+    </header>
+
+    <div class="crm-stats">
+      <div class="stat"><span class="n" id="s-invited">0</span><span class="k">Households invited</span></div>
+      <div class="stat"><span class="n" id="s-coming">0</span><span class="k">People coming</span></div>
+      <div class="stat"><span class="n" id="s-books">0</span><span class="k">Books claimed</span></div>
+      <div class="stat"><span class="n" id="s-ty">0</span><span class="k">Thank-yous sent</span></div>
+    </div>
+
+    <div class="crm-filters">
+      <button class="filter-btn active" data-f="all" type="button">Everyone</button>
+      <button class="filter-btn" data-f="coming" type="button">Coming</button>
+      <button class="filter-btn" data-f="await" type="button">Awaiting reply</button>
+      <button class="filter-btn" data-f="regret" type="button">Regrets</button>
+    </div>
+
+    <div class="crm-card">
+      <table class="crm" id="crm-table">
+        <thead>
+          <tr><th>Guest</th><th>Party of</th><th>Status</th><th>Book claimed</th><th>Address</th><th>Thank-you</th></tr>
+        </thead>
+        <tbody>
+          <tr data-status="coming"><td class="g-name">Margaret Ellison</td><td class="num">2</td><td><span class="pill st-coming">Coming</span></td><td>The Carrot Seed</td><td>on file</td><td><input type="checkbox" class="ty" checked aria-label="Thank-you sent to Margaret Ellison"></td></tr>
+          <tr data-status="coming"><td class="g-name">Aunt Susan</td><td class="num">1</td><td><span class="pill st-coming">Coming</span></td><td>Goodnight Moon</td><td>on file</td><td><input type="checkbox" class="ty" aria-label="Thank-you sent to Aunt Susan"></td></tr>
+          <tr data-status="coming"><td class="g-name">Ruth &amp; Ellen</td><td class="num">2</td><td><span class="pill st-coming">Coming</span></td><td>The Tiny Seed</td><td>on file</td><td><input type="checkbox" class="ty" aria-label="Thank-you sent to Ruth and Ellen"></td></tr>
+          <tr data-status="coming"><td class="g-name">Grandma Karmie</td><td class="num">1</td><td><span class="pill st-coming">Coming</span></td><td>—</td><td>on file</td><td><input type="checkbox" class="ty" aria-label="Thank-you sent to Grandma Karmie"></td></tr>
+          <tr data-status="coming"><td class="g-name">Diane White</td><td class="num">1</td><td><span class="pill st-coming">Coming</span></td><td>—</td><td>on file</td><td><input type="checkbox" class="ty" aria-label="Thank-you sent to Diane White"></td></tr>
+          <tr data-status="await"><td class="g-name">Jess Hartley</td><td class="num">—</td><td><span class="pill st-await">Awaiting reply</span></td><td>—</td><td>—</td><td><input type="checkbox" class="ty" aria-label="Thank-you sent to Jess Hartley"></td></tr>
+          <tr data-status="await"><td class="g-name">Kate Morrison</td><td class="num">—</td><td><span class="pill st-await">Awaiting reply</span></td><td>—</td><td>—</td><td><input type="checkbox" class="ty" aria-label="Thank-you sent to Kate Morrison"></td></tr>
+          <tr data-status="regret"><td class="g-name">The Nielsens</td><td class="num">0</td><td><span class="pill st-regret">Regrets</span></td><td>—</td><td>on file</td><td><input type="checkbox" class="ty" aria-label="Thank-you sent to the Nielsens"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="crm-add">
+      <input type="text" id="add-name" placeholder="Guest name" aria-label="New guest name">
+      <input type="text" id="add-party" class="short" placeholder="Party" aria-label="Party size">
+      <select id="add-status" aria-label="Status">
+        <option value="await">Awaiting reply</option>
+        <option value="coming">Coming</option>
+        <option value="regret">Regrets</option>
+      </select>
+      <button class="btn small ghost" id="add-btn" type="button">Add guest</button>
+    </div>
+    <p class="crm-note">In the real build: import from CSV or spreadsheet, one-tap invite texts and reminder nudges, and the thank-you column fills in from the gift log automatically.</p>
+  </div>
+</section>
+
+<nav class="chapter-nav">
+  <a href="the-evening.html">← Chapter ten</a>
+  <a class="mid" href="index.html#contents" style="text-decoration:none">table of contents</a>
+  <a href="epilogue.html">Epilogue →</a>
+</nav>
+<footer class="colophon">
+  a story garden for Myles Bryant White · arriving October 14th, 2026
+</footer>
+<script src="assets/site.js"></script>
+</body>
+</html>
