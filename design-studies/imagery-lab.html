@@ -1,0 +1,332 @@
+<meta charset="utf-8">
+<title>The Imagery Lab — Story Garden</title>
+<style>
+  :root{
+    --cream:#F9F5EA;--paper:#FFFDF6;--navy:#22304A;--dusty:#8FA3BF;--dusty-deep:#4F6584;
+    --sage:#98A68B;--leaf:#5C7046;--butter:#E9C46A;--butter-deep:#B98F2E;--wood:#C9A87C;
+    --wood-deep:#8A6B42;--soft:#5E6678;--hairline:rgba(34,48,74,.22);--pop:#C24B33;
+    --display:"Hoefler Text",Baskerville,"Iowan Old Style",Georgia,serif;
+    --script:"Snell Roundhand","Apple Chancery",cursive;
+    --body:"Seravek","Avenir Next",Avenir,"Gill Sans",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--cream);color:var(--navy);font-family:var(--body);font-size:16.5px;line-height:1.7}
+  .wrap{max-width:1020px;margin:0 auto;padding:60px 28px 80px}
+  header.top{text-align:center;margin-bottom:48px}
+  .eyebrow{font-family:var(--display);font-size:13px;letter-spacing:.34em;text-transform:uppercase;color:var(--dusty-deep)}
+  h1{font-family:var(--display);font-weight:400;font-size:clamp(34px,5vw,46px);letter-spacing:.1em;text-transform:uppercase;margin:14px 0 6px}
+  h1 .script{font-family:var(--script);font-size:1.3em;text-transform:none;letter-spacing:0;color:var(--dusty-deep)}
+  header.top p{color:var(--soft);max-width:56ch;margin:12px auto 0}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px}
+  .tile{background:var(--paper);border:1px solid var(--hairline);border-radius:8px;overflow:hidden}
+  .tile .art{display:block;width:100%;height:auto}
+  .tile .info{padding:20px 24px 24px;border-top:1px solid var(--hairline)}
+  .tile h3{font-family:var(--display);font-weight:400;font-size:20px;margin:0 0 6px}
+  .tile h3 .tag{font-family:var(--body);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--butter-deep);border:1px solid var(--butter-deep);border-radius:999px;padding:3px 10px;vertical-align:3px;margin-left:8px}
+  .tile p{margin:6px 0;font-size:14.5px;color:var(--soft)}
+  .tile p.shines{font-family:var(--script);font-size:19px;color:var(--leaf)}
+  .rec{background:#FBF0D6;border:1px solid var(--butter-deep);border-radius:8px;padding:26px 30px;margin:42px 0}
+  .rec h2{font-family:var(--display);font-weight:400;font-size:22px;margin:0 0 8px}
+  .rec p{margin:6px 0;color:var(--soft);font-size:15.5px}
+  .applied{margin-top:48px;text-align:center}
+  .applied h2{font-family:var(--display);font-weight:400;font-size:24px;letter-spacing:.08em;margin:0 0 6px}
+  .applied p{color:var(--soft);max-width:52ch;margin:8px auto 26px}
+  .applied-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:26px}
+  .applied-row .tile .art{background:var(--paper)}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">The imagery lab</p>
+    <h1>Four ways to draw <span class="script">the same balloon</span></h1>
+    <p>One scene — the balloon drifting over the daisy patch — rendered four ways. Pick the technique, and the whole library gets redrawn to match: the teddy, the gift table, the vegetables, the timeline, the sprigs.</p>
+  </header>
+
+  <div class="grid">
+
+    <figure class="tile" style="margin:0">
+      <svg class="art" viewBox="0 0 360 300" aria-label="Current flat style sample">
+        <rect width="360" height="300" fill="#FFFDF6"/>
+        <path d="M70 84 C60 84 58 74 66 70 C66 62 76 58 83 63 C87 56 99 56 103 63 C112 59 120 66 117 73 C126 73 128 84 118 84 Z" fill="#FFFDF6" stroke="rgba(34,48,74,.2)"/>
+        <path d="M292 60 L294 68 L302 70 L294 72 L292 80 L290 72 L282 70 L290 68 Z" fill="#E9C46A"/>
+        <path d="M180 34 C210 34 228 54 228 82 C228 110 204 132 192 144 L168 144 C156 132 132 110 132 82 C132 54 150 34 180 34 Z" fill="#8FA3BF"/>
+        <path d="M180 34 C192 34 200 54 200 82 C200 110 190 132 186 144 L174 144 C170 132 160 110 160 82 C160 54 168 34 180 34 Z" fill="#FFFDF6"/>
+        <path d="M180 34 C184 34 187 54 187 82 C187 110 184 132 183 144 L177 144 C176 132 173 110 173 82 C173 54 176 34 180 34 Z" fill="#22304A" opacity=".85"/>
+        <path d="M168 144 L171 158 M192 144 L189 158" stroke="#8A6B42" stroke-width="1.5"/>
+        <rect x="169" y="158" width="22" height="15" rx="2" fill="#C9A87C" stroke="#8A6B42"/>
+        <path d="M0 262 Q90 240 180 252 T360 250 V300 H0 Z" fill="#98A68B"/>
+        <path d="M0 278 Q120 260 240 272 T360 268 V300 H0 Z" fill="#7C8A6E"/>
+        <g>
+          <path d="M92 258 V236" stroke="#5C7046" stroke-width="2.5"/>
+          <circle cx="92" cy="228" r="6" fill="#E9C46A"/>
+          <g fill="#FFFDF6" stroke="#22304A" stroke-width=".5">
+            <ellipse cx="92" cy="215" rx="4" ry="8"/><ellipse cx="79" cy="228" rx="8" ry="4"/><ellipse cx="105" cy="228" rx="8" ry="4"/>
+            <ellipse cx="83" cy="219" rx="6" ry="5"/><ellipse cx="101" cy="219" rx="6" ry="5"/>
+          </g>
+          <circle cx="92" cy="228" r="6" fill="#E9C46A"/>
+        </g>
+        <g>
+          <path d="M268 262 V240" stroke="#5C7046" stroke-width="2.5"/>
+          <circle cx="268" cy="232" r="6" fill="#E9C46A"/>
+          <g fill="#FFFDF6" stroke="#22304A" stroke-width=".5">
+            <ellipse cx="268" cy="219" rx="4" ry="8"/><ellipse cx="255" cy="232" rx="8" ry="4"/><ellipse cx="281" cy="232" rx="8" ry="4"/>
+            <ellipse cx="259" cy="223" rx="6" ry="5"/><ellipse cx="277" cy="223" rx="6" ry="5"/>
+          </g>
+          <circle cx="268" cy="232" r="6" fill="#E9C46A"/>
+        </g>
+      </svg>
+      <figcaption class="info">
+        <h3>Where we are today <span class="tag">baseline</span></h3>
+        <p>Flat vector shapes, solid fills, clean outlines. Sweet and legible — but it reads "clip-art" next to your mood boards.</p>
+        <p class="shines">kept here for honest comparison</p>
+      </figcaption>
+    </figure>
+
+    <figure class="tile" style="margin:0">
+      <svg class="art" viewBox="0 0 360 300" aria-label="Watercolor and ink style sample">
+        <defs>
+          <filter id="wcA" x="-20%" y="-20%" width="140%" height="140%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="3" seed="7" result="n"/>
+            <feDisplacementMap in="SourceGraphic" in2="n" scale="16"/>
+          </filter>
+          <filter id="wcB" x="-20%" y="-20%" width="140%" height="140%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="3" seed="3" result="n"/>
+            <feDisplacementMap in="SourceGraphic" in2="n" scale="10"/>
+          </filter>
+          <filter id="wcEdge" x="-20%" y="-20%" width="140%" height="140%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" seed="11" result="n"/>
+            <feDisplacementMap in="SourceGraphic" in2="n" scale="14" result="d"/>
+            <feGaussianBlur in="d" stdDeviation="0.9"/>
+          </filter>
+          <filter id="grainA">
+            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="5"/>
+            <feColorMatrix type="matrix" values="0 0 0 0 0.45  0 0 0 0 0.42  0 0 0 0 0.34  0 0 0 0.05 0"/>
+          </filter>
+        </defs>
+        <rect width="360" height="300" fill="#FFFDF6"/>
+        <g filter="url(#wcB)">
+          <path d="M60 88 C48 88 46 74 58 70 C58 58 74 52 84 60 C90 50 108 50 114 60 C126 54 136 64 130 74 C142 74 144 88 130 88 Z" fill="#DCE3EC" opacity=".7"/>
+        </g>
+        <path d="M180 36 C212 36 232 56 232 84 C232 112 206 134 193 146 L167 146 C154 134 128 112 128 84 C128 56 148 36 180 36 Z" fill="#8FA3BF" opacity=".5" filter="url(#wcA)"/>
+        <path d="M184 42 C210 46 224 62 224 86 C224 110 202 130 191 142 L173 142 C186 118 192 78 184 42 Z" fill="#4F6584" opacity=".3" filter="url(#wcB)"/>
+        <path d="M164 46 C150 56 138 68 138 86 C138 104 150 122 162 136 C152 112 150 74 164 46 Z" fill="#FFFDF6" opacity=".6" filter="url(#wcB)"/>
+        <path d="M180 36 C212 36 232 56 232 84 C232 112 206 134 193 146 L167 146 C154 134 128 112 128 84 C128 56 148 36 180 36 Z" fill="none" stroke="#4F6584" stroke-width="5" opacity=".22" filter="url(#wcEdge)"/>
+        <g fill="none" stroke="#22304A" stroke-width="1.4" stroke-linecap="round">
+          <path d="M181 37 C212 37 231 57 231 84 C231 110 207 132 194 145"/>
+          <path d="M166 143 C154 132 130 110 130 86 C130 60 147 40 172 37"/>
+          <path d="M180 38 C190 52 194 96 189 144 M180 38 C170 52 166 96 171 144"/>
+          <path d="M168 146 L171 160 M192 146 L189 160"/>
+        </g>
+        <rect x="169" y="160" width="22" height="15" rx="2" fill="#C9A87C" opacity=".55" filter="url(#wcB)"/>
+        <g fill="none" stroke="#22304A" stroke-width="1.2" stroke-linecap="round">
+          <path d="M168 160 H192 M169 175 H191 M168 160 L168 175 M192 160 L192 175 M173 160 L175 175 M180 160 L180 175 M187 160 L185 175"/>
+        </g>
+        <path d="M0 258 Q90 238 180 250 T360 246 V300 H0 Z" fill="#98A68B" opacity=".45" filter="url(#wcA)"/>
+        <path d="M0 276 Q120 258 240 270 T360 264 V300 H0 Z" fill="#5C7046" opacity=".3" filter="url(#wcB)"/>
+        <g fill="none" stroke="#3E5232" stroke-width="1.2" stroke-linecap="round" opacity=".7">
+          <path d="M60 268 q3 -10 1 -18 M74 272 q-4 -8 -2 -16 M300 264 q3 -10 1 -18 M318 270 q-4 -8 -2 -14 M180 272 q3 -8 1 -14"/>
+        </g>
+        <g>
+          <path d="M92 256 C90 244 92 236 92 230" fill="none" stroke="#3E5232" stroke-width="1.4"/>
+          <ellipse cx="92" cy="216" rx="14" ry="13" fill="#FFFDF6" opacity=".85" filter="url(#wcB)"/>
+          <circle cx="92" cy="217" r="6" fill="#E9C46A" opacity=".75" filter="url(#wcB)"/>
+          <g fill="none" stroke="#22304A" stroke-width="1" stroke-linecap="round" opacity=".85">
+            <path d="M92 209 V204 M85 212 L81 208 M99 212 L103 208 M85 222 L80 225 M99 222 L104 225 M92 224 V229"/>
+            <circle cx="92" cy="217" r="5.5"/>
+          </g>
+        </g>
+        <g>
+          <path d="M268 260 C266 248 268 242 268 234" fill="none" stroke="#3E5232" stroke-width="1.4"/>
+          <ellipse cx="268" cy="221" rx="13" ry="12" fill="#FFFDF6" opacity=".85" filter="url(#wcA)"/>
+          <circle cx="268" cy="222" r="5.5" fill="#E9C46A" opacity=".75" filter="url(#wcB)"/>
+          <g fill="none" stroke="#22304A" stroke-width="1" stroke-linecap="round" opacity=".85">
+            <path d="M268 214 V209 M261 217 L257 213 M275 217 L279 213 M261 226 L256 229 M275 226 L280 229 M268 228 V233"/>
+            <circle cx="268" cy="222" r="5"/>
+          </g>
+        </g>
+        <circle cx="296" cy="66" r="5" fill="#E9C46A" opacity=".6" filter="url(#wcB)"/>
+        <g stroke="#22304A" stroke-width="1" opacity=".8"><path d="M296 58 V54 M296 74 V78 M288 66 H284 M304 66 H308"/></g>
+        <rect width="360" height="300" filter="url(#grainA)"/>
+      </svg>
+      <figcaption class="info">
+        <h3>Watercolor &amp; ink <span class="tag">recommended</span></h3>
+        <p>Translucent washes that pool and bleed like real pigment, a loose ink line that doesn't quite hug the color, and a whisper of paper grain. This is the language of your mood boards — soft, heirloom, hand-made.</p>
+        <p class="shines">the whole site: cover, chapter art, the teddy</p>
+      </figcaption>
+    </figure>
+
+    <figure class="tile" style="margin:0">
+      <svg class="art" viewBox="0 0 360 300" aria-label="Botanical etching style sample">
+        <rect width="360" height="300" fill="#FFFDF6"/>
+        <ellipse cx="180" cy="150" rx="158" ry="132" fill="none" stroke="#22304A" stroke-width="1.6"/>
+        <ellipse cx="180" cy="150" rx="151" ry="125" fill="none" stroke="#22304A" stroke-width=".7"/>
+        <g fill="none" stroke="#22304A" stroke-linecap="round">
+          <path d="M180 44 C210 44 228 62 228 88 C228 114 204 134 192 146 L168 146 C156 134 132 114 132 88 C132 62 150 44 180 44 Z" stroke-width="1.4"/>
+          <path d="M180 45 C190 58 194 100 189 145 M180 45 C170 58 166 100 171 145" stroke-width=".9"/>
+          <path d="M180 45 C201 52 210 96 185 145 M180 45 C159 52 150 96 175 145" stroke-width=".7"/>
+          <path d="M136 76 C148 70 166 67 180 67 M133 92 C150 84 168 81 180 81 M134 108 C152 98 168 95 180 95" stroke-width=".6"/>
+          <path d="M141 64 l-5 6 M149 57 l-6 7 M158 51 l-6 7 M146 76 l-6 7 M140 90 l-6 7 M141 104 l-6 6 M146 118 l-5 6 M153 128 l-5 6" stroke-width=".55"/>
+          <path d="M168 146 L171 162 M192 146 L189 162" stroke-width="1"/>
+          <path d="M167 162 H193 L191 178 H169 Z" stroke-width="1.1"/>
+          <path d="M170 166 H190 M170 170 H190 M170 174 H190 M173 162 L174 178 M179 162 L180 178 M185 162 L186 178" stroke-width=".55"/>
+        </g>
+        <g fill="#22304A">
+          <circle cx="86" cy="84" r=".8"/><circle cx="92" cy="80" r=".8"/><circle cx="99" cy="78" r=".8"/><circle cx="106" cy="79" r=".8"/><circle cx="112" cy="82" r=".8"/>
+          <circle cx="90" cy="88" r=".7"/><circle cx="97" cy="85" r=".7"/><circle cx="104" cy="84" r=".7"/><circle cx="110" cy="87" r=".7"/><circle cx="96" cy="91" r=".6"/><circle cx="103" cy="90" r=".6"/>
+        </g>
+        <g fill="none" stroke="#22304A" stroke-linecap="round">
+          <path d="M92 252 C90 240 92 232 93 224" stroke-width="1.1"/>
+          <path d="M93 224 m-6 0 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0" stroke-width=".9"/>
+          <path d="M93 212 q-2 6 0 6 q2 0 0 -6 M81 218 q4 4 7 5 M105 218 q-4 4 -7 5 M83 231 q5 -2 7 -3 M103 231 q-5 -2 -7 -3" stroke-width=".8"/>
+          <path d="M87 254 q8 -6 12 -14 M84 250 q6 -4 9 -9" stroke-width=".5"/>
+          <path d="M268 256 C266 244 268 238 269 230" stroke-width="1.1"/>
+          <path d="M269 230 m-5.5 0 a5.5 5.5 0 1 0 11 0 a5.5 5.5 0 1 0 -11 0" stroke-width=".9"/>
+          <path d="M269 219 q-2 5 0 5 q2 0 0 -5 M258 224 q4 4 6 5 M280 224 q-4 4 -6 5 M260 236 q4 -2 6 -3 M278 236 q-4 -2 -6 -3" stroke-width=".8"/>
+          <path d="M40 262 Q120 246 200 256 T340 252" stroke-width=".9"/>
+          <path d="M52 268 q3 -8 1 -14 M66 271 q-3 -7 -1 -12 M186 268 q3 -8 1 -13 M206 270 q-3 -7 -1 -11 M298 264 q3 -8 1 -13 M316 267 q-3 -6 -1 -10" stroke-width=".6"/>
+        </g>
+        <text x="180" y="290" text-anchor="middle" font-family="Hoefler Text,Baskerville,Georgia,serif" font-size="10" letter-spacing="3" fill="#22304A">PL. IV — THE BALLOON, ASCENDING</text>
+      </svg>
+      <figcaption class="info">
+        <h3>Botanical etching <span class="tag">accent</span></h3>
+        <p>One ink, fine hatching and stipple, a plate number like an old field guide. Too austere to carry the whole site — but gorgeous for frames, dividers, the library bookplate, and the "already written" ledger.</p>
+        <p class="shines">chapter frames, the keepsake book, thank-you cards</p>
+      </figcaption>
+    </figure>
+
+    <figure class="tile" style="margin:0">
+      <svg class="art" viewBox="0 0 360 300" aria-label="Vintage picture-book print style sample">
+        <defs>
+          <filter id="rough" x="-20%" y="-20%" width="140%" height="140%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="9" result="n"/>
+            <feDisplacementMap in="SourceGraphic" in2="n" scale="7"/>
+          </filter>
+          <filter id="grainB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.55" numOctaves="2" seed="4"/>
+            <feColorMatrix type="matrix" values="0 0 0 0 0.4  0 0 0 0 0.36  0 0 0 0 0.3  0 0 0 0.09 0"/>
+          </filter>
+        </defs>
+        <rect width="360" height="300" fill="#F6EFDD"/>
+        <g filter="url(#rough)">
+          <path d="M64 86 C54 86 52 76 60 72 C60 64 70 60 77 65 C81 58 93 58 97 65 C106 61 114 68 111 75 C120 75 122 86 112 86 Z" fill="#DCE3EC"/>
+        </g>
+        <g filter="url(#rough)" opacity=".85">
+          <path d="M186 40 C216 42 234 60 233 88 C232 114 208 136 196 148 L172 146 C160 134 136 112 137 84 C138 58 156 38 186 40 Z" fill="#8FA3BF" transform="translate(3,-2)"/>
+        </g>
+        <g filter="url(#rough)">
+          <path d="M180 38 C210 38 228 56 228 84 C228 112 204 134 192 146 L168 146 C156 134 132 112 132 84 C132 56 150 38 180 38 Z" fill="#E9C46A"/>
+          <path d="M180 38 C192 38 200 58 200 84 C200 112 190 134 186 146 L174 146 C170 134 160 112 160 84 C160 58 168 38 180 38 Z" fill="#22304A"/>
+          <path d="M180 38 C184 38 187 58 187 84 C187 112 184 134 183 146 L177 146 C176 134 173 112 173 84 C173 58 176 38 180 38 Z" fill="#F6EFDD"/>
+        </g>
+        <path d="M228 60 L252 52 L246 72 Z" fill="#C24B33" filter="url(#rough)"/>
+        <g filter="url(#rough)">
+          <path d="M168 146 L171 162 M192 146 L189 162" stroke="#8A6B42" stroke-width="2"/>
+          <rect x="167" y="162" width="26" height="17" rx="2" fill="#8A6B42"/>
+        </g>
+        <g filter="url(#rough)">
+          <path d="M0 256 Q90 236 180 248 T360 244 V300 H0 Z" fill="#98A68B"/>
+          <path d="M0 276 Q120 256 240 268 T360 262 V300 H0 Z" fill="#5C7046" transform="translate(-2,2)"/>
+        </g>
+        <g filter="url(#rough)">
+          <path d="M92 254 V232" stroke="#3E5232" stroke-width="3"/>
+          <circle cx="92" cy="220" r="12" fill="#FFFDF6"/>
+          <circle cx="94" cy="218" r="12" fill="#FFFDF6" opacity=".5" transform="translate(2,-1)"/>
+          <circle cx="92" cy="220" r="5" fill="#B98F2E"/>
+          <path d="M268 258 V238" stroke="#3E5232" stroke-width="3"/>
+          <circle cx="268" cy="226" r="11" fill="#FFFDF6"/>
+          <circle cx="268" cy="226" r="4.5" fill="#C24B33"/>
+        </g>
+        <path d="M294 62 L296 70 L304 72 L296 74 L294 82 L292 74 L284 72 L292 70 Z" fill="#B98F2E" filter="url(#rough)"/>
+        <rect width="360" height="300" filter="url(#grainB)"/>
+      </svg>
+      <figcaption class="info">
+        <h3>Vintage picture-book print <span class="tag">playful</span></h3>
+        <p>Flat gouache shapes with rough edges, print grain, and colors deliberately a hair out of register — like a beloved 1960s Golden Book. Note the little red pennant: the "whisper of Seuss" from your board.</p>
+        <p class="shines">party signage, favors, the quiz and games pages</p>
+      </figcaption>
+    </figure>
+
+  </div>
+
+  <div class="rec">
+    <h2>My recommendation: watercolor &amp; ink, with etched accents</h2>
+    <p><strong style="font-weight:500">Watercolor &amp; ink</strong> carries the site — it's exactly the hand of your three mood boards, it flatters the real photography (the baby photos, the eventual garden photos), and it ages into the family-site years without ever feeling like a party flyer.</p>
+    <p><strong style="font-weight:500">Botanical etching</strong> becomes the supporting voice: chapter frames, dividers, the plate-style captions, the printed keepsake. <strong style="font-weight:500">Print grain</strong> from the vintage style gets applied site-wide at 5% so every page feels like paper, not pixels.</p>
+  </div>
+
+  <div class="applied">
+    <h2>Applied: two motifs redrawn in watercolor &amp; ink</h2>
+    <p>The cover daisy sprig and the contents-page teddy, as they would look after the redraw.</p>
+    <div class="applied-row">
+      <figure class="tile" style="margin:0">
+        <svg class="art" viewBox="0 0 360 240" aria-label="Watercolor daisy sprig sample">
+          <defs>
+            <filter id="wcC" x="-20%" y="-20%" width="140%" height="140%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" seed="21" result="n"/>
+              <feDisplacementMap in="SourceGraphic" in2="n" scale="12"/>
+            </filter>
+            <filter id="grainC">
+              <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="6"/>
+              <feColorMatrix type="matrix" values="0 0 0 0 0.45  0 0 0 0 0.42  0 0 0 0 0.34  0 0 0 0.05 0"/>
+            </filter>
+          </defs>
+          <rect width="360" height="240" fill="#FFFDF6"/>
+          <path d="M70 220 C110 170 150 130 210 96" fill="none" stroke="#5C7046" stroke-width="4" opacity=".35" filter="url(#wcC)"/>
+          <path d="M72 218 C112 168 152 128 208 96" fill="none" stroke="#3E5232" stroke-width="1.3"/>
+          <path d="M116 176 C138 166 152 150 156 132 C134 138 118 154 116 176 Z" fill="#98A68B" opacity=".55" filter="url(#wcC)"/>
+          <path d="M118 174 C138 165 150 151 154 135" fill="none" stroke="#3E5232" stroke-width="1"/>
+          <path d="M150 142 C170 134 182 120 186 104 C166 110 152 124 150 142 Z" fill="#7C8A6E" opacity=".5" filter="url(#wcC)"/>
+          <path d="M152 140 C170 132 180 120 184 107" fill="none" stroke="#3E5232" stroke-width="1"/>
+          <ellipse cx="234" cy="78" rx="26" ry="24" fill="#FFFDF6" opacity=".9" filter="url(#wcC)"/>
+          <ellipse cx="230" cy="74" rx="18" ry="16" fill="#DCE3EC" opacity=".5" filter="url(#wcC)"/>
+          <circle cx="234" cy="79" r="10" fill="#E9C46A" opacity=".8" filter="url(#wcC)"/>
+          <g fill="none" stroke="#22304A" stroke-width="1.1" stroke-linecap="round" opacity=".9">
+            <circle cx="234" cy="79" r="9"/>
+            <path d="M234 66 V56 M222 70 L214 62 M246 70 L254 62 M220 82 L210 84 M248 82 L258 84 M224 90 L217 98 M244 90 L251 98 M234 92 V102"/>
+          </g>
+          <circle cx="284" cy="52" r="4" fill="#E9C46A" opacity=".7" filter="url(#wcC)"/>
+          <g stroke="#22304A" stroke-width=".9" opacity=".8"><path d="M284 45 V41 M284 59 V63 M277 52 H273 M291 52 H295"/></g>
+          <rect width="360" height="240" filter="url(#grainC)"/>
+        </svg>
+        <figcaption class="info"><p class="shines" style="margin:0">the cover sprig, after</p></figcaption>
+      </figure>
+      <figure class="tile" style="margin:0">
+        <svg class="art" viewBox="0 0 360 240" aria-label="Watercolor teddy reading sample">
+          <defs>
+            <filter id="wcD" x="-20%" y="-20%" width="140%" height="140%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" seed="13" result="n"/>
+              <feDisplacementMap in="SourceGraphic" in2="n" scale="11"/>
+            </filter>
+            <filter id="grainD">
+              <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="8"/>
+              <feColorMatrix type="matrix" values="0 0 0 0 0.45  0 0 0 0 0.42  0 0 0 0 0.34  0 0 0 0.05 0"/>
+            </filter>
+          </defs>
+          <rect width="360" height="240" fill="#FFFDF6"/>
+          <circle cx="152" cy="52" r="14" fill="#C9A87C" opacity=".6" filter="url(#wcD)"/>
+          <circle cx="208" cy="52" r="14" fill="#C9A87C" opacity=".6" filter="url(#wcD)"/>
+          <circle cx="180" cy="78" r="34" fill="#C9A87C" opacity=".65" filter="url(#wcD)"/>
+          <circle cx="172" cy="70" r="20" fill="#D8BC94" opacity=".5" filter="url(#wcD)"/>
+          <ellipse cx="180" cy="150" rx="46" ry="42" fill="#C9A87C" opacity=".65" filter="url(#wcD)"/>
+          <ellipse cx="180" cy="88" rx="13" ry="10" fill="#FFFDF6" opacity=".8" filter="url(#wcD)"/>
+          <path d="M180 148 L128 134 L128 168 L180 182 L232 168 L232 134 Z" fill="#4F6584" opacity=".55" filter="url(#wcD)"/>
+          <path d="M180 152 L136 140 L136 164 L180 176 L224 164 L224 140 Z" fill="#FFFDF6" opacity=".85" filter="url(#wcD)"/>
+          <g fill="none" stroke="#22304A" stroke-width="1.2" stroke-linecap="round" opacity=".9">
+            <circle cx="152" cy="52" r="12"/><circle cx="208" cy="52" r="12"/>
+            <circle cx="180" cy="78" r="32"/>
+            <ellipse cx="180" cy="150" rx="44" ry="40"/>
+            <path d="M180 150 L130 136 L130 166 L180 180 L230 166 L230 136 Z"/>
+            <path d="M180 154 V178 M140 144 L172 152 M140 150 L172 158 M220 144 L188 152 M220 150 L188 158"/>
+            <circle cx="168" cy="72" r="2" fill="#22304A"/><circle cx="192" cy="72" r="2" fill="#22304A"/>
+            <path d="M180 82 q0 4 0 4 M174 90 q6 5 12 0"/>
+            <path d="M143 120 q-12 10 -8 24 M217 120 q12 10 8 24"/>
+          </g>
+          <circle cx="286" cy="60" r="4" fill="#E9C46A" opacity=".7" filter="url(#wcD)"/>
+          <g stroke="#22304A" stroke-width=".9" opacity=".8"><path d="M286 53 V49 M286 67 V71 M279 60 H275 M293 60 H297"/></g>
+          <rect width="360" height="240" filter="url(#grainD)"/>
+        </svg>
+        <figcaption class="info"><p class="shines" style="margin:0">the contents-page teddy, after</p></figcaption>
+      </figure>
+    </div>
+  </div>
+</div>
