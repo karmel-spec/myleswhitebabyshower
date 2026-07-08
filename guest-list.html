@@ -19,8 +19,22 @@
       <p class="eyebrow">Chapter eleven</p>
       <h2>The guest <span class="script">list</span></h2>
       <div><span class="hosts-chip">Hosts only — Karmel &amp; Abby</span></div>
-      <p class="lede">The quiet chapter guests never see: who's invited, who's coming, who claimed which book, and whose thank-you note is done. Upload your list — a CSV, a spreadsheet, even a photo of a handwritten one — and it lands here.</p>
     </header>
+
+    <div class="gate-panel" id="gate">
+      <p class="lede" style="margin-top:0">This chapter is just for the hosts. If that's you, whisper the password.</p>
+      <input type="password" id="gate-pw" placeholder="The hosts' password" aria-label="Host password" autocomplete="current-password">
+      <div><button class="btn small" id="gate-btn" type="button" style="margin-top:18px">Open the guest list</button></div>
+      <p class="confirm whisper" id="gate-wrong" style="text-align:center">that's not it — ask Karmel or Abby</p>
+    </div>
+
+    <div id="crm-app" hidden>
+    <p class="lede">The quiet chapter guests never see: who's invited, who's coming, who claimed which book, and whose thank-you note is done. Upload your list — a CSV, a spreadsheet, even a photo of a handwritten one — and it lands here.</p>
+
+    <div class="rsvp-inbox" id="rsvp-inbox" hidden>
+      <h3>Fresh replies from the RSVP page</h3>
+      <div id="rsvp-inbox-list"></div>
+    </div>
 
     <div class="crm-stats">
       <div class="stat"><span class="n" id="s-invited">0</span><span class="k">Households invited</span></div>
@@ -65,6 +79,7 @@
       <button class="btn small ghost" id="add-btn" type="button">Add guest</button>
     </div>
     <p class="crm-note">In the real build: import from CSV or spreadsheet, one-tap invite texts and reminder nudges, and the thank-you column fills in from the gift log automatically.</p>
+    </div>
   </div>
 </section>
 
@@ -76,6 +91,8 @@
 <footer class="colophon">
   a story garden for Myles Bryant White · arriving October 14th, 2026
 </footer>
+<script src="assets/config.js"></script>
+<script src="assets/backend.js"></script>
 <script src="assets/site.js"></script>
 </body>
 </html>

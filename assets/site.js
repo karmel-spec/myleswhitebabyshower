@@ -1,6 +1,41 @@
 (function(){
   function $(id){return document.getElementById(id)}
   var DUE=new Date(2026,9,14,0,0,0);
+  var SG=window.SG||{enabled:false};
+
+  function fmtTime(iso){
+    var d=new Date(iso);
+    var h=d.getHours(),m=d.getMinutes();
+    var ap=h>=12?'pm':'am';
+    h=h%12||12;
+    return h+':'+(m<10?'0':'')+m+' '+ap;
+  }
+  function busy(btn,on,label){
+    btn.disabled=on;
+    if(on){btn.setAttribute('data-label',btn.textContent);btn.textContent=label||'Sending…'}
+    else{btn.textContent=btn.getAttribute('data-label')||btn.textContent}
+  }
+  function oops(el){
+    if(!el)return;
+    el.textContent='hmm, that didn’t save — try once more?';
+    el.classList.add('show');
+  }
+  function pickFile(drop,onPick){
+    var input=document.createElement('input');
+    input.type='file';
+    input.accept='image/*';
+    input.style.display='none';
+    document.body.appendChild(input);
+    input.addEventListener('change',function(){
+      if(input.files[0]){
+        drop.textContent=SG.enabled?input.files[0].name:drop.textContent;
+        onPick(input.files[0]);
+      }
+    });
+    var open=function(){input.click()};
+    drop.addEventListener('click',open);
+    drop.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});
+  }
 
   if(document.querySelector('.cd-d')){
     var tick=function(){
@@ -19,25 +54,61 @@
     setInterval(tick,1000);
   }
 
+  // --- books for baby: claim a book -------------------------------------
   if($('claim-btn')){
+    function addSpine(title){
+      var s=document.createElement('div');
+      s.className='spine s-sage claimed';
+      s.textContent=title;
+      $('shelf').appendChild(s);
+    }
+    if(SG.enabled){
+      SG.listClaims().then(function(rows){rows.forEach(function(r){addSpine(r.title)})}).catch(function(){});
+    }
     $('claim-btn').addEventListener('click',function(){
+      var btn=this;
       var title=$('claim-title').value.trim();
-      if(title){
-        var s=document.createElement('div');
-        s.className='spine s-sage claimed';
-        s.textContent=title;
-        $('shelf').appendChild(s);
+      var name=$('claim-name')?$('claim-name').value.trim():'';
+      if(SG.enabled){
+        if(!title)return;
+        busy(btn,true,'Claiming…');
+        SG.claimBook(name,title).then(function(){
+          addSpine(title);
+          $('claim-title').value='';
+          $('claim-confirm').textContent='thanks for helping our story grow';
+          $('claim-confirm').classList.add('show');
+        }).catch(function(){oops($('claim-confirm'))}).then(function(){busy(btn,false)});
+        return;
       }
+      if(title)addSpine(title);
       $('claim-confirm').classList.add('show');
     });
   }
 
+  // --- rsvp ---------------------------------------------------------------
   if($('rsvp-btn')){
     $('rsvp-btn').addEventListener('click',function(){
+      var btn=this;
+      if(SG.enabled){
+        var name=$('r-name').value.trim();
+        if(!name){$('r-name').focus();return}
+        busy(btn,true,'Sending…');
+        SG.submitRsvp({
+          name:name,
+          party:$('r-party').value.trim(),
+          cant_eat:$('r-food').value.trim(),
+          address:$('r-addr').value.trim()
+        }).then(function(){
+          $('rsvp-confirm').textContent='you are part of our story now';
+          $('rsvp-confirm').classList.add('show');
+        }).catch(function(){oops($('rsvp-confirm'))}).then(function(){busy(btn,false)});
+        return;
+      }
       $('rsvp-confirm').classList.add('show');
     });
   }
 
+  // --- predictions ---------------------------------------------------------
   document.querySelectorAll('.hair-btn').forEach(function(btn){
     btn.addEventListener('click',function(){
       document.querySelectorAll('.hair-btn').forEach(function(o){o.classList.remove('sel')});
@@ -46,18 +117,62 @@
   });
   if($('pred-btn')){
     $('pred-btn').addEventListener('click',function(){
+      var btn=this;
+      if(SG.enabled){
+        var hair=document.querySelector('.hair-btn.sel');
+        busy(btn,true,'Sealing…');
+        SG.submitPrediction({
+          arrival:$('p-date').value.trim(),
+          weight:$('p-weight').value.trim(),
+          length:$('p-length').value.trim(),
+          hair:hair?hair.textContent:''
+        }).then(function(){
+          $('pred-confirm').textContent='sealed until October — no peeking';
+          $('pred-confirm').classList.add('show');
+        }).catch(function(){oops($('pred-confirm'))}).then(function(){busy(btn,false)});
+        return;
+      }
       $('pred-confirm').classList.add('show');
     });
   }
 
+  // --- the evening: group album --------------------------------------------
   if($('al-drop')){
-    $('al-drop').addEventListener('click',function(){
-      this.textContent='photo added';
-      this.style.color='#F9F5EA';
-      this.style.borderColor='#F9F5EA';
+    var albumFile=null;
+    function albumTile(url,caption){
+      var fig=document.createElement('figure');
+      fig.className='album-tile';
+      var im=document.createElement('img');
+      im.src=url;im.alt=caption||'party photo';
+      fig.appendChild(im);
+      if(caption){
+        var fc=document.createElement('figcaption');
+        fc.textContent=caption;
+        fig.appendChild(fc);
+      }
+      var firstEmpty=document.querySelector('#album .album-tile.empty');
+      if(firstEmpty){firstEmpty.replaceWith(fig)}else{$('album').appendChild(fig)}
+    }
+    pickFile($('al-drop'),function(f){
+      albumFile=f;
+      $('al-drop').style.color='#F9F5EA';
+      $('al-drop').style.borderColor='#F9F5EA';
+      if(!SG.enabled)$('al-drop').textContent='photo added';
     });
     $('al-btn').addEventListener('click',function(){
+      var btn=this;
       var cap=$('al-cap').value.trim()||'from tonight, under the string lights';
+      if(SG.enabled){
+        if(!albumFile){$('al-drop').textContent='pick a photo first';return}
+        busy(btn,true,'Adding…');
+        SG.addAlbumPhoto(albumFile,cap).then(function(){
+          albumTile(URL.createObjectURL(albumFile),cap);
+          albumFile=null;
+          $('al-drop').textContent='add another photo';
+          $('al-cap').value='';
+        }).catch(function(){$('al-drop').textContent='hmm — try that photo again?'}).then(function(){busy(btn,false)});
+        return;
+      }
       var fig=document.createElement('figure');
       fig.className='album-tile empty';
       var s=document.createElement('span');
@@ -67,33 +182,115 @@
       if(firstEmpty){firstEmpty.replaceWith(fig)}else{$('album').appendChild(fig)}
       $('al-cap').value='';
     });
+    if(SG.enabled){
+      SG.listAlbum().then(function(rows){rows.forEach(function(r){albumTile(r.photo_url,r.caption)})}).catch(function(){});
+    }
   }
 
+  // --- the evening: guest book ---------------------------------------------
   if($('gb-drop')){
-    $('gb-drop').addEventListener('click',function(){
-      this.textContent='selfie added';
-      this.style.color='#F9F5EA';
-      this.style.borderColor='#F9F5EA';
+    var gbFile=null;
+    pickFile($('gb-drop'),function(f){
+      gbFile=f;
+      $('gb-drop').style.color='#F9F5EA';
+      $('gb-drop').style.borderColor='#F9F5EA';
+      if(!SG.enabled)$('gb-drop').textContent='selfie added';
     });
-  }
-  if($('gb-btn')){
-    $('gb-btn').addEventListener('click',function(){
-      $('gb-confirm').classList.add('show');
-    });
+    function gbEntry(message,photoUrl,when,prepend){
+      var wrap=document.createElement('div');
+      wrap.className='gb-entry';
+      if(photoUrl){
+        var im=document.createElement('img');
+        im.src=photoUrl;im.alt='guest selfie';im.className='gb-photo';
+        wrap.appendChild(im);
+      }else{
+        wrap.insertAdjacentHTML('afterbegin','<svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="20" fill="none" stroke="#C3CCDD" stroke-width="1.3"/><circle cx="16" cy="20" r="1.6" fill="#C3CCDD"/><circle cx="28" cy="20" r="1.6" fill="#C3CCDD"/><path d="M16 28 Q22 33 28 28" fill="none" stroke="#C3CCDD" stroke-width="1.3"/></svg>');
+      }
+      var p=document.createElement('p');
+      p.textContent='"'+message+'"';
+      var who=document.createElement('span');
+      who.className='who';
+      who.textContent=when;
+      p.appendChild(who);
+      wrap.appendChild(p);
+      var box=document.querySelector('.gb-entries');
+      if(prepend&&box.firstChild){box.insertBefore(wrap,box.firstChild)}else{box.appendChild(wrap)}
+    }
+    if($('gb-btn')){
+      $('gb-btn').addEventListener('click',function(){
+        var btn=this;
+        if(SG.enabled){
+          var msg=$('gb-msg').value.trim();
+          if(!msg&&!gbFile){$('gb-msg').focus();return}
+          busy(btn,true,'Signing…');
+          var file=gbFile;
+          SG.signGuestbook(msg,file).then(function(){
+            gbEntry(msg||'…',file?URL.createObjectURL(file):null,fmtTime(new Date().toISOString()),true);
+            gbFile=null;
+            $('gb-msg').value='';
+            $('gb-drop').textContent='add your selfie';
+            $('gb-confirm').textContent='signed — see you in the album';
+            $('gb-confirm').classList.add('show');
+          }).catch(function(){oops($('gb-confirm'))}).then(function(){busy(btn,false)});
+          return;
+        }
+        $('gb-confirm').classList.add('show');
+      });
+    }
+    if(SG.enabled){
+      SG.listGuestbook().then(function(rows){
+        for(var i=rows.length-1;i>=0;i--){
+          gbEntry(rows[i].message,rows[i].photo_url,fmtTime(rows[i].created_at),true);
+        }
+      }).catch(function(){});
+    }
   }
 
+  // --- the evening: advice wall ---------------------------------------------
+  function adviceCard(text,name,id){
+    var card=document.createElement('div');card.className='adv-card';
+    if(id)card.setAttribute('data-id',id);
+    var q=document.createElement('blockquote');q.textContent=text;
+    var w=document.createElement('div');w.className='who';w.textContent=name;
+    var cm=document.createElement('div');cm.className='adv-comments';
+    cm.innerHTML='<div class="c-row"><input type="text" placeholder="Add your two cents" aria-label="Comment on this advice"><button class="btn small ghost c-post" type="button">Post</button></div>';
+    card.appendChild(q);card.appendChild(w);card.appendChild(cm);
+    return card;
+  }
+  function commentLine(text,who){
+    var p=document.createElement('p');
+    p.textContent=text+' ';
+    var s=document.createElement('span');s.className='c-who';s.textContent='— '+who;
+    p.appendChild(s);
+    return p;
+  }
   if($('adv-btn')){
+    if(SG.enabled){
+      SG.listAdvice().then(function(rows){
+        for(var i=rows.length-1;i>=0;i--){
+          var card=adviceCard(rows[i].message,rows[i].name||'A guest',rows[i].id);
+          (rows[i].advice_comments||[]).forEach(function(c){
+            var row=card.querySelector('.c-row');
+            row.parentElement.insertBefore(commentLine(c.message,'a guest'),row);
+          });
+          $('adv-wall').prepend(card);
+        }
+      }).catch(function(){});
+    }
     $('adv-btn').addEventListener('click',function(){
+      var btn=this;
       var t=$('adv-text').value.trim();
       if(!t)return;
       var name=$('adv-name').value.trim()||'You';
-      var card=document.createElement('div');card.className='adv-card';
-      var q=document.createElement('blockquote');q.textContent=t;
-      var w=document.createElement('div');w.className='who';w.textContent=name;
-      var cm=document.createElement('div');cm.className='adv-comments';
-      cm.innerHTML='<div class="c-row"><input type="text" placeholder="Add your two cents" aria-label="Comment on this advice"><button class="btn small ghost c-post" type="button">Post</button></div>';
-      card.appendChild(q);card.appendChild(w);card.appendChild(cm);
-      $('adv-wall').prepend(card);
+      if(SG.enabled){
+        busy(btn,true,'Posting…');
+        SG.postAdvice(name,t).then(function(row){
+          $('adv-wall').prepend(adviceCard(t,name,row.id));
+          $('adv-text').value='';
+        }).catch(function(){}).then(function(){busy(btn,false)});
+        return;
+      }
+      $('adv-wall').prepend(adviceCard(t,name));
       $('adv-text').value='';
     });
   }
@@ -103,14 +300,14 @@
     var inp=row.querySelector('input');
     var v=inp.value.trim();
     if(!v)return;
-    var p=document.createElement('p');
-    p.textContent=v+' ';
-    var s=document.createElement('span');s.className='c-who';s.textContent='— you';
-    p.appendChild(s);
-    row.parentElement.insertBefore(p,row);
+    var card=e.target.closest('.adv-card');
+    var id=card?card.getAttribute('data-id'):null;
+    row.parentElement.insertBefore(commentLine(v,'you'),row);
     inp.value='';
+    if(SG.enabled&&id)SG.postComment(id,v).catch(function(){});
   });
 
+  // --- the evening: beau-or-abby quiz -----------------------------------------
   if($('quiz-unlock')){
     $('quiz-unlock').addEventListener('click',function(){
       var v=$('quiz-pw').value.trim().toLowerCase();
@@ -122,37 +319,81 @@
       }
     });
   }
-  document.querySelectorAll('.quiz-q').forEach(function(q){
-    var a=parseInt(q.getAttribute('data-a'),10);
-    var b=parseInt(q.getAttribute('data-b'),10);
-    function paint(){
-      var total=(a+b)||1;
-      q.querySelector('.t-a').style.width=Math.round(a/total*70)+'%';
-      q.querySelector('.t-b').style.width=Math.round(b/total*70)+'%';
-      q.querySelector('.n-a').textContent=a;
-      q.querySelector('.n-b').textContent=b;
-    }
-    q.querySelectorAll('.q-btn').forEach(function(btn){
-      btn.addEventListener('click',function(){
-        if(q.getAttribute('data-voted'))return;
-        q.setAttribute('data-voted','1');
-        if(btn.getAttribute('data-side')==='a'){a++}else{b++}
-        btn.classList.add('voted');
-        paint();
-        q.querySelector('.tally').classList.add('show');
-      });
-    });
-    q.querySelector('.reveal').addEventListener('click',function(){
-      var ans=q.getAttribute('data-ans');
+  var quizQs=document.querySelectorAll('.quiz-q');
+  if(quizQs.length){
+    var tallies={};
+    quizQs.forEach(function(q,idx){
+      var a=parseInt(q.getAttribute('data-a'),10);
+      var b=parseInt(q.getAttribute('data-b'),10);
+      if(SG.enabled){a=0;b=0}
+      tallies[idx]={a:a,b:b};
+      function paint(){
+        var t=tallies[idx];
+        var total=(t.a+t.b)||1;
+        q.querySelector('.t-a').style.width=Math.round(t.a/total*70)+'%';
+        q.querySelector('.t-b').style.width=Math.round(t.b/total*70)+'%';
+        q.querySelector('.n-a').textContent=t.a;
+        q.querySelector('.n-b').textContent=t.b;
+      }
+      q.paint=paint;
       q.querySelectorAll('.q-btn').forEach(function(btn){
-        if(btn.getAttribute('data-side')===ans)btn.classList.add('correct');
+        btn.addEventListener('click',function(){
+          if(q.getAttribute('data-voted'))return;
+          q.setAttribute('data-voted','1');
+          var side=btn.getAttribute('data-side');
+          tallies[idx][side]++;
+          btn.classList.add('voted');
+          paint();
+          q.querySelector('.tally').classList.add('show');
+          if(SG.enabled)SG.voteQuiz(idx,side).catch(function(){});
+        });
       });
-      this.style.display='none';
+      q.querySelector('.reveal').addEventListener('click',function(){
+        var ans=q.getAttribute('data-ans');
+        q.querySelectorAll('.q-btn').forEach(function(btn){
+          if(btn.getAttribute('data-side')===ans)btn.classList.add('correct');
+        });
+        this.style.display='none';
+      });
     });
-  });
+    if(SG.enabled){
+      var refreshTallies=function(){
+        SG.quizTallies().then(function(t){
+          quizQs.forEach(function(q,idx){
+            tallies[idx]={a:(t[idx]&&t[idx].a)||0,b:(t[idx]&&t[idx].b)||0};
+            q.paint();
+          });
+        }).catch(function(){});
+      };
+      refreshTallies();
+      setInterval(refreshTallies,5000);
+    }
+  }
+
+  // --- guest list: host gate + crm ---------------------------------------------
+  if($('gate')){
+    var unlock=function(){
+      $('gate').hidden=true;
+      $('crm-app').hidden=false;
+      if(SG.enabled)loadCrm();
+    };
+    SG.hostSession().then(function(ok){if(ok)unlock()});
+    var tryPw=function(){
+      var pw=$('gate-pw').value;
+      if(!pw)return;
+      var btn=$('gate-btn');
+      busy(btn,true,'Checking…');
+      SG.hostSignIn(pw).then(unlock).catch(function(){
+        $('gate-wrong').classList.add('show');
+      }).then(function(){busy(btn,false)});
+    };
+    $('gate-btn').addEventListener('click',tryPw);
+    $('gate-pw').addEventListener('keydown',function(e){if(e.key==='Enter')tryPw()});
+  }
 
   var crmBody=document.querySelector('#crm-table tbody');
   if(crmBody){
+    var PILL={coming:'<span class="pill st-coming">Coming</span>',await:'<span class="pill st-await">Awaiting reply</span>',regret:'<span class="pill st-regret">Regrets</span>'};
     var crmStats=function(){
       var rows=Array.from(crmBody.querySelectorAll('tr'));
       var invited=rows.length;
@@ -171,9 +412,57 @@
       $('s-books').textContent=books;
       $('s-ty').textContent=ty;
     };
+    var guestRow=function(g){
+      var tr=document.createElement('tr');
+      tr.setAttribute('data-status',g.status);
+      if(g.id)tr.setAttribute('data-id',g.id);
+      var tdName=document.createElement('td');tdName.className='g-name';tdName.textContent=g.name;
+      var tdParty=document.createElement('td');tdParty.className='num';tdParty.textContent=g.party||'—';
+      var tdStatus=document.createElement('td');tdStatus.innerHTML=PILL[g.status]||PILL.await;
+      var tdBook=document.createElement('td');tdBook.textContent=g.book||'—';
+      var tdAddr=document.createElement('td');tdAddr.textContent=g.address?'on file':'—';
+      var tdTy=document.createElement('td');
+      var cb=document.createElement('input');cb.type='checkbox';cb.className='ty';cb.checked=!!g.thank_you;
+      cb.setAttribute('aria-label','Thank-you sent to '+g.name);
+      tdTy.appendChild(cb);
+      tr.appendChild(tdName);tr.appendChild(tdParty);tr.appendChild(tdStatus);tr.appendChild(tdBook);tr.appendChild(tdAddr);tr.appendChild(tdTy);
+      return tr;
+    };
+    var loadCrm=function(){
+      SG.listGuests().then(function(rows){
+        crmBody.innerHTML='';
+        rows.forEach(function(g){crmBody.appendChild(guestRow(g))});
+        crmStats();
+      }).catch(function(){});
+      SG.listRsvps().then(function(rows){
+        if(!rows.length)return;
+        $('rsvp-inbox').hidden=false;
+        var box=$('rsvp-inbox-list');
+        box.innerHTML='';
+        rows.forEach(function(r){
+          var d=document.createElement('div');
+          d.className='inbox-card';
+          var strong=document.createElement('strong');strong.textContent=r.name;
+          d.appendChild(strong);
+          var bits=[];
+          if(r.party)bits.push(r.party);
+          if(r.cant_eat)bits.push('can’t eat: '+r.cant_eat);
+          if(r.address)bits.push('address on file');
+          var p=document.createElement('p');p.textContent=bits.join(' · ')||'no details';
+          d.appendChild(p);
+          var when=document.createElement('span');when.className='who';when.textContent=new Date(r.created_at).toLocaleDateString();
+          d.appendChild(when);
+          box.appendChild(d);
+        });
+      }).catch(function(){});
+    };
     crmStats();
     crmBody.addEventListener('change',function(e){
-      if(e.target.classList.contains('ty'))crmStats();
+      if(!e.target.classList.contains('ty'))return;
+      crmStats();
+      var tr=e.target.closest('tr');
+      var id=tr.getAttribute('data-id');
+      if(SG.enabled&&id)SG.updateGuest(id,{thank_you:e.target.checked}).catch(function(){});
     });
     document.querySelectorAll('.filter-btn').forEach(function(btn){
       btn.addEventListener('click',function(){
@@ -185,31 +474,27 @@
         });
       });
     });
-    var PILL={coming:'<span class="pill st-coming">Coming</span>',await:'<span class="pill st-await">Awaiting reply</span>',regret:'<span class="pill st-regret">Regrets</span>'};
     $('add-btn').addEventListener('click',function(){
+      var btn=this;
       var name=$('add-name').value.trim();
       if(!name)return;
-      var party=$('add-party').value.trim()||'—';
-      var status=$('add-status').value;
-      var tr=document.createElement('tr');
-      tr.setAttribute('data-status',status);
-      var tdName=document.createElement('td');tdName.className='g-name';tdName.textContent=name;
-      var tdParty=document.createElement('td');tdParty.className='num';tdParty.textContent=party;
-      var tdStatus=document.createElement('td');tdStatus.innerHTML=PILL[status];
-      var tdBook=document.createElement('td');tdBook.textContent='—';
-      var tdAddr=document.createElement('td');tdAddr.textContent='—';
-      var tdTy=document.createElement('td');
-      var cb=document.createElement('input');cb.type='checkbox';cb.className='ty';
-      cb.setAttribute('aria-label','Thank-you sent to '+name);
-      tdTy.appendChild(cb);
-      tr.appendChild(tdName);tr.appendChild(tdParty);tr.appendChild(tdStatus);tr.appendChild(tdBook);tr.appendChild(tdAddr);tr.appendChild(tdTy);
-      crmBody.appendChild(tr);
-      $('add-name').value='';
-      $('add-party').value='';
-      crmStats();
+      var g={name:name,party:$('add-party').value.trim()||null,status:$('add-status').value};
+      var done=function(saved){
+        crmBody.appendChild(guestRow(saved));
+        $('add-name').value='';
+        $('add-party').value='';
+        crmStats();
+      };
+      if(SG.enabled){
+        busy(btn,true,'Adding…');
+        SG.addGuest(g).then(done).catch(function(){}).then(function(){busy(btn,false)});
+        return;
+      }
+      done(g);
     });
   }
 
+  // --- growing: week-by-week tracker -------------------------------------------
   if($('veg-icon')){
     function wcf(id,seed){return '<defs><filter id="'+id+'" x="-30%" y="-30%" width="160%" height="160%"><feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="3" seed="'+seed+'" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="9"/></filter></defs>'}
     function icoRound(fill,seed,stem){

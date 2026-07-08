@@ -61,6 +61,8 @@
   <span class="add">add your photo from the party pages — it lands here</span>
 </p>
 
+<script src="assets/config.js"></script>
+<script src="assets/backend.js"></script>
 <script>
   var SLIDES=[
     {quote:'A new chapter begins',sub:'Myles Bryant White · arriving October 14th'},
@@ -98,6 +100,30 @@
   var reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(!reduced)setInterval(next,6000);
   document.addEventListener('click',next);
+
+  // live sync: photos guests add on the party page join the loop
+  if(window.SG&&SG.enabled){
+    var seen={};
+    function addSlide(row){
+      if(seen[row.id])return;
+      seen[row.id]=true;
+      var d=document.createElement('div');
+      d.className='slide';
+      var im=document.createElement('img');
+      im.src=row.photo_url;im.alt='';
+      d.appendChild(im);
+      var c=document.createElement('p');
+      c.className='cap';
+      c.textContent=row.caption||'from tonight, under the string lights';
+      d.appendChild(c);
+      stage.appendChild(d);
+    }
+    var pull=function(){
+      SG.listAlbum().then(function(rows){rows.forEach(addSlide)}).catch(function(){});
+    };
+    pull();
+    setInterval(pull,20000);
+  }
 </script>
 </body>
 </html>
