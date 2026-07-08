@@ -423,14 +423,59 @@
       $('s-books').textContent=books;
       $('s-ty').textContent=ty;
     };
-    var smsHref=function(phone){
+    var SEND_MSGS=(function(){
+      var cfg=window.STORY_GARDEN_CONFIG||{};
+      var link=cfg.siteUrl||'';
+      return {
+        invite:'You’re invited! 🌼 A baby shower for Baby Boy White — Saturday, August 15th at 7pm, in Grandma’s garden, Orem.'
+          +(link?' All the details & RSVP: '+link:' RSVP details to follow!'),
+        nudge:'🌼 A little nudge from the Story Garden — we’re saving you a seat at Baby Boy White’s shower, Saturday, August 15th at 7pm. Kindly RSVP'
+          +(link?': '+link+'/rsvp.html':' — reply to this text and we’ll pencil you in!'),
+        details:'🌙 Two days to go! Baby Boy White’s shower — Saturday at 7pm, Grandma’s garden, Orem. Bring a well-loved children’s book instead of a card.'
+          +(link?' Everything else: '+link:'')
+      };
+    })();
+    var smsHref=function(phone,kind){
       var digits=phone.replace(/\D/g,'');
       if(digits.length===10)digits='1'+digits;
-      var cfg=window.STORY_GARDEN_CONFIG||{};
-      var msg='You’re invited! 🌼 A baby shower for Baby Boy White — Saturday, August 15th at 7pm, in Grandma’s garden, Orem.'
-        +(cfg.siteUrl?' All the details & RSVP: '+cfg.siteUrl:' RSVP details to follow!');
-      return 'sms:+'+digits+'?&body='+encodeURIComponent(msg);
+      return 'sms:+'+digits+'?&body='+encodeURIComponent(SEND_MSGS[kind||'invite']);
     };
+    var crmGuests=[];
+    var renderChips=function(){
+      var FILTERS={
+        invite:function(g){return !!g.phone},
+        nudge:function(g){return !!g.phone&&g.status==='await'},
+        details:function(g){return !!g.phone&&g.status==='coming'}
+      };
+      Object.keys(FILTERS).forEach(function(kind){
+        var box=document.querySelector('.send-chips[data-kind="'+kind+'"]');
+        if(!box)return;
+        box.innerHTML='';
+        var who=crmGuests.filter(FILTERS[kind]);
+        if(!who.length){
+          var em=document.createElement('span');
+          em.className='chip-empty';
+          em.textContent=(kind==='invite')
+            ?'no cell numbers yet — add them above and names appear here'
+            :'no one in this group has a cell number yet';
+          box.appendChild(em);
+          return;
+        }
+        who.forEach(function(g){
+          var a=document.createElement('a');
+          a.className='chip';
+          a.href=smsHref(g.phone,kind);
+          a.textContent=g.name;
+          box.appendChild(a);
+        });
+      });
+    };
+    if($('send-bubble-invite')){
+      $('send-bubble-invite').textContent=SEND_MSGS.invite;
+      $('send-bubble-nudge').textContent=SEND_MSGS.nudge;
+      $('send-bubble-details').textContent=SEND_MSGS.details;
+      renderChips();
+    }
     var guestRow=function(g){
       var tr=document.createElement('tr');
       tr.setAttribute('data-status',g.status);
@@ -459,6 +504,8 @@
         crmBody.innerHTML='';
         rows.forEach(function(g){crmBody.appendChild(guestRow(g))});
         crmStats();
+        crmGuests=rows;
+        renderChips();
       }).catch(function(){});
       SG.listRsvps().then(function(rows){
         if(!rows.length)return;
@@ -511,6 +558,8 @@
         $('add-party').value='';
         $('add-phone').value='';
         crmStats();
+        crmGuests.push(saved);
+        renderChips();
       };
       if(SG.enabled){
         busy(btn,true,'Adding…');

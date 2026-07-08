@@ -80,6 +80,37 @@
       <button class="btn small ghost" id="add-btn" type="button">Add guest</button>
     </div>
     <p class="crm-note">Add a cell number and a <em>text invite</em> link appears under the guest's name — one tap opens Messages on your phone with the invitation written and ready to send.</p>
+
+    <div class="send-center">
+      <h3>Three texts, ready to send</h3>
+      <p class="send-note">Open this page on your phone. Tap a guest's name and Messages opens with the words already written — you just press send. For the picture texts, press and hold the picture first to save it, then attach it in Messages.</p>
+
+      <div class="send-card">
+        <h4>1 · The invitation</h4>
+        <p class="send-when">Send first, to everyone</p>
+        <p class="send-bubble" id="send-bubble-invite"></p>
+        <p class="send-to">Tap to text:</p>
+        <div class="send-chips" data-kind="invite"></div>
+      </div>
+
+      <div class="send-card">
+        <h4>2 · The RSVP nudge</h4>
+        <p class="send-when">Send about a week after the invitation, to anyone still awaiting reply</p>
+        <img class="send-img" src="assets/invites/rsvp-nudge.png" alt="RSVP reminder card — we're saving you a seat">
+        <p class="send-bubble" id="send-bubble-nudge"></p>
+        <p class="send-to">Tap to text (awaiting reply only):</p>
+        <div class="send-chips" data-kind="nudge"></div>
+      </div>
+
+      <div class="send-card">
+        <h4>3 · Two days to go</h4>
+        <p class="send-when">Send two days before the shower, to everyone coming</p>
+        <img class="send-img" src="assets/invites/two-days.png" alt="Two days to go reminder card with the shower details">
+        <p class="send-bubble" id="send-bubble-details"></p>
+        <p class="send-to">Tap to text (coming only):</p>
+        <div class="send-chips" data-kind="details"></div>
+      </div>
+    </div>
     </div>
   </div>
 </section>
