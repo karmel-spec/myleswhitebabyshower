@@ -87,19 +87,30 @@
 
   // --- rsvp ---------------------------------------------------------------
   if($('rsvp-btn')){
+    var faceBaby=null,faceNow=null;
+    if($('face-baby')){
+      pickFile($('face-baby'),function(f){faceBaby=f;$('face-baby').classList.add('picked');if(!SG.enabled)$('face-baby').textContent='baby photo added'});
+      pickFile($('face-now'),function(f){faceNow=f;$('face-now').classList.add('picked');if(!SG.enabled)$('face-now').textContent='photo added'});
+    }
     $('rsvp-btn').addEventListener('click',function(){
       var btn=this;
       if(SG.enabled){
         var name=$('r-name').value.trim();
         if(!name){$('r-name').focus();return}
         busy(btn,true,'Sending…');
-        SG.submitRsvp({
+        var sent=SG.submitRsvp({
           name:name,
           party:$('r-party').value.trim(),
           cant_eat:$('r-food').value.trim(),
           address:$('r-addr').value.trim()
-        }).then(function(){
-          $('rsvp-confirm').textContent='you are part of our story now';
+        });
+        if(faceBaby&&faceNow){
+          sent=sent.then(function(){return SG.addFace(name,faceBaby,faceNow)});
+        }
+        sent.then(function(){
+          $('rsvp-confirm').textContent=(faceBaby&&faceNow)
+            ?'you are part of our story now — and you’re in the baby-face game'
+            :'you are part of our story now';
           $('rsvp-confirm').classList.add('show');
         }).catch(function(){oops($('rsvp-confirm'))}).then(function(){busy(btn,false)});
         return;
@@ -412,11 +423,26 @@
       $('s-books').textContent=books;
       $('s-ty').textContent=ty;
     };
+    var smsHref=function(phone){
+      var digits=phone.replace(/\D/g,'');
+      if(digits.length===10)digits='1'+digits;
+      var cfg=window.STORY_GARDEN_CONFIG||{};
+      var msg='You’re invited! 🌼 A baby shower for Baby Boy White — Saturday, August 15th at 7pm, in Grandma’s garden, Orem.'
+        +(cfg.siteUrl?' All the details & RSVP: '+cfg.siteUrl:' RSVP details to follow!');
+      return 'sms:+'+digits+'?&body='+encodeURIComponent(msg);
+    };
     var guestRow=function(g){
       var tr=document.createElement('tr');
       tr.setAttribute('data-status',g.status);
       if(g.id)tr.setAttribute('data-id',g.id);
       var tdName=document.createElement('td');tdName.className='g-name';tdName.textContent=g.name;
+      if(g.phone){
+        var sms=document.createElement('a');
+        sms.className='sms-link';
+        sms.href=smsHref(g.phone);
+        sms.textContent='text invite';
+        tdName.appendChild(sms);
+      }
       var tdParty=document.createElement('td');tdParty.className='num';tdParty.textContent=g.party||'—';
       var tdStatus=document.createElement('td');tdStatus.innerHTML=PILL[g.status]||PILL.await;
       var tdBook=document.createElement('td');tdBook.textContent=g.book||'—';
@@ -478,11 +504,12 @@
       var btn=this;
       var name=$('add-name').value.trim();
       if(!name)return;
-      var g={name:name,party:$('add-party').value.trim()||null,status:$('add-status').value};
+      var g={name:name,party:$('add-party').value.trim()||null,phone:$('add-phone').value.trim()||null,status:$('add-status').value};
       var done=function(saved){
         crmBody.appendChild(guestRow(saved));
         $('add-name').value='';
         $('add-party').value='';
+        $('add-phone').value='';
         crmStats();
       };
       if(SG.enabled){
@@ -492,6 +519,350 @@
       }
       done(g);
     });
+  }
+
+  // --- the games: baby care quiz ------------------------------------------------
+  if($('cq-questions')){
+    var CARE_Q=[
+      {q:'How many hours a day does a brand-new baby sleep (in bits and pieces)?',opts:['About 8','14 to 17','A solid 12, all night'],ans:1},
+      {q:'The safest way to lay a baby down to sleep is…',opts:['On his back','On his tummy','On his side'],ans:0},
+      {q:'How many diapers will he go through in his first month?',opts:['Around 100','Around 200','Around 300'],ans:2},
+      {q:'The umbilical cord stump usually falls off after…',opts:['2 or 3 days','1 to 3 weeks','2 months'],ans:1},
+      {q:'Baby bathwater should be right about…',opts:['90 degrees','100 degrees','110 degrees'],ans:1},
+      {q:'On day one, a newborn’s tummy is the size of…',opts:['A cherry','An orange','A cantaloupe'],ans:0},
+      {q:'That first true smile usually arrives around…',opts:['Day 3','6 to 8 weeks','6 months'],ans:1},
+      {q:'Which of these can newborns NOT do at first?',opts:['Sneeze','Hiccup','Cry real tears'],ans:2}
+    ];
+    var cqPicks=CARE_Q.map(function(){return -1});
+    var cqRevealed=CARE_Q.map(function(){return false});
+    var cqEntries=SG.enabled?[]:[
+      {name:'Margaret E.',answers:[1,0,2,0,1,0,1,2]},
+      {name:'Ruth',answers:[1,0,0,1,1,0,1,1]},
+      {name:'Aunt Susan',answers:[0,0,2,1,1,1,1,2]}
+    ];
+    CARE_Q.forEach(function(item,qi){
+      var card=document.createElement('div');
+      card.className='quiz-q';
+      var h=document.createElement('h4');
+      h.textContent=(qi+1)+'. '+item.q;
+      card.appendChild(h);
+      var row=document.createElement('div');
+      row.className='q-btns cq-btns';
+      item.opts.forEach(function(opt,oi){
+        var b=document.createElement('button');
+        b.type='button';b.className='q-btn';b.textContent=opt;
+        b.addEventListener('click',function(){
+          if($('cq-submit').disabled)return;
+          cqPicks[qi]=oi;
+          row.querySelectorAll('.q-btn').forEach(function(o){o.classList.remove('voted')});
+          b.classList.add('voted');
+        });
+        row.appendChild(b);
+      });
+      card.appendChild(row);
+      var rev=document.createElement('button');
+      rev.type='button';rev.className='reveal';rev.textContent='Host — reveal the answer';
+      rev.addEventListener('click',function(){
+        cqRevealed[qi]=true;
+        row.children[item.ans].classList.add('correct');
+        this.style.display='none';
+        cqRefresh();
+      });
+      card.appendChild(document.createElement('div')).appendChild(rev);
+      $('cq-questions').appendChild(card);
+    });
+    var cqBoard=function(){
+      var shown=cqRevealed.filter(Boolean).length;
+      $('cq-progress').textContent=shown
+        ?shown+' of '+CARE_Q.length+' answers revealed'
+        :'no answers revealed yet — scores appear as the host reveals them';
+      var scored=cqEntries.map(function(e){
+        var s=0;
+        CARE_Q.forEach(function(item,qi){
+          if(cqRevealed[qi]&&e.answers[qi]===item.ans)s++;
+        });
+        return {name:e.name,score:s};
+      }).sort(function(a,b){return b.score-a.score||a.name.localeCompare(b.name)});
+      var ol=$('cq-board');
+      ol.innerHTML='';
+      scored.forEach(function(e,i){
+        var li=document.createElement('li');
+        if(i===0&&shown&&e.score>0)li.className='lead';
+        var nm=document.createElement('span');nm.className='b-name';nm.textContent=e.name;
+        var sc=document.createElement('span');sc.className='b-score';
+        sc.textContent=e.score+' right'+(i===0&&shown&&e.score>0?' — in the lead':'');
+        li.appendChild(nm);li.appendChild(sc);
+        ol.appendChild(li);
+      });
+      if(!scored.length){
+        var li=document.createElement('li');
+        li.className='b-empty';
+        li.textContent='no players yet — be the first to lock in';
+        ol.appendChild(li);
+      }
+    };
+    var cqRefresh=function(){
+      if(SG.enabled){
+        SG.listCareQuiz().then(function(rows){
+          cqEntries=rows.map(function(r){return {name:r.name,answers:r.answers}});
+          cqBoard();
+        }).catch(function(){cqBoard()});
+      }else{cqBoard()}
+    };
+    $('cq-submit').addEventListener('click',function(){
+      var btn=this;
+      var name=$('cq-name').value.trim();
+      if(!name){$('cq-name').focus();return}
+      if(cqPicks.indexOf(-1)!==-1){
+        $('cq-confirm').textContent='answer all eight first — no half experts';
+        $('cq-confirm').classList.add('show');
+        return;
+      }
+      var finish=function(){
+        cqEntries.push({name:name,answers:cqPicks.slice()});
+        btn.disabled=true;
+        btn.textContent='Answers locked';
+        $('cq-confirm').textContent='locked — now watch the reveals';
+        $('cq-confirm').classList.add('show');
+        cqBoard();
+      };
+      if(SG.enabled){
+        busy(btn,true,'Locking…');
+        SG.submitCareQuiz(name,cqPicks.slice()).then(function(){busy(btn,false);finish()})
+          .catch(function(){busy(btn,false);oops($('cq-confirm'))});
+        return;
+      }
+      finish();
+    });
+    cqRefresh();
+    if(SG.enabled)setInterval(cqRefresh,8000);
+  }
+
+  // --- the games: whose baby face? ------------------------------------------------
+  if($('fm-grid')){
+    var fmFaces=[];
+    var fmScores=SG.enabled?[]:[{name:'Ruth',score:1,total:2},{name:'Kate M.',score:2,total:2}];
+    var fmBoard=function(){
+      var best={};
+      fmScores.forEach(function(s){
+        if(!(s.name in best)||s.score>best[s.name].score)best[s.name]=s;
+      });
+      var rows=Object.keys(best).map(function(k){return best[k]})
+        .sort(function(a,b){return b.score-a.score||a.name.localeCompare(b.name)});
+      var ol=$('fm-board');
+      ol.innerHTML='';
+      rows.forEach(function(s,i){
+        var li=document.createElement('li');
+        if(i===0)li.className='lead';
+        var nm=document.createElement('span');nm.className='b-name';nm.textContent=s.name;
+        var sc=document.createElement('span');sc.className='b-score';
+        sc.textContent=s.score+' of '+s.total+(i===0?' — in the lead':'');
+        li.appendChild(nm);li.appendChild(sc);
+        ol.appendChild(li);
+      });
+      if(!rows.length){
+        var li=document.createElement('li');
+        li.className='b-empty';
+        li.textContent='no matches locked in yet';
+        ol.appendChild(li);
+      }
+    };
+    var fmBuild=function(){
+      var grid=$('fm-grid');
+      grid.innerHTML='';
+      if(!fmFaces.length){
+        var p=document.createElement('p');
+        p.className='fm-empty';
+        p.textContent='No baby faces yet — they arrive as guests RSVP with their two photos.';
+        grid.appendChild(p);
+        return;
+      }
+      var names=fmFaces.map(function(f){return f.name}).sort();
+      // reference gallery of grown-up faces
+      var ref=document.createElement('div');
+      ref.className='fm-ref';
+      fmFaces.slice().sort(function(a,b){return a.name.localeCompare(b.name)}).forEach(function(f){
+        if(!f.now_url)return;
+        var fig=document.createElement('figure');
+        var im=document.createElement('img');im.src=f.now_url;im.alt=f.name+', these days';
+        var cap=document.createElement('figcaption');cap.textContent=f.name;
+        fig.appendChild(im);fig.appendChild(cap);
+        ref.appendChild(fig);
+      });
+      if(ref.children.length)grid.appendChild(ref);
+      // shuffled baby cards
+      var order=fmFaces.slice();
+      for(var i=order.length-1;i>0;i--){
+        var j=Math.floor(Math.random()*(i+1));
+        var tmp=order[i];order[i]=order[j];order[j]=tmp;
+      }
+      order.forEach(function(f){
+        var card=document.createElement('div');
+        card.className='fm-card';
+        card.setAttribute('data-name',f.name);
+        var im=document.createElement('img');
+        im.src=f.baby_url;im.alt='a mystery baby';
+        card.appendChild(im);
+        var sel=document.createElement('select');
+        sel.setAttribute('aria-label','Who is this baby?');
+        var opt=document.createElement('option');
+        opt.value='';opt.textContent='who is this baby?';
+        sel.appendChild(opt);
+        names.forEach(function(n){
+          var o=document.createElement('option');
+          o.value=n;o.textContent=n;
+          sel.appendChild(o);
+        });
+        card.appendChild(sel);
+        grid.appendChild(card);
+      });
+    };
+    var fmRefreshScores=function(){
+      if(SG.enabled){
+        SG.listFaceScores().then(function(rows){fmScores=rows;fmBoard()}).catch(function(){fmBoard()});
+      }else{fmBoard()}
+    };
+    $('fm-unlock').addEventListener('click',function(){
+      if($('fm-pw').value.trim().toLowerCase()==='ladybugs'){
+        $('fm-lock').style.display='none';
+        $('fm-game').classList.add('open');
+        if(SG.enabled){
+          SG.listFaces().then(function(rows){fmFaces=rows;fmBuild()}).catch(function(){fmBuild()});
+        }else{
+          fmFaces=[
+            {name:'Abby',baby_url:'assets/photos/baby-abby.jpg',now_url:null},
+            {name:'Beau',baby_url:'assets/photos/baby-beau.jpg',now_url:null}
+          ];
+          fmBuild();
+        }
+        fmRefreshScores();
+        if(SG.enabled)setInterval(fmRefreshScores,8000);
+      }else{
+        $('fm-wrong').classList.add('show');
+      }
+    });
+    $('fm-submit').addEventListener('click',function(){
+      var btn=this;
+      var name=$('fm-name').value.trim();
+      if(!name){$('fm-name').focus();return}
+      var cards=Array.from(document.querySelectorAll('.fm-card'));
+      if(!cards.length)return;
+      var score=0;
+      cards.forEach(function(c){
+        if(c.querySelector('select').value===c.getAttribute('data-name'))score++;
+      });
+      var finish=function(){
+        fmScores.push({name:name,score:score,total:cards.length});
+        $('fm-result').textContent='you matched '+score+' of '+cards.length+(score===cards.length?' — a perfect eye!':'');
+        $('fm-result').classList.add('show');
+        btn.disabled=true;
+        btn.textContent='Matches locked';
+        fmBoard();
+      };
+      if(SG.enabled){
+        busy(btn,true,'Scoring…');
+        SG.submitFaceScore(name,score,cards.length).then(function(){busy(btn,false);finish()})
+          .catch(function(){busy(btn,false);oops($('fm-result'))});
+        return;
+      }
+      finish();
+    });
+  }
+
+  // --- the games: the dressing derby ------------------------------------------------
+  if($('dd-board')){
+    var ddFmt=function(sec){
+      var m=Math.floor(sec/60);
+      var s=(sec-m*60).toFixed(1);
+      return m+':'+(s<10?'0':'')+s;
+    };
+    var ddParse=function(text){
+      text=text.trim();
+      var m=text.match(/^(\d+):(\d{1,2}(?:\.\d+)?)$/);
+      if(m)return parseInt(m[1],10)*60+parseFloat(m[2]);
+      var n=parseFloat(text);
+      return isNaN(n)?null:n;
+    };
+    var ddTimes=SG.enabled?[]:[
+      {name:'Margaret E.',seconds:61.8,attempt:1},
+      {name:'Ruth',seconds:88.4,attempt:1},
+      {name:'Ruth',seconds:73.2,attempt:2},
+      {name:'Kate M.',seconds:95.7,attempt:1}
+    ];
+    var ddBoard=function(){
+      var by={};
+      ddTimes.forEach(function(t){
+        var k=t.name.toLowerCase();
+        if(!(k in by))by[k]={name:t.name,best:t.seconds,tries:0};
+        by[k].tries++;
+        if(t.seconds<by[k].best)by[k].best=t.seconds;
+      });
+      var rows=Object.keys(by).map(function(k){return by[k]})
+        .sort(function(a,b){return a.best-b.best});
+      var ol=$('dd-board');
+      ol.innerHTML='';
+      rows.forEach(function(r,i){
+        var li=document.createElement('li');
+        if(i===0)li.className='lead';
+        var nm=document.createElement('span');nm.className='b-name';nm.textContent=r.name;
+        var sc=document.createElement('span');sc.className='b-score';
+        sc.textContent=ddFmt(r.best)+' · '+(r.tries===1?'first try':'best of '+r.tries+' tries')+(i===0?' — in the lead':'');
+        li.appendChild(nm);li.appendChild(sc);
+        ol.appendChild(li);
+      });
+      if(!rows.length){
+        var li=document.createElement('li');
+        li.className='b-empty';
+        li.textContent='the doll waits, undefeated';
+        ol.appendChild(li);
+      }
+    };
+    var ddRefresh=function(){
+      if(SG.enabled){
+        SG.listDollTimes().then(function(rows){ddTimes=rows;ddBoard()}).catch(function(){ddBoard()});
+      }else{ddBoard()}
+    };
+    var running=false,t0=0,timer=null;
+    $('dd-start').addEventListener('click',function(){
+      if(!running){
+        running=true;t0=Date.now();
+        this.textContent='Stop — last snap snapped';
+        timer=setInterval(function(){
+          $('dd-clock').textContent=ddFmt((Date.now()-t0)/1000);
+        },100);
+      }else{
+        running=false;
+        clearInterval(timer);
+        var sec=(Date.now()-t0)/1000;
+        $('dd-clock').textContent=ddFmt(sec);
+        $('dd-time').value=ddFmt(sec);
+        this.textContent='Start the clock';
+      }
+    });
+    $('dd-log-btn').addEventListener('click',function(){
+      var btn=this;
+      var name=$('dd-name').value.trim();
+      var sec=ddParse($('dd-time').value);
+      if(!name){$('dd-name').focus();return}
+      if(sec===null||sec<=0){$('dd-time').focus();return}
+      var attempt=ddTimes.filter(function(t){return t.name.toLowerCase()===name.toLowerCase()}).length+1;
+      var finish=function(){
+        ddTimes.push({name:name,seconds:sec,attempt:attempt});
+        $('dd-time').value='';
+        $('dd-confirm').textContent='logged — attempt '+attempt+' for '+name;
+        $('dd-confirm').classList.add('show');
+        ddBoard();
+      };
+      if(SG.enabled){
+        busy(btn,true,'Logging…');
+        SG.addDollTime(name,sec,attempt).then(function(){busy(btn,false);finish()})
+          .catch(function(){busy(btn,false);oops($('dd-confirm'))});
+        return;
+      }
+      finish();
+    });
+    ddRefresh();
+    if(SG.enabled)setInterval(ddRefresh,8000);
   }
 
   // --- growing: week-by-week tracker -------------------------------------------
@@ -572,7 +943,7 @@
     }
     renderWeek();
     if(ga.toGo>0){
-      $('g-now-note').textContent='Myles is '+ga.week+' weeks, '+ga.day+(ga.day===1?' day':' days')+' along — '+ga.toGo+' days until October 14th.';
+      $('g-now-note').textContent='Baby Boy White is '+ga.week+' weeks, '+ga.day+(ga.day===1?' day':' days')+' along — '+ga.toGo+' days until October 14th.';
     }else{
       $('g-now-note').textContent='He’s here! The next chapter has begun.';
     }

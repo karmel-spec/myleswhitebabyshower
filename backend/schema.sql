@@ -66,10 +66,43 @@ create table guests (
   created_at timestamptz not null default now(),
   name text not null,
   party text,
+  phone text,
   status text not null default 'await' check (status in ('coming','await','regret')),
   book text,
   address text,
   thank_you boolean not null default false
+);
+
+-- the games
+create table faces (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  name text not null,
+  baby_url text not null,
+  now_url text not null
+);
+
+create table care_entries (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  name text not null,
+  answers jsonb not null
+);
+
+create table face_scores (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  name text not null,
+  score int not null,
+  total int not null
+);
+
+create table doll_times (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  name text not null,
+  seconds numeric not null,
+  attempt int not null
 );
 
 -- Row-level security: guests (anon) may drop things in the mailbox but never
@@ -109,6 +142,23 @@ create policy "anyone reads" on quiz_votes for select using (true);
 
 create policy "anon insert" on album for insert to anon with check (true);
 create policy "anyone reads" on album for select using (true);
+
+alter table faces enable row level security;
+alter table care_entries enable row level security;
+alter table face_scores enable row level security;
+alter table doll_times enable row level security;
+
+create policy "anon insert" on faces for insert to anon with check (true);
+create policy "anyone reads" on faces for select using (true);
+
+create policy "anon insert" on care_entries for insert to anon with check (true);
+create policy "anyone reads" on care_entries for select using (true);
+
+create policy "anon insert" on face_scores for insert to anon with check (true);
+create policy "anyone reads" on face_scores for select using (true);
+
+create policy "anon insert" on doll_times for insert to anon with check (true);
+create policy "anyone reads" on doll_times for select using (true);
 
 -- hosts only
 create policy "hosts all" on guests for all to authenticated using (true) with check (true);

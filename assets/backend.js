@@ -136,6 +136,20 @@
     },
     listAlbum:function(){return list('album')},
 
+    // games
+    addFace:function(name,babyFile,nowFile){
+      return Promise.all([uploadPhoto(babyFile),uploadPhoto(nowFile)]).then(function(urls){
+        return insert('faces',{name:name,baby_url:urls[0],now_url:urls[1]});
+      });
+    },
+    listFaces:function(){return list('faces')},
+    submitCareQuiz:function(name,answers){return insert('care_entries',{name:name,answers:answers})},
+    listCareQuiz:function(){return list('care_entries')},
+    submitFaceScore:function(name,score,total){return insert('face_scores',{name:name,score:score,total:total})},
+    listFaceScores:function(){return list('face_scores')},
+    addDollTime:function(name,seconds,attempt){return insert('doll_times',{name:name,seconds:seconds,attempt:attempt})},
+    listDollTimes:function(){return list('doll_times')},
+
     listGuests:function(){return list('guests','created_at')},
     addGuest:function(g){
       return client().then(function(sb){
