@@ -11,9 +11,8 @@ window.STORY_GARDEN_CONFIG = {
   // Karmel & Abby share this one login on the guest-list page.
   hostEmail: 'hosts@storygarden.family',
 
-  // Once the site is live (GitHub Pages), put its address here — it's added
-  // to the invite texts sent from the guest list.
-  siteUrl: '',
+  // The live site — added to the invite texts sent from the guest list.
+  siteUrl: 'https://babywhiteshower.com',
 
   // Before Supabase is connected, the guest-list page is gated by this
   // password instead (stored as a SHA-256 hash, so the password itself
