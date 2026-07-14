@@ -1,6 +1,7 @@
 (function(){
   function $(id){return document.getElementById(id)}
   var DUE=new Date(2026,9,14,0,0,0);
+  var SHOWER=new Date(2026,7,15,19,0,0);
   var SG=window.SG||{enabled:false};
 
   function fmtTime(iso){
@@ -17,7 +18,7 @@
   }
   function oops(el){
     if(!el)return;
-    el.textContent='hmm, that didn’t save — try once more?';
+    el.textContent='hmm, that didn’t save. Try once more?';
     el.classList.add('show');
   }
   function pickFile(drop,onPick){
@@ -39,7 +40,7 @@
 
   if(document.querySelector('.cd-d')){
     var tick=function(){
-      var ms=DUE-new Date();
+      var ms=SHOWER-new Date();
       if(ms<0)ms=0;
       var d=Math.floor(ms/86400000);
       var h=Math.floor(ms%86400000/3600000);
@@ -52,6 +53,16 @@
     };
     tick();
     setInterval(tick,1000);
+  }
+
+  // --- the evening: games stay locked until the day of the shower ---------
+  if($('games-block')){
+    var PARTY=new Date(2026,7,15,0,0,0);
+    var sneak=/[?&]preview/.test(location.search);
+    if(new Date()<PARTY&&!sneak){
+      $('games-block').style.display='none';
+      $('games-daylock').hidden=false;
+    }
   }
 
   // --- books for baby: claim a book -------------------------------------
@@ -102,14 +113,14 @@
           name:name,
           party:$('r-party').value.trim(),
           cant_eat:$('r-food').value.trim(),
-          address:$('r-addr').value.trim()
+          address:''
         });
         if(faceBaby&&faceNow){
           sent=sent.then(function(){return SG.addFace(name,faceBaby,faceNow)});
         }
         sent.then(function(){
           $('rsvp-confirm').textContent=(faceBaby&&faceNow)
-            ?'you are part of our story now — and you’re in the baby-face game'
+            ?'you are part of our story now, and you’re in the baby-face game'
             :'you are part of our story now';
           $('rsvp-confirm').classList.add('show');
         }).catch(function(){oops($('rsvp-confirm'))}).then(function(){busy(btn,false)});
@@ -138,7 +149,7 @@
           length:$('p-length').value.trim(),
           hair:hair?hair.textContent:''
         }).then(function(){
-          $('pred-confirm').textContent='sealed until October — no peeking';
+          $('pred-confirm').textContent='sealed until October. No peeking';
           $('pred-confirm').classList.add('show');
         }).catch(function(){oops($('pred-confirm'))}).then(function(){busy(btn,false)});
         return;
@@ -181,13 +192,13 @@
           albumFile=null;
           $('al-drop').textContent='add another photo';
           $('al-cap').value='';
-        }).catch(function(){$('al-drop').textContent='hmm — try that photo again?'}).then(function(){busy(btn,false)});
+        }).catch(function(){$('al-drop').textContent='hmm, try that photo again?'}).then(function(){busy(btn,false)});
         return;
       }
       var fig=document.createElement('figure');
       fig.className='album-tile empty';
       var s=document.createElement('span');
-      s.textContent='"'+cap+'" — your photo syncs to the screen';
+      s.textContent='"'+cap+'" (your photo syncs to the screen)';
       fig.appendChild(s);
       var firstEmpty=document.querySelector('#album .album-tile.empty');
       if(firstEmpty){firstEmpty.replaceWith(fig)}else{$('album').appendChild(fig)}
@@ -240,7 +251,7 @@
             gbFile=null;
             $('gb-msg').value='';
             $('gb-drop').textContent='add your selfie';
-            $('gb-confirm').textContent='signed — see you in the album';
+            $('gb-confirm').textContent='signed! See you in the album';
             $('gb-confirm').classList.add('show');
           }).catch(function(){oops($('gb-confirm'))}).then(function(){busy(btn,false)});
           return;
@@ -427,11 +438,11 @@
       var cfg=window.STORY_GARDEN_CONFIG||{};
       var link=cfg.siteUrl||'';
       return {
-        invite:'You’re invited! 🌼 A baby shower for Baby Boy White — Saturday, August 15th at 7pm, in Grandma’s garden, Orem.'
+        invite:'You’re invited! 🌼 A baby shower for Baby Boy White: Saturday, August 15th at 7pm, in Grandma’s garden, Orem.'
           +(link?' All the details & RSVP: '+link:' RSVP details to follow!'),
-        nudge:'🌼 A little nudge from the Story Garden — we’re saving you a seat at Baby Boy White’s shower, Saturday, August 15th at 7pm. Kindly RSVP'
-          +(link?': '+link+'/rsvp.html':' — reply to this text and we’ll pencil you in!'),
-        details:'🌙 Two days to go! Baby Boy White’s shower — Saturday at 7pm, Grandma’s garden, Orem. Bring a well-loved children’s book instead of a card.'
+        nudge:'🌼 A little nudge from the Story Garden: we’re saving you a seat at Baby Boy White’s shower, Saturday, August 15th at 7pm. Kindly RSVP'
+          +(link?': '+link+'/rsvp.html':'! Reply to this text and we’ll pencil you in.'),
+        details:'🌙 Two days to go! Baby Boy White’s shower is Saturday at 7pm, Grandma’s garden, Orem. Bring a well-loved children’s book instead of a card.'
           +(link?' Everything else: '+link:'')
       };
     })();
@@ -456,7 +467,7 @@
           var em=document.createElement('span');
           em.className='chip-empty';
           em.textContent=(kind==='invite')
-            ?'no cell numbers yet — add them above and names appear here'
+            ?'no cell numbers yet. Add them above and names appear here'
             :'no one in this group has a cell number yet';
           box.appendChild(em);
           return;
@@ -610,7 +621,7 @@
       });
       card.appendChild(row);
       var rev=document.createElement('button');
-      rev.type='button';rev.className='reveal';rev.textContent='Host — reveal the answer';
+      rev.type='button';rev.className='reveal';rev.textContent='Host: reveal the answer';
       rev.addEventListener('click',function(){
         cqRevealed[qi]=true;
         row.children[item.ans].classList.add('correct');
@@ -624,7 +635,7 @@
       var shown=cqRevealed.filter(Boolean).length;
       $('cq-progress').textContent=shown
         ?shown+' of '+CARE_Q.length+' answers revealed'
-        :'no answers revealed yet — scores appear as the host reveals them';
+        :'no answers revealed yet. Scores appear as the host reveals them';
       var scored=cqEntries.map(function(e){
         var s=0;
         CARE_Q.forEach(function(item,qi){
@@ -639,14 +650,14 @@
         if(i===0&&shown&&e.score>0)li.className='lead';
         var nm=document.createElement('span');nm.className='b-name';nm.textContent=e.name;
         var sc=document.createElement('span');sc.className='b-score';
-        sc.textContent=e.score+' right'+(i===0&&shown&&e.score>0?' — in the lead':'');
+        sc.textContent=e.score+' right'+(i===0&&shown&&e.score>0?' · in the lead':'');
         li.appendChild(nm);li.appendChild(sc);
         ol.appendChild(li);
       });
       if(!scored.length){
         var li=document.createElement('li');
         li.className='b-empty';
-        li.textContent='no players yet — be the first to lock in';
+        li.textContent='no players yet. Be the first to lock in';
         ol.appendChild(li);
       }
     };
@@ -663,7 +674,7 @@
       var name=$('cq-name').value.trim();
       if(!name){$('cq-name').focus();return}
       if(cqPicks.indexOf(-1)!==-1){
-        $('cq-confirm').textContent='answer all eight first — no half experts';
+        $('cq-confirm').textContent='answer all eight first, no half experts';
         $('cq-confirm').classList.add('show');
         return;
       }
@@ -671,7 +682,7 @@
         cqEntries.push({name:name,answers:cqPicks.slice()});
         btn.disabled=true;
         btn.textContent='Answers locked';
-        $('cq-confirm').textContent='locked — now watch the reveals';
+        $('cq-confirm').textContent='locked. Now watch the reveals';
         $('cq-confirm').classList.add('show');
         cqBoard();
       };
@@ -705,7 +716,7 @@
         if(i===0)li.className='lead';
         var nm=document.createElement('span');nm.className='b-name';nm.textContent=s.name;
         var sc=document.createElement('span');sc.className='b-score';
-        sc.textContent=s.score+' of '+s.total+(i===0?' — in the lead':'');
+        sc.textContent=s.score+' of '+s.total+(i===0?' · in the lead':'');
         li.appendChild(nm);li.appendChild(sc);
         ol.appendChild(li);
       });
@@ -722,7 +733,7 @@
       if(!fmFaces.length){
         var p=document.createElement('p');
         p.className='fm-empty';
-        p.textContent='No baby faces yet — they arrive as guests RSVP with their two photos.';
+        p.textContent='No baby faces yet. They arrive as guests RSVP with their two photos.';
         grid.appendChild(p);
         return;
       }
@@ -802,7 +813,7 @@
       });
       var finish=function(){
         fmScores.push({name:name,score:score,total:cards.length});
-        $('fm-result').textContent='you matched '+score+' of '+cards.length+(score===cards.length?' — a perfect eye!':'');
+        $('fm-result').textContent='you matched '+score+' of '+cards.length+(score===cards.length?'. A perfect eye!':'');
         $('fm-result').classList.add('show');
         btn.disabled=true;
         btn.textContent='Matches locked';
@@ -855,7 +866,7 @@
         if(i===0)li.className='lead';
         var nm=document.createElement('span');nm.className='b-name';nm.textContent=r.name;
         var sc=document.createElement('span');sc.className='b-score';
-        sc.textContent=ddFmt(r.best)+' · '+(r.tries===1?'first try':'best of '+r.tries+' tries')+(i===0?' — in the lead':'');
+        sc.textContent=ddFmt(r.best)+' · '+(r.tries===1?'first try':'best of '+r.tries+' tries')+(i===0?' · in the lead':'');
         li.appendChild(nm);li.appendChild(sc);
         ol.appendChild(li);
       });
@@ -875,7 +886,7 @@
     $('dd-start').addEventListener('click',function(){
       if(!running){
         running=true;t0=Date.now();
-        this.textContent='Stop — last snap snapped';
+        this.textContent='Stop. Last snap snapped!';
         timer=setInterval(function(){
           $('dd-clock').textContent=ddFmt((Date.now()-t0)/1000);
         },100);
@@ -898,7 +909,7 @@
       var finish=function(){
         ddTimes.push({name:name,seconds:sec,attempt:attempt});
         $('dd-time').value='';
-        $('dd-confirm').textContent='logged — attempt '+attempt+' for '+name;
+        $('dd-confirm').textContent='logged. Attempt '+attempt+' for '+name;
         $('dd-confirm').classList.add('show');
         ddBoard();
       };
@@ -941,27 +952,27 @@
     ICONS.coconut=icoRound('#8A6B42',14,false);
 
     var GROWTH={
-      20:['a garden banana','banana','10 in','10 oz',['He can hear now — the first read-alouds land.','Practicing swallows and little hiccups.']],
-      21:['a fresh-pulled carrot','carrot','10½ in','12 oz',['Taste buds are working — he tastes what Abby eats.','Sleeping and waking in tiny cycles.']],
+      20:['a garden banana','banana','10 in','10 oz',['He can hear now, so the first read-alouds land.','Practicing swallows and little hiccups.']],
+      21:['a fresh-pulled carrot','carrot','10½ in','12 oz',['Taste buds are working. He tastes what Abby eats.','Sleeping and waking in tiny cycles.']],
       22:['an ear of sweet corn','corn','11 in','15 oz',['Eyebrows and lashes are in.','His grip is already strong.']],
-      23:['a garden grapefruit','grapefruit','11½ in','1.1 lb',['Movement rocks him — he can feel Abby dance.','Hearing sharpens; voices carry through.']],
+      23:['a garden grapefruit','grapefruit','11½ in','1.1 lb',['Movement rocks him. He can feel Abby dance.','Hearing sharpens; voices carry through.']],
       24:['a cantaloupe from the vine','melon','11¾ in','1.3 lb',['His face is fully formed.','Lungs are rehearsing breathing.']],
       25:['a head of cauliflower','leafy','13½ in','1.5 lb',['First hair is coming in.','He startles at loud noises now.']],
-      26:['a head of garden lettuce','leafy','14 in','1.7 lb',['His eyes are opening this week.','He knows Beau’s and Abby’s voices — read to him.']],
-      27:['a glossy eggplant','eggplant','14½ in','1.9 lb',['He may know a favorite story’s rhythm already.','Regular sleep and wake times — often opposite Abby’s.']],
-      28:['a butternut squash','squash','14¾ in','2.2 lb',['Eyes open, blinking — maybe even dreaming.','He turns toward light through the garden wall.']],
+      26:['a head of garden lettuce','leafy','14 in','1.7 lb',['His eyes are opening this week.','He knows Beau’s and Abby’s voices. Read to him.']],
+      27:['a glossy eggplant','eggplant','14½ in','1.9 lb',['He may know a favorite story’s rhythm already.','Regular sleep and wake times, often opposite Abby’s.']],
+      28:['a butternut squash','squash','14¾ in','2.2 lb',['Eyes open, blinking, maybe even dreaming.','He turns toward light through the garden wall.']],
       29:['an acorn squash','squash','15¼ in','2.5 lb',['Muscles and lungs are bulking up.','Kicks strong enough for Beau to feel from across the couch.']],
-      30:['a head of cabbage','cabbage','15¾ in','2.9 lb',['His brain is wrinkling beautifully — growing fast.','He holds his own feet for fun.']],
+      30:['a head of cabbage','cabbage','15¾ in','2.9 lb',['His brain is wrinkling beautifully and growing fast.','He holds his own feet for fun.']],
       31:['a coconut','coconut','16¼ in','3.3 lb',['All five senses are online.','He’s processing faces’ voices and sounds.']],
       32:['a bunch of kale','leafy','16¾ in','3.8 lb',['Practicing sucking his thumb.','Toenails in; hair thickening.']],
-      33:['a pineapple','pumpkin','17¼ in','4.2 lb',['His pupils widen and narrow with light now.','Bones hardening — except his clever soft skull.']],
+      33:['a pineapple','pumpkin','17¼ in','4.2 lb',['His pupils widen and narrow with light now.','Bones are hardening, except his clever soft skull.']],
       34:['a garden melon','melon','17¾ in','4.7 lb',['Cozy and waterproofed in vernix.','He can tell family voices apart.']],
-      35:['a honeydew','melon','18¼ in','5.3 lb',['Kidneys and liver fully on the job.','Getting snug — more rolls than kicks.']],
+      35:['a honeydew','melon','18¼ in','5.3 lb',['Kidneys and liver fully on the job.','Getting snug in there: more rolls than kicks.']],
       36:['a head of romaine','leafy','18¾ in','5.8 lb',['Likely head-down and getting ready.','Cheeks filling in, skin smoothing out.']],
-      37:['a bunch of swiss chard','leafy','19 in','6.3 lb',['Officially early term — rehearsing everything.','Grip strong enough to hold a finger.']],
+      37:['a bunch of swiss chard','leafy','19 in','6.3 lb',['Officially early term, rehearsing everything.','Grip strong enough to hold a finger.']],
       38:['a winter squash','squash','19½ in','6.8 lb',['Brain adding connections by the million.','A firm little handshake is waiting.']],
       39:['a mini watermelon','melon','20 in','7.3 lb',['Lungs ready to announce himself.','Building fat to stay cozy in the world.']],
-      40:['a little pumpkin','pumpkin','20¼ in','7.6 lb',['Ready for chapter one.','Any day now — the garden is waiting.']]
+      40:['a little pumpkin','pumpkin','20¼ in','7.6 lb',['Ready for chapter one.','Any day now. The garden is waiting.']]
     };
     function gaInfo(){
       var daysToDue=Math.ceil((DUE-new Date())/86400000);
@@ -974,7 +985,7 @@
     function renderWeek(){
       var g=GROWTH[viewWeek];
       $('veg-icon').innerHTML=ICONS[g[1]];
-      $('g-week').textContent='Week '+viewWeek+' of 40'+(viewWeek===curWeek?' — this week':'');
+      $('g-week').textContent='Week '+viewWeek+' of 40'+(viewWeek===curWeek?' · this week':'');
       $('g-size').textContent='about the size of '+g[0];
       $('g-stats').textContent=g[2]+' long · around '+g[3];
       var notes=$('g-notes');
@@ -992,7 +1003,7 @@
     }
     renderWeek();
     if(ga.toGo>0){
-      $('g-now-note').textContent='Baby Boy White is '+ga.week+' weeks, '+ga.day+(ga.day===1?' day':' days')+' along — '+ga.toGo+' days until October 14th.';
+      $('g-now-note').textContent='Baby Boy White is '+ga.week+' weeks, '+ga.day+(ga.day===1?' day':' days')+' along, with '+ga.toGo+' days until October 14th.';
     }else{
       $('g-now-note').textContent='He’s here! The next chapter has begun.';
     }

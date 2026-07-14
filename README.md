@@ -9,26 +9,24 @@ Theme: **Story Garden** — a boyish garden meets children's books. Blue gingham
 ## What's here
 
 A multi-page storybook: **`index.html`** is the cover — bunting, balloon cluster, moon and stars, the live countdown to October 14th, and a table of contents styled like a real book's (dotted leaders, page numbers, a teddy reading over the heading). Each chapter is its own page, linked prev/next like turning pages:
-  1. `the-particulars.html` — A new chapter begins (with the long gingham-table scene)
-  2. `our-story.html` — The story so far: dating → honeymoon → ultrasound & gender reveal → countdown
-  3. `what-we-know.html` — Every story begins with love: what's written + guest predictions (sealed until he arrives)
-  4. `growing.html` — He grows by the week: auto-computing growth tracker (size, length, weight, what's new)
-  5. `books-for-baby.html` — claim-a-book library shelf (bring a well-loved used book instead of a card, note inside the cover)
-  6. `gift-table.html` — illustrated garden gift table: Amazon registry + Venmo group gift (the stroller jar)
-  7. `portraits.html` — Before he was famous: ultrasound gallery
-  8. `two-babies.html` — Abby & Beau baby photos + the blended "as imagined" portrait
-  9. `rsvp.html` — Help us write the first pages (addresses for thank-yous + two photos for the baby-face game)
-  10. `the-evening.html` — night-of party mode: selfie guest book, advice wall with comments, password-gated "Beau or Abby?" live quiz
-  11. `games.html` — the games: Baby Care Quiz with reveal-by-reveal leaderboard, password-gated "Whose baby face?" matching game, and the Dressing Derby stopwatch leaderboard
-  12. `guest-list.html` — hosts-only CRM (statuses, filters, books claimed, thank-you tracking, one-tap text invites)
-  13. `epilogue.html` — The story is just beginning… (after October 14th this becomes the family site)
+  1. `the-particulars.html` — A new chapter begins (when, where, what to bring; links to the book chapter and registries)
+  2. `what-we-know.html` — Every story begins with love: what's written + guest predictions (sealed until he arrives)
+  3. `growing.html` — He grows by the week: auto-computing growth tracker (size, length, weight, what's new)
+  4. `books-for-baby.html` — claim-a-book library shelf (bring a well-loved used book instead of a card, note inside the cover)
+  5. `gift-table.html` — Amazon + Target registries, Venmo, and the nursery color palette
+  6. `portraits.html` — Before he was famous: his real ultrasounds (14 weeks, anatomy scan, 4D)
+  7. `two-babies.html` — Abby & Beau baby photos with his 4D ultrasound between them
+  8. `rsvp.html` — Help us write the first pages (name, party, food notes + two photos for the baby-face game)
+  9. `the-evening.html` — night-of party mode: selfie guest book, advice wall, group album, and all four games (Beau or Abby?, Baby Care Quiz, Whose baby face?, Dressing Derby). Games are date-locked until August 15th; hosts can preview with `?preview` on the URL
+  10. `guest-list.html` — hosts-only CRM (statuses, filters, books claimed, thank-you tracking, one-tap text invites)
+  11. `epilogue.html` — The story is just beginning… (after October 14th this becomes the family site)
 - **`slideshow.html`** — the big screen: open on the TV/projector by the dessert table; it loops the group album (photos + storybook quote cards) all evening. Guests add photos from `the-evening.html` and they join the loop (live sync needs the backend, below).
 - **`assets/`** — shared `styles.css` + `site.js` (countdown, growth tracker, quiz, CRM, album — all feature-guarded so any page can load them). `assets/photos/` holds baby Abby & baby Beau.
 - **`design-studies/`** — the three earlier design-direction studies plus the previous single-page version (`story-garden-onepage.html`), kept for reference.
 
 ## Status
 
-Everything runs as an in-page demo out of the box; connect a free Supabase project (see `backend/SETUP.md`) and RSVPs, book claims, guest book, photos, quiz tallies, game leaderboards, and the CRM all persist and sync live. Passwords: guest list "storygarden" (until Supabase login takes over), "Beau or Abby?" quiz "fireflies", baby-face game "ladybugs". Placeholders pending: real photos, ultrasound scans, the Amazon registry URL, Venmo handle, and the live site URL in `assets/config.js`.
+Everything runs as an in-page demo out of the box; connect a free Supabase project (see `backend/SETUP.md`) and RSVPs, book claims, guest book, photos, quiz tallies, game leaderboards, and the CRM all persist and sync live. Passwords: guest list "storygarden" (until Supabase login takes over), "Beau or Abby?" quiz "fireflies", baby-face game "ladybugs". Real content now in: ultrasounds, Amazon + Target registry links, Venmo (@abby_white), and the venue address (128 Westview Circle, Orem). Still pending: real quiz answers.
 
 ## Viewing
 

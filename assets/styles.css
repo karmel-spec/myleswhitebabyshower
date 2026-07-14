@@ -82,6 +82,16 @@
   }
   .hero-details .day{font-size:21px}
   .hero .note{margin-top:26px}
+  .hero-cta{margin-top:8px}
+  .hero-cta .btn{margin:0 5px}
+  @media (max-width:560px){
+    .hero .wrap{display:flex;flex-direction:column}
+    .hero-cta{order:-2;margin-top:0}
+    .hero-cta .btn{display:block;margin:0 auto 12px;max-width:300px}
+    .countdown{order:-1;margin-top:10px}
+    .count-cap{order:-1;margin:12px 0 30px}
+    .hero h1{margin-top:10px}
+  }
   .corner-sprig{position:absolute;z-index:1;opacity:.9}
   .corner-sprig.left{left:-30px;bottom:-16px}
   .corner-sprig.right{right:-30px;bottom:-16px;transform:scaleX(-1)}
@@ -103,6 +113,8 @@
   }
   .card h3{font-size:15px;letter-spacing:.26em;text-transform:uppercase;margin-bottom:12px;color:var(--dusty-deep)}
   .card p{margin:8px 0;font-size:15.5px;color:var(--soft)}
+  .card a{color:var(--dusty-deep);text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(79,101,132,.45)}
+  .card a:hover{text-decoration-color:var(--dusty-deep)}
   .card .whisper{font-size:20px}
 
   .wash-sage{background:var(--sage-wash)}
@@ -152,9 +164,18 @@
   .reg-card .btn{margin:20px auto 0;padding:12px 20px;font-size:11.5px}
   .venmo-handle{font-family:var(--display);font-size:20px;color:var(--wood-deep);margin:8px 0 2px}
 
+  .palette-panel{margin-top:56px;padding:34px 30px 30px;background:var(--paper);border:1px solid var(--hairline);border-radius:6px;text-align:center}
+  .palette-panel h3{font-family:var(--display);font-size:26px;margin:0 0 10px}
+  .palette-panel p{max-width:52ch;margin:0 auto;color:var(--soft)}
+  .palette-row{display:flex;justify-content:center;flex-wrap:wrap;gap:26px;margin-top:26px}
+  .swatch{margin:0;text-align:center}
+  .swatch .dot{display:block;width:58px;height:58px;border-radius:50%;margin:0 auto;box-shadow:inset 0 0 0 1px rgba(43,58,88,.15)}
+  .swatch figcaption{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--soft);margin-top:10px}
+
   .sono-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px}
   .sono{background:var(--navy-deep);border:6px solid var(--paper);outline:1px solid var(--hairline);border-radius:4px;padding:14px;text-align:center;margin:0}
   .sono svg{width:100%;height:auto;display:block}
+  .sono img{width:100%;aspect-ratio:7/4;object-fit:cover;display:block;border-radius:3px}
   .sono figcaption{font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--dusty);margin-top:10px}
   .sono .whisper{display:block;font-size:18px;margin-top:2px;color:var(--butter);text-transform:none;letter-spacing:0}
 
@@ -380,7 +401,7 @@
 
   /* rsvp: photos for the face game */
   .face-note{font-size:14.5px;color:var(--soft);margin:4px 0 14px}
-  .face-drops{display:flex;gap:14px;flex-wrap:wrap}
+  .face-drops{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
   .face-drop{width:130px;height:110px;border:1px dashed var(--dusty-deep);border-radius:6px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dusty-deep);cursor:pointer;padding:8px}
   .face-drop.picked{border-style:solid;border-color:var(--leaf);color:var(--leaf)}
 
