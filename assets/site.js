@@ -333,7 +333,7 @@
   if($('quiz-unlock')){
     $('quiz-unlock').addEventListener('click',function(){
       var v=$('quiz-pw').value.trim().toLowerCase();
-      if(v==='fireflies'){
+      if(v==='karm0451'){
         $('quiz').classList.add('open');
         $('quiz-lock').style.display='none';
       }else{
@@ -783,7 +783,7 @@
       }else{fmBoard()}
     };
     $('fm-unlock').addEventListener('click',function(){
-      if($('fm-pw').value.trim().toLowerCase()==='ladybugs'){
+      if($('fm-pw').value.trim().toLowerCase()==='karm0451'){
         $('fm-lock').style.display='none';
         $('fm-game').classList.add('open');
         if(SG.enabled){

@@ -4,8 +4,8 @@
 // still works as a local demo. Full setup steps: backend/SETUP.md
 window.STORY_GARDEN_CONFIG = {
   // From your Supabase project: Settings → API
-  supabaseUrl: '',      // e.g. 'https://abcd1234.supabase.co'
-  supabaseAnonKey: '',  // the "anon public" key
+  supabaseUrl: 'https://cjfmcvzzlqocldikkgjo.supabase.co',
+  supabaseAnonKey: 'sb_publishable_5459b1BlnWcURtvsLZmeAg_1CgQir6C',
 
   // The host account you create in Supabase: Authentication → Users.
   // Karmel & Abby share this one login on the guest-list page.
