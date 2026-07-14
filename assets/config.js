@@ -16,7 +16,7 @@ window.STORY_GARDEN_CONFIG = {
 
   // Before Supabase is connected, the guest-list page is gated by this
   // password instead (stored as a SHA-256 hash, so the password itself
-  // isn't readable in the source). Current password: "storygarden".
+  // isn't readable in the source).
   // To change it: python3 -c "import hashlib;print(hashlib.sha256(b'new-password').hexdigest())"
-  hostPasswordHash: 'cda8e40c88fb52a822830bc409aeb9530af1522937923f04fc35e813389852d4'
+  hostPasswordHash: '4c30e1ff68b60101f624cca4f7d6b1136575700e3d63e5f78f0734d76e4a1c72'
 };
