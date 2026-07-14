@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#F9F5EA"/>
+  <!-- balloon strings, converging to the book -->
+  <g fill="none" stroke="#22304A" stroke-width="5" opacity=".75">
+    <path d="M166 268 C200 330 236 366 252 396"/>
+    <path d="M258 236 C258 300 256 350 256 396"/>
+    <path d="M348 262 C320 326 276 366 260 396"/>
+  </g>
+  <!-- balloon cluster -->
+  <circle cx="160" cy="212" r="62" fill="#8FA3BF"/>
+  <circle cx="258" cy="160" r="84" fill="#BBD0E4"/>
+  <circle cx="352" cy="206" r="56" fill="#E9C46A"/>
+  <circle cx="210" cy="286" r="40" fill="#FFFDF6"/>
+  <circle cx="308" cy="284" r="36" fill="#C24B33" opacity=".85"/>
+  <g fill="none" stroke="#22304A" stroke-width="6">
+    <circle cx="160" cy="212" r="62"/>
+    <circle cx="258" cy="160" r="84"/>
+    <circle cx="352" cy="206" r="56"/>
+    <circle cx="210" cy="286" r="40"/>
+    <circle cx="308" cy="284" r="36"/>
+  </g>
+  <!-- highlights -->
+  <path d="M222 118 C236 106 254 102 268 106" fill="none" stroke="#FFFDF6" stroke-width="10" stroke-linecap="round" opacity=".9"/>
+  <path d="M126 186 C134 176 146 170 156 170" fill="none" stroke="#FFFDF6" stroke-width="7" stroke-linecap="round" opacity=".8"/>
+  <!-- open book -->
+  <g>
+    <path d="M256 402 C222 384 168 384 138 396 L138 452 C168 440 222 440 256 458 Z" fill="#FFFDF6" stroke="#22304A" stroke-width="6" stroke-linejoin="round"/>
+    <path d="M256 402 C290 384 344 384 374 396 L374 452 C344 440 290 440 256 458 Z" fill="#FFFDF6" stroke="#22304A" stroke-width="6" stroke-linejoin="round"/>
+    <path d="M256 402 V458" stroke="#22304A" stroke-width="6"/>
+    <g stroke="#8FA3BF" stroke-width="4" opacity=".85">
+      <path d="M162 408 C186 402 216 404 240 412"/>
+      <path d="M162 424 C186 418 216 420 240 428"/>
+      <path d="M272 412 C296 404 326 402 350 408"/>
+      <path d="M272 428 C296 420 326 418 350 424"/>
+    </g>
+  </g>
+  <!-- a sprig of green, story-garden style -->
+  <path d="M374 396 C388 380 396 362 396 344" fill="none" stroke="#5C7046" stroke-width="6" stroke-linecap="round"/>
+  <path d="M392 366 C402 360 410 350 412 340 C400 342 392 352 392 366 Z" fill="#98A68B" stroke="#3E5232" stroke-width="3"/>
+</svg>
