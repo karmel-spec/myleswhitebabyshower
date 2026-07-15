@@ -117,12 +117,19 @@
       pickFile($('face-baby'),function(f){faceBaby=f;$('face-baby').classList.add('picked')});
       pickFile($('face-now'),function(f){faceNow=f;$('face-now').classList.add('picked')});
     }
+    var markSent=function(btn){
+      btn.disabled=true;
+      btn.textContent='Sent 🌼';
+      btn.classList.add('sent');
+    };
     $('rsvp-btn').addEventListener('click',function(){
       var btn=this;
+      if(btn.classList.contains('sent'))return;
       if(SG.enabled){
         var name=$('r-name').value.trim();
         if(!name){$('r-name').focus();return}
         busy(btn,true,'Sending…');
+        var ok=false;
         var sent=SG.submitRsvp({
           name:name,
           party:$('r-party').value.trim(),
@@ -133,14 +140,19 @@
           sent=sent.then(function(){return SG.addFace(name,faceBaby,faceNow)});
         }
         sent.then(function(){
+          ok=true;
           $('rsvp-confirm').textContent=(faceBaby&&faceNow)
             ?'you are part of our story now, and you’re in the baby-face game'
             :'you are part of our story now';
           $('rsvp-confirm').classList.add('show');
-        }).catch(function(){oops($('rsvp-confirm'))}).then(function(){busy(btn,false)});
+        }).catch(function(){oops($('rsvp-confirm'))}).then(function(){
+          busy(btn,false);
+          if(ok)markSent(btn);
+        });
         return;
       }
       $('rsvp-confirm').classList.add('show');
+      markSent(btn);
     });
   }
 

@@ -417,6 +417,7 @@
   .st-sel:focus{outline:2px solid var(--dusty)}
   .crm-import{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:14px}
   .import-note{font-size:13.5px;color:var(--soft);font-style:italic}
+  .btn.sent,.btn.sent:hover{background:#E4EBDD;border-color:#5C7046;color:#41522F;cursor:default}
 
   /* the games */
   .cq-join{margin-bottom:6px;max-width:340px}
