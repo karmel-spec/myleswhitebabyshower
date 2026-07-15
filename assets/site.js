@@ -52,6 +52,24 @@
     drop.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});
   }
 
+  if(document.body.hasAttribute('data-dayof')){
+    var OPENS=new Date(2026,7,15,0,0,0);
+    var sneakPeek=/[?&]preview/.test(location.search);
+    if(!sneakPeek&&new Date()<OPENS){
+      document.querySelectorAll('section.chapter,.top-next,nav.chapter-nav').forEach(function(el){el.style.display='none'});
+      var lock=document.createElement('section');
+      lock.className='chapter';
+      lock.innerHTML='<div class="wrap" style="text-align:center;max-width:640px">'
+        +'<header><p class="eyebrow">On the day of the shower</p>'
+        +'<h2 style="letter-spacing:.12em;text-transform:uppercase">This page opens <span class="script" style="font-size:1.35em;text-transform:none;letter-spacing:0;vertical-align:-2px">August 15th</span></h2>'
+        +'<p class="lede">The predictions, his portraits, the games, and the guest book all unlock the evening of the shower. Scan the code at your table that night and everything will be waiting.</p></header>'
+        +'<a class="btn ghost" href="index.html#contents">Back to the table of contents</a>'
+        +'</div>';
+      var foot=document.querySelector('footer.colophon');
+      document.body.insertBefore(lock,foot);
+    }
+  }
+
   if(document.querySelector('.cd-d')){
     var tick=function(){
       var ms=SHOWER-new Date();
@@ -460,7 +478,7 @@
       return {
         invite:'You’re invited! 🌼 A baby shower for Baby Boy White: Saturday, August 15th at 7pm, in Grandma’s garden, Orem.'
           +(link?' All the details & RSVP: '+link:' RSVP details to follow!')
-          +' It’s more than a story to read: please look through the webapp for RSVP and registry info, and to fill in your part of the evening’s activities in the chapters. Follow the Next chapter buttons through to the end! 📖',
+          +' Five quick storybook pages — tap Next chapter through to the RSVP (the registry is inside too). The games, guest book, and photo drop unlock at the party! 📖',
         nudge:'🌼 A little nudge from the Story Garden: we’re saving you a seat at Baby Boy White’s shower, Saturday, August 15th at 7pm. Kindly RSVP'
           +(link?': '+link+'/rsvp.html':'! Reply to this text and we’ll pencil you in.'),
         details:'🌙 Two days to go! Baby Boy White’s shower is Saturday at 7pm, Grandma’s garden, Orem. Bring a well-loved children’s book instead of a card.'

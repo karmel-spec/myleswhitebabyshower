@@ -8,7 +8,7 @@ Theme: **Story Garden** — a boyish garden meets children's books. Blue gingham
 
 ## What's here
 
-A multi-page storybook: **`index.html`** is the cover — bunting, balloon cluster, moon and stars, the live countdown to October 14th, and a table of contents styled like a real book's (dotted leaders, page numbers, a teddy reading over the heading). Each chapter is its own page, linked prev/next like turning pages:
+A multi-page storybook: **`index.html`** is the cover — bunting, balloon cluster, moon and stars, the live countdown to October 14th, and a table of contents styled like a real book's (dotted leaders, page numbers, a teddy reading over the heading). The book is deliberately short for guests — five chapters straight to the RSVP — with three **party pages** that stay locked until August 15th (guests scan a QR card at their table; hosts preview anytime with `?preview` on the URL, and print the cards from `table-cards.html`). Each chapter is its own page, linked prev/next like turning pages:
   1. `the-particulars.html` — A new chapter begins (when, where, what to bring; links to the book chapter and registries)
   2. `what-we-know.html` — Every story begins with love: what's written + guest predictions (sealed until he arrives)
   3. `growing.html` — He grows by the week: auto-computing growth tracker (size, length, weight, what's new)
