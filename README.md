@@ -12,14 +12,13 @@ A multi-page storybook: **`index.html`** is the cover — bunting, balloon clust
   1. `the-particulars.html` — A new chapter begins (when, where, what to bring; links to the book chapter and registries)
   2. `what-we-know.html` — Every story begins with love: what's written + guest predictions (sealed until he arrives)
   3. `growing.html` — He grows by the week: auto-computing growth tracker (size, length, weight, what's new)
-  4. `books-for-baby.html` — claim-a-book library shelf (bring a well-loved used book instead of a card, note inside the cover)
+  4. `books-for-baby.html` — claim-a-book library shelf (a book instead of a card; all books welcome — new, well worn, and in between; note inside the cover)
   5. `gift-table.html` — Amazon + Target registries, Venmo, and the nursery color palette
   6. `portraits.html` — Before he was famous: his real ultrasounds (14 weeks, anatomy scan, 4D)
-  7. `two-babies.html` — Abby & Beau baby photos with his 4D ultrasound between them
-  8. `rsvp.html` — Help us write the first pages (name, party, food notes + two photos for the baby-face game)
-  9. `the-evening.html` — night-of party mode: selfie guest book, advice wall, group album, and all four games (Beau or Abby?, Baby Care Quiz, Whose baby face?, Dressing Derby). Games are date-locked until August 15th; hosts can preview with `?preview` on the URL
-  10. `guest-list.html` — hosts-only CRM (statuses, filters, books claimed, thank-you tracking, one-tap text invites)
-  11. `epilogue.html` — The story is just beginning… (after October 14th this becomes the family site)
+  7. `rsvp.html` — Help us write the first pages (name, party, food notes + two photos for the baby-face game)
+  8. `the-evening.html` — night-of party mode: selfie guest book, advice wall, group album, and all four games (Beau or Abby?, Baby Care Quiz, Whose baby face?, Dressing Derby). Games are date-locked until August 15th; hosts can preview with `?preview` on the URL
+  9. `guest-list.html` — hosts-only CRM (statuses, filters, books claimed, thank-you tracking, one-tap text invites)
+  10. `epilogue.html` — The story is just beginning… (after October 14th this becomes the family site)
 - **`slideshow.html`** — the big screen: open on the TV/projector by the dessert table; it loops the group album (photos + storybook quote cards) all evening. Guests add photos from `the-evening.html` and they join the loop (live sync needs the backend, below).
 - **`assets/`** — shared `styles.css` + `site.js` (countdown, growth tracker, quiz, CRM, album — all feature-guarded so any page can load them). `assets/photos/` holds baby Abby & baby Beau.
 - **`design-studies/`** — the three earlier design-direction studies plus the previous single-page version (`story-garden-onepage.html`), kept for reference.
