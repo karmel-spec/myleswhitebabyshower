@@ -13,14 +13,21 @@
       document.head.appendChild(s);
     });
   }
+  function loadLib(){
+    if(window.supabase)return Promise.resolve();
+    return loadScript('assets/vendor/supabase.min.js').catch(function(){
+      return loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js');
+    });
+  }
   function client(){
     if(!enabled)return Promise.reject(new Error('backend not configured'));
     if(!clientP){
-      clientP=loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js')
-        .then(function(){return window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey)});
+      clientP=loadLib().then(function(){return window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey)});
+      clientP.then(null,function(){clientP=null});
     }
     return clientP;
   }
+  if(enabled)client().then(null,function(){});
   function insert(table,row){
     return client().then(function(sb){
       return sb.from(table).insert(row).then(function(r){

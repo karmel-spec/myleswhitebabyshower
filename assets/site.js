@@ -18,7 +18,7 @@
   }
   function oops(el){
     if(!el)return;
-    el.textContent='hmm, that didn’t save. Try once more?';
+    el.textContent='hmm, that didn’t save — check your connection and try once more?';
     el.classList.add('show');
   }
   function showPreview(drop,file){
