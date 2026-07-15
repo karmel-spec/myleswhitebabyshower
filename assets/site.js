@@ -461,7 +461,8 @@
       var link=cfg.siteUrl||'';
       return {
         invite:'You’re invited! 🌼 A baby shower for Baby Boy White: Saturday, August 15th at 7pm, in Grandma’s garden, Orem.'
-          +(link?' All the details & RSVP: '+link:' RSVP details to follow!'),
+          +(link?' All the details & RSVP: '+link:' RSVP details to follow!')
+          +' It’s more than a story to read: please look through the webapp for RSVP and registry info, and to fill in your part of the evening’s activities in the chapters. Follow the Next chapter buttons through to the end! 📖',
         nudge:'🌼 A little nudge from the Story Garden: we’re saving you a seat at Baby Boy White’s shower, Saturday, August 15th at 7pm. Kindly RSVP'
           +(link?': '+link+'/rsvp.html':'! Reply to this text and we’ll pencil you in.'),
         details:'🌙 Two days to go! Baby Boy White’s shower is Saturday at 7pm, Grandma’s garden, Orem. Bring a well-loved children’s book instead of a card.'
