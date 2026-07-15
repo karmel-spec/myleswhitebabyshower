@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Chapter three · Books for Baby — The Story Garden</title>
-<link rel="stylesheet" href="assets/styles.css?v=16">
+<link rel="stylesheet" href="assets/styles.css?v=17">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/icon/favicon-32.png">
 <link rel="apple-touch-icon" href="assets/icon/apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
@@ -40,6 +40,9 @@
     </header>
 
     <div class="shelf-panel">
+      <div class="shelf-scroll-wrap" id="shelf-wrap">
+      <button class="shelf-arrow left" id="shelf-left" type="button" aria-label="Slide the shelf left">‹</button>
+      <button class="shelf-arrow right" id="shelf-right" type="button" aria-label="Slide the shelf right">›</button>
       <div class="shelf" id="shelf">
         <div class="spine s-sage s-tall">The Carrot Seed</div>
         <div class="spine s-navy">Oh, the Places You'll Go!</div>
@@ -53,9 +56,10 @@
         <div class="spine s-wood">Winnie-the-Pooh</div>
         <div class="spine s-leaf">The Secret Garden</div>
       </div>
+      </div>
       <div class="shelf-board"></div>
     </div>
-    <p class="shelf-caption">a few we'd love for his shelf. Claimed books join in green</p>
+    <p class="shelf-caption">a few we'd love for his shelf. Claimed books join in green<span class="shelf-hint">‹ slide the shelf to browse ›</span></p>
 
     <div class="claim-row">
       <input type="text" placeholder="Your name" aria-label="Your name" id="claim-name">
@@ -75,8 +79,8 @@
   a story garden for Baby Boy White<br>
   arriving October 14th, 2026
 </footer>
-<script src="assets/config.js?v=16"></script>
-<script src="assets/backend.js?v=16"></script>
-<script src="assets/site.js?v=16"></script>
+<script src="assets/config.js?v=17"></script>
+<script src="assets/backend.js?v=17"></script>
+<script src="assets/site.js?v=17"></script>
 </body>
 </html>

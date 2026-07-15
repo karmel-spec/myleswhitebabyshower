@@ -128,6 +128,23 @@
     });
   }
 
+  if($('shelf-wrap')){
+    var sWrap=$('shelf-wrap'),sShelf=$('shelf');
+    var sUpd=function(){
+      var max=sShelf.scrollWidth-sShelf.clientWidth;
+      sWrap.toggleAttribute('data-at-start',sShelf.scrollLeft<8);
+      sWrap.toggleAttribute('data-at-end',sShelf.scrollLeft>max-8);
+      var hint=document.querySelector('.shelf-hint');
+      if(hint)hint.style.display=max>8?'':'none';
+    };
+    sShelf.addEventListener('scroll',sUpd,{passive:true});
+    window.addEventListener('resize',sUpd);
+    sUpd();
+    setTimeout(sUpd,400);
+    $('shelf-left').addEventListener('click',function(){sShelf.scrollBy({left:-220,behavior:'smooth'})});
+    $('shelf-right').addEventListener('click',function(){sShelf.scrollBy({left:220,behavior:'smooth'})});
+  }
+
   // --- rsvp ---------------------------------------------------------------
   if($('rsvp-btn')){
     var faceBaby=null,faceNow=null;
