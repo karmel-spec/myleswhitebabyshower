@@ -629,6 +629,77 @@
       }
       done(g);
     });
+    var parseCsv=function(text){
+      var rows=[],row=[],cur='',q=false;
+      for(var i=0;i<text.length;i++){
+        var c=text[i];
+        if(q){
+          if(c==='"'){if(text[i+1]==='"'){cur+='"';i++}else q=false}
+          else cur+=c;
+        }else if(c==='"')q=true;
+        else if(c===','){row.push(cur);cur=''}
+        else if(c==='\n'||c==='\r'){
+          if(c==='\r'&&text[i+1]==='\n')i++;
+          row.push(cur);rows.push(row);row=[];cur='';
+        }else cur+=c;
+      }
+      if(cur!==''||row.length){row.push(cur);rows.push(row)}
+      return rows.filter(function(r){return r.some(function(x){return x.trim()!==''})});
+    };
+    var csvStatus=function(v){
+      v=(v||'').toLowerCase();
+      if(/yes|coming|accept/.test(v))return 'coming';
+      if(/no\b|regret|declin|can.t/.test(v))return 'regret';
+      return 'await';
+    };
+    if($('csv-file')){
+      $('csv-file').addEventListener('change',function(){
+        var file=this.files[0];
+        var input=this;
+        if(!file)return;
+        var note=$('csv-note');
+        var reader=new FileReader();
+        reader.onload=function(){
+          var rows=parseCsv(String(reader.result));
+          if(!rows.length){note.textContent='hmm, that file looks empty';return}
+          var head=rows[0].map(function(h){return h.toLowerCase().trim()});
+          var idx={name:-1,phone:-1,party:-1,status:-1};
+          head.forEach(function(h,i){
+            if(idx.name<0&&/name|guest/.test(h))idx.name=i;
+            else if(idx.phone<0&&/phone|cell|mobile|number|text/.test(h))idx.phone=i;
+            else if(idx.party<0&&/party|count|size|people|many/.test(h))idx.party=i;
+            else if(idx.status<0&&/status|coming|rsvp|reply/.test(h))idx.status=i;
+          });
+          var hasHeader=idx.name>-1||idx.phone>-1;
+          if(!hasHeader){idx.name=0;idx.phone=1;idx.party=2;idx.status=3}
+          var data=hasHeader?rows.slice(1):rows;
+          var pick=function(r,i){return i>-1&&r[i]?String(r[i]).trim():''};
+          var guests=data.map(function(r){
+            return {
+              name:pick(r,idx.name),
+              phone:pick(r,idx.phone)||null,
+              party:pick(r,idx.party)||null,
+              status:csvStatus(pick(r,idx.status))
+            };
+          }).filter(function(g){return g.name});
+          if(!guests.length){note.textContent='no guest names found in that file — is there a name column?';return}
+          if(!SG.enabled){note.textContent='connect the backend first (assets/config.js)';return}
+          var doneCount=0,failCount=0;
+          var next=function(i){
+            if(i>=guests.length){
+              note.textContent='imported '+doneCount+' guest'+(doneCount===1?'':'s')+(failCount?' ('+failCount+' didn’t save — try those again)':'')+' 🌼';
+              input.value='';
+              loadCrm();
+              return;
+            }
+            note.textContent='importing '+(i+1)+' of '+guests.length+'…';
+            SG.addGuest(guests[i]).then(function(){doneCount++}).catch(function(){failCount++}).then(function(){next(i+1)});
+          };
+          next(0);
+        };
+        reader.readAsText(file);
+      });
+    }
   }
 
   // --- the games: baby care quiz ------------------------------------------------
