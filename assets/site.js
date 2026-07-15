@@ -474,11 +474,14 @@
         box.innerHTML='';
         var who=crmGuests.filter(FILTERS[kind]);
         if(!who.length){
+          var EMPTY={
+            invite:'no cell numbers yet. Add them above and names appear here',
+            nudge:'no one to nudge — everyone with a number has replied',
+            details:'no “coming” guests with a number yet. RSVPs mark a guest as coming when the names match — or change any status right in the table above'
+          };
           var em=document.createElement('span');
           em.className='chip-empty';
-          em.textContent=(kind==='invite')
-            ?'no cell numbers yet. Add them above and names appear here'
-            :'no one in this group has a cell number yet';
+          em.textContent=EMPTY[kind];
           box.appendChild(em);
           return;
         }
@@ -510,7 +513,24 @@
         tdName.appendChild(sms);
       }
       var tdParty=document.createElement('td');tdParty.className='num';tdParty.textContent=g.party||'—';
-      var tdStatus=document.createElement('td');tdStatus.innerHTML=PILL[g.status]||PILL.await;
+      var tdStatus=document.createElement('td');
+      var sel=document.createElement('select');
+      sel.className='st-sel st-'+(g.status||'await');
+      sel.setAttribute('aria-label','Status for '+g.name);
+      [['coming','Coming'],['await','Awaiting reply'],['regret','Regrets']].forEach(function(o){
+        var op=document.createElement('option');op.value=o[0];op.textContent=o[1];
+        if((g.status||'await')===o[0])op.selected=true;
+        sel.appendChild(op);
+      });
+      sel.addEventListener('change',function(){
+        g.status=sel.value;
+        sel.className='st-sel st-'+g.status;
+        tr.setAttribute('data-status',g.status);
+        crmStats();
+        renderChips();
+        if(SG.enabled&&g.id)SG.updateGuest(g.id,{status:g.status}).catch(function(){});
+      });
+      tdStatus.appendChild(sel);
       var tdBook=document.createElement('td');tdBook.textContent=g.book||'—';
       var tdAddr=document.createElement('td');tdAddr.textContent=g.address?'on file':'—';
       var tdTy=document.createElement('td');
@@ -520,35 +540,55 @@
       tr.appendChild(tdName);tr.appendChild(tdParty);tr.appendChild(tdStatus);tr.appendChild(tdBook);tr.appendChild(tdAddr);tr.appendChild(tdTy);
       return tr;
     };
+    var normName=function(s){return (s||'').toLowerCase().replace(/[^a-z ]/g,' ').replace(/\s+/g,' ').trim()};
     var loadCrm=function(){
-      SG.listGuests().then(function(rows){
-        crmBody.innerHTML='';
-        rows.forEach(function(g){crmBody.appendChild(guestRow(g))});
-        crmStats();
-        crmGuests=rows;
-        renderChips();
-      }).catch(function(){});
-      SG.listRsvps().then(function(rows){
-        if(!rows.length)return;
-        $('rsvp-inbox').hidden=false;
-        var box=$('rsvp-inbox-list');
-        box.innerHTML='';
-        rows.forEach(function(r){
-          var d=document.createElement('div');
-          d.className='inbox-card';
-          var strong=document.createElement('strong');strong.textContent=r.name;
-          d.appendChild(strong);
-          var bits=[];
-          if(r.party)bits.push(r.party);
-          if(r.cant_eat)bits.push('can’t eat: '+r.cant_eat);
-          if(r.address)bits.push('address on file');
-          var p=document.createElement('p');p.textContent=bits.join(' · ')||'no details';
-          d.appendChild(p);
-          var when=document.createElement('span');when.className='who';when.textContent=new Date(r.created_at).toLocaleDateString();
-          d.appendChild(when);
-          box.appendChild(d);
+      Promise.all([
+        SG.listGuests().catch(function(){return []}),
+        SG.listRsvps().catch(function(){return []})
+      ]).then(function(res){
+        var guests=res[0],rsvps=res[1];
+        rsvps.forEach(function(r){
+          var rn=normName(r.name);
+          if(!rn)return;
+          var g=guests.find(function(g2){
+            var gn=normName(g2.name);
+            return !!gn&&(gn===rn||(rn.length>3&&gn.indexOf(rn)>-1)||(gn.length>3&&rn.indexOf(gn)>-1));
+          });
+          r.matched=!!g;
+          if(g&&g.status!=='coming'){
+            g.status='coming';
+            if(!g.party&&r.party)g.party=r.party;
+            if(SG.enabled&&g.id)SG.updateGuest(g.id,{status:'coming'}).catch(function(){});
+          }
         });
-      }).catch(function(){});
+        crmBody.innerHTML='';
+        guests.forEach(function(g){crmBody.appendChild(guestRow(g))});
+        crmGuests=guests;
+        crmStats();
+        renderChips();
+        if(rsvps.length){
+          $('rsvp-inbox').hidden=false;
+          var box=$('rsvp-inbox-list');
+          box.innerHTML='';
+          rsvps.forEach(function(r){
+            var d=document.createElement('div');
+            d.className='inbox-card';
+            var strong=document.createElement('strong');strong.textContent=r.name;
+            d.appendChild(strong);
+            var bits=[];
+            if(r.party)bits.push(r.party);
+            if(r.cant_eat)bits.push('can’t eat: '+r.cant_eat);
+            if(r.address)bits.push('address on file');
+            var p=document.createElement('p');p.textContent=bits.join(' · ')||'no details';
+            d.appendChild(p);
+            var when=document.createElement('span');when.className='who';
+            when.textContent=new Date(r.created_at).toLocaleDateString()
+              +(r.matched?' · marked coming in the guest list':' · not on the guest list yet — add them above');
+            d.appendChild(when);
+            box.appendChild(d);
+          });
+        }
+      });
     };
     crmStats();
     crmBody.addEventListener('change',function(e){
