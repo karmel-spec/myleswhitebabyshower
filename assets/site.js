@@ -21,6 +21,20 @@
     el.textContent='hmm, that didn’t save. Try once more?';
     el.classList.add('show');
   }
+  function showPreview(drop,file){
+    var old=drop.querySelector('img.drop-preview');
+    if(old)URL.revokeObjectURL(old.src);
+    drop.innerHTML='';
+    var img=document.createElement('img');
+    img.className='drop-preview';
+    img.alt='your photo, added';
+    img.src=URL.createObjectURL(file);
+    var tag=document.createElement('span');
+    tag.className='drop-tag';
+    tag.textContent='added · tap to change';
+    drop.appendChild(img);
+    drop.appendChild(tag);
+  }
   function pickFile(drop,onPick){
     var input=document.createElement('input');
     input.type='file';
@@ -29,7 +43,7 @@
     document.body.appendChild(input);
     input.addEventListener('change',function(){
       if(input.files[0]){
-        drop.textContent=SG.enabled?input.files[0].name:drop.textContent;
+        showPreview(drop,input.files[0]);
         onPick(input.files[0]);
       }
     });
@@ -100,8 +114,8 @@
   if($('rsvp-btn')){
     var faceBaby=null,faceNow=null;
     if($('face-baby')){
-      pickFile($('face-baby'),function(f){faceBaby=f;$('face-baby').classList.add('picked');if(!SG.enabled)$('face-baby').textContent='baby photo added'});
-      pickFile($('face-now'),function(f){faceNow=f;$('face-now').classList.add('picked');if(!SG.enabled)$('face-now').textContent='photo added'});
+      pickFile($('face-baby'),function(f){faceBaby=f;$('face-baby').classList.add('picked')});
+      pickFile($('face-now'),function(f){faceNow=f;$('face-now').classList.add('picked')});
     }
     $('rsvp-btn').addEventListener('click',function(){
       var btn=this;
@@ -177,9 +191,7 @@
     }
     pickFile($('al-drop'),function(f){
       albumFile=f;
-      $('al-drop').style.color='#F9F5EA';
       $('al-drop').style.borderColor='#F9F5EA';
-      if(!SG.enabled)$('al-drop').textContent='photo added';
     });
     $('al-btn').addEventListener('click',function(){
       var btn=this;
@@ -214,9 +226,7 @@
     var gbFile=null;
     pickFile($('gb-drop'),function(f){
       gbFile=f;
-      $('gb-drop').style.color='#F9F5EA';
       $('gb-drop').style.borderColor='#F9F5EA';
-      if(!SG.enabled)$('gb-drop').textContent='selfie added';
     });
     function gbEntry(message,photoUrl,when,prepend){
       var wrap=document.createElement('div');
