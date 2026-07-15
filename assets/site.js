@@ -574,10 +574,15 @@
     var loadCrm=function(){
       Promise.all([
         SG.listGuests().catch(function(){return []}),
-        SG.listRsvps().catch(function(){return []})
+        SG.listRsvps().catch(function(){return []}),
+        SG.listFaces().catch(function(){return []})
       ]).then(function(res){
         var guests=res[0].filter(function(g){return !isJunk(g.name)});
         var rsvps=res[1].filter(function(r){return !isJunk(r.name)});
+        var facesByName={};
+        res[2].forEach(function(f){
+          if(!isJunk(f.name))facesByName[normName(f.name)]=f;
+        });
         rsvps.forEach(function(r){
           var rn=normName(r.name);
           if(!rn)return;
@@ -618,9 +623,24 @@
             if(r.address)bits.push('address on file');
             var p=document.createElement('p');p.textContent=bits.join(' · ')||'no details';
             d.appendChild(p);
+            var f=facesByName[normName(r.name)];
+            if(f){
+              var ph=document.createElement('span');
+              ph.className='inbox-thumbs';
+              [[f.baby_url,'as a baby'],[f.now_url,'these days']].forEach(function(u){
+                if(!u[0])return;
+                var im=document.createElement('img');
+                im.src=u[0];
+                im.alt=r.name+', '+u[1];
+                im.loading='lazy';
+                ph.appendChild(im);
+              });
+              d.appendChild(ph);
+            }
             var when=document.createElement('span');when.className='who';
             when.textContent=new Date(r.created_at).toLocaleDateString()
-              +(r.matched==='added'?' · added to the guest list as coming':' · marked coming in the guest list');
+              +(r.matched==='added'?' · added to the guest list as coming':' · marked coming in the guest list')
+              +(f?' · baby-face photos in':'');
             d.appendChild(when);
             box.appendChild(d);
           });

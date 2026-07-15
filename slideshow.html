@@ -41,6 +41,8 @@
     .firefly{animation:none;opacity:.4}
     .slide{transition:none}
   }
+  .exit{position:fixed;top:16px;right:16px;z-index:5;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;color:rgba(249,245,234,.55);background:rgba(34,48,74,.5);border:1px solid rgba(249,245,234,.3);border-radius:50%;text-decoration:none}
+  .exit:hover,.exit:focus-visible{color:var(--cream);border-color:var(--cream)}
 </style>
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="The Story Garden">
@@ -67,14 +69,16 @@
 <span class="firefly" style="left:82%;top:60%"></span>
 <span class="firefly" style="left:50%;top:78%"></span>
 
+<a class="exit" href="the-evening.html" aria-label="Leave the slideshow" title="Back to the party page">×</a>
+
 <div class="stage" id="stage" role="img" aria-label="Slideshow of the Story Garden shared album"></div>
 
 <p class="brand">The Story Garden · August 15th, 2026
   <span class="add">add your photo from the party page and it lands here</span>
 </p>
 
-<script src="assets/config.js?v=13"></script>
-<script src="assets/backend.js?v=13"></script>
+<script src="assets/config.js?v=14"></script>
+<script src="assets/backend.js?v=14"></script>
 <script>
   var SLIDES=[
     {quote:'A new chapter begins',sub:'Baby Boy White · arriving October 14th'},
@@ -112,7 +116,13 @@
   }
   var reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(!reduced)setInterval(next,6000);
-  document.addEventListener('click',next);
+  document.addEventListener('click',function(e){
+    if(e.target.closest&&e.target.closest('.exit'))return;
+    next();
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape')window.location.href='the-evening.html';
+  });
 
   // live sync: photos guests add on the party page join the loop
   if(window.SG&&SG.enabled){

@@ -425,6 +425,8 @@
   .top-next .tn-next{flex:none;margin-top:0}
   .row-del{border:none;background:none;color:var(--soft);font-size:17px;line-height:1;cursor:pointer;padding:4px 9px;border-radius:999px}
   .row-del:hover{background:#F0E6D6;color:#7A5A2E}
+  .inbox-thumbs{display:flex;gap:8px;margin:8px 0 2px}
+  .inbox-thumbs img{width:58px;height:58px;object-fit:cover;border-radius:6px;border:1px solid var(--hairline);background:var(--blue-wash)}
 
   /* the games */
   .cq-join{margin-bottom:6px;max-width:340px}
