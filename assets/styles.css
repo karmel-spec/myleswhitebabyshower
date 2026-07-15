@@ -141,7 +141,9 @@
   .hair-btn.sel{border-color:var(--butter-deep);background:#FBF0D6;color:var(--navy)}
 
   .shelf-panel{background:var(--paper);border:1px solid var(--hairline);border-radius:6px;padding:38px 28px 0;max-width:760px;margin:0 auto}
-  .shelf{display:flex;align-items:flex-end;justify-content:center;gap:5px;flex-wrap:wrap}
+  .shelf{display:flex;align-items:flex-end;justify-content:flex-start;gap:5px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px;scrollbar-width:thin}
+  .shelf .spine:first-child{margin-left:auto}
+  .shelf .spine:last-child{margin-right:auto}
   .spine{
     writing-mode:vertical-rl;font-family:var(--display);font-size:13px;letter-spacing:.05em;
     padding:13px 4px;width:35px;min-height:152px;
