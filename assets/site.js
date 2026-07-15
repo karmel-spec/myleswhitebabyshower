@@ -132,7 +132,7 @@
         var ok=false;
         var sent=SG.submitRsvp({
           name:name,
-          party:$('r-party').value.trim(),
+          party:null,
           cant_eat:$('r-food').value.trim(),
           address:''
         });
@@ -443,13 +443,11 @@
       var invited=rows.length;
       var coming=0,books=0,ty=0;
       rows.forEach(function(r){
-        if(r.getAttribute('data-status')==='coming'){
-          var n=parseInt(r.querySelector('td.num').textContent,10);
-          if(!isNaN(n))coming+=n;
-        }
-        var book=r.children[3].textContent.trim();
+        if(r.getAttribute('data-status')==='coming')coming++;
+        var book=r.children[2]?r.children[2].textContent.trim():'';
         if(book&&book!=='—')books++;
-        if(r.querySelector('.ty').checked)ty++;
+        var cb=r.querySelector('.ty');
+        if(cb&&cb.checked)ty++;
       });
       $('s-invited').textContent=invited;
       $('s-coming').textContent=coming;
@@ -525,7 +523,6 @@
         sms.textContent='text invite';
         tdName.appendChild(sms);
       }
-      var tdParty=document.createElement('td');tdParty.className='num';tdParty.textContent=g.party||'—';
       var tdStatus=document.createElement('td');
       var sel=document.createElement('select');
       sel.className='st-sel st-'+(g.status||'await');
@@ -550,16 +547,37 @@
       var cb=document.createElement('input');cb.type='checkbox';cb.className='ty';cb.checked=!!g.thank_you;
       cb.setAttribute('aria-label','Thank-you sent to '+g.name);
       tdTy.appendChild(cb);
-      tr.appendChild(tdName);tr.appendChild(tdParty);tr.appendChild(tdStatus);tr.appendChild(tdBook);tr.appendChild(tdAddr);tr.appendChild(tdTy);
+      var tdDel=document.createElement('td');
+      var del=document.createElement('button');
+      del.className='row-del';
+      del.type='button';
+      del.textContent='×';
+      del.setAttribute('aria-label','Remove '+g.name+' from the guest list');
+      del.addEventListener('click',function(){
+        if(!window.confirm('Remove '+g.name+' from the guest list?'))return;
+        var finish=function(){
+          var i=crmGuests.indexOf(g);
+          if(i>-1)crmGuests.splice(i,1);
+          tr.remove();
+          crmStats();
+          renderChips();
+        };
+        if(SG.enabled&&g.id){SG.deleteGuest(g.id).then(finish).catch(function(){})}
+        else finish();
+      });
+      tdDel.appendChild(del);
+      tr.appendChild(tdName);tr.appendChild(tdStatus);tr.appendChild(tdBook);tr.appendChild(tdAddr);tr.appendChild(tdTy);tr.appendChild(tdDel);
       return tr;
     };
     var normName=function(s){return (s||'').toLowerCase().replace(/[^a-z ]/g,' ').replace(/\s+/g,' ').trim()};
+    var isJunk=function(s){return /claude diagnostic|please ignore|\(test\)/i.test(s||'')};
     var loadCrm=function(){
       Promise.all([
         SG.listGuests().catch(function(){return []}),
         SG.listRsvps().catch(function(){return []})
       ]).then(function(res){
-        var guests=res[0],rsvps=res[1];
+        var guests=res[0].filter(function(g){return !isJunk(g.name)});
+        var rsvps=res[1].filter(function(r){return !isJunk(r.name)});
         rsvps.forEach(function(r){
           var rn=normName(r.name);
           if(!rn)return;
@@ -567,11 +585,17 @@
             var gn=normName(g2.name);
             return !!gn&&(gn===rn||(rn.length>3&&gn.indexOf(rn)>-1)||(gn.length>3&&rn.indexOf(gn)>-1));
           });
-          r.matched=!!g;
-          if(g&&g.status!=='coming'){
-            g.status='coming';
-            if(!g.party&&r.party)g.party=r.party;
-            if(SG.enabled&&g.id)SG.updateGuest(g.id,{status:'coming'}).catch(function(){});
+          if(g){
+            r.matched='matched';
+            if(g.status!=='coming'){
+              g.status='coming';
+              if(SG.enabled&&g.id)SG.updateGuest(g.id,{status:'coming'}).catch(function(){});
+            }
+          }else{
+            var ng={name:r.name,phone:null,party:null,status:'coming'};
+            guests.push(ng);
+            r.matched='added';
+            if(SG.enabled)SG.addGuest(ng).then(function(saved){if(saved&&saved.id)ng.id=saved.id}).catch(function(){});
           }
         });
         crmBody.innerHTML='';
@@ -596,7 +620,7 @@
             d.appendChild(p);
             var when=document.createElement('span');when.className='who';
             when.textContent=new Date(r.created_at).toLocaleDateString()
-              +(r.matched?' · marked coming in the guest list':' · not on the guest list yet — add them above');
+              +(r.matched==='added'?' · added to the guest list as coming':' · marked coming in the guest list');
             d.appendChild(when);
             box.appendChild(d);
           });
@@ -625,11 +649,10 @@
       var btn=this;
       var name=$('add-name').value.trim();
       if(!name)return;
-      var g={name:name,party:$('add-party').value.trim()||null,phone:$('add-phone').value.trim()||null,status:$('add-status').value};
+      var g={name:name,party:null,phone:$('add-phone').value.trim()||null,status:$('add-status').value};
       var done=function(saved){
         crmBody.appendChild(guestRow(saved));
         $('add-name').value='';
-        $('add-party').value='';
         $('add-phone').value='';
         crmStats();
         crmGuests.push(saved);
@@ -691,7 +714,7 @@
             return {
               name:pick(r,idx.name),
               phone:pick(r,idx.phone)||null,
-              party:pick(r,idx.party)||null,
+              party:null,
               status:csvStatus(pick(r,idx.status))
             };
           }).filter(function(g){return g.name});
@@ -921,7 +944,10 @@
         $('fm-lock').style.display='none';
         $('fm-game').classList.add('open');
         if(SG.enabled){
-          SG.listFaces().then(function(rows){fmFaces=rows;fmBuild()}).catch(function(){fmBuild()});
+          SG.listFaces().then(function(rows){
+            fmFaces=rows.filter(function(r){return !/claude diagnostic|please ignore|\(test\)/i.test(r.name||'')});
+            fmBuild();
+          }).catch(function(){fmBuild()});
         }else{
           fmFaces=[
             {name:'Abby',baby_url:'assets/photos/baby-abby.jpg',now_url:null},

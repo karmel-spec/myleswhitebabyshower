@@ -166,6 +166,14 @@
         });
       });
     },
+    deleteGuest:function(id){
+      return client().then(function(sb){
+        return sb.from('guests').delete().eq('id',id).then(function(r){
+          if(r.error)throw r.error;
+          return true;
+        });
+      });
+    },
     updateGuest:function(id,fields){
       return client().then(function(sb){
         return sb.from('guests').update(fields).eq('id',id).then(function(r){

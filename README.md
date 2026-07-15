@@ -15,7 +15,7 @@ A multi-page storybook: **`index.html`** is the cover — bunting, balloon clust
   4. `books-for-baby.html` — claim-a-book library shelf (a book instead of a card; all books welcome — new, well worn, and in between; note inside the cover)
   5. `gift-table.html` — Amazon + Target registries, Venmo, and the nursery color palette
   6. `portraits.html` — Before he was famous: his real ultrasounds (14 weeks, anatomy scan, 4D)
-  7. `rsvp.html` — Help us write the first pages (name, party, food notes + two photos for the baby-face game)
+  7. `rsvp.html` — Help us write the first pages (name + food notes + two photos for the baby-face game; one guest per RSVP)
   8. `the-evening.html` — night-of party mode: selfie guest book, advice wall, group album, and all four games (Beau or Abby?, Baby Care Quiz, Whose baby face?, Dressing Derby). Games are date-locked until August 15th; hosts can preview with `?preview` on the URL
   9. `guest-list.html` — hosts-only CRM (statuses, filters, books claimed, thank-you tracking, one-tap text invites)
   10. `epilogue.html` — The story is just beginning… (after October 14th this becomes the family site)

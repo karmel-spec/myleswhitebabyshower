@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Chapter nine · The guest list — The Story Garden</title>
-<link rel="stylesheet" href="assets/styles.css?v=12">
+<link rel="stylesheet" href="assets/styles.css?v=13">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/icon/favicon-32.png">
 <link rel="apple-touch-icon" href="assets/icon/apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
@@ -55,8 +55,8 @@
     </div>
 
     <div class="crm-stats">
-      <div class="stat"><span class="n" id="s-invited">0</span><span class="k">Households invited</span></div>
-      <div class="stat"><span class="n" id="s-coming">0</span><span class="k">People coming</span></div>
+      <div class="stat"><span class="n" id="s-invited">0</span><span class="k">Guests invited</span></div>
+      <div class="stat"><span class="n" id="s-coming">0</span><span class="k">Guests coming</span></div>
       <div class="stat"><span class="n" id="s-books">0</span><span class="k">Books claimed</span></div>
       <div class="stat"><span class="n" id="s-ty">0</span><span class="k">Thank-yous sent</span></div>
     </div>
@@ -71,7 +71,7 @@
     <div class="crm-card">
       <table class="crm" id="crm-table">
         <thead>
-          <tr><th>Guest</th><th>Party of</th><th>Status</th><th>Book claimed</th><th>Address</th><th>Thank-you</th></tr>
+          <tr><th>Guest</th><th>Status</th><th>Book claimed</th><th>Address</th><th>Thank-you</th><th></th></tr>
         </thead>
         <tbody>
         </tbody>
@@ -80,7 +80,6 @@
 
     <div class="crm-add">
       <input type="text" id="add-name" placeholder="Guest name" aria-label="New guest name">
-      <input type="text" id="add-party" class="short" placeholder="party of…" aria-label="Party size — how many people in their group" title="How many people they'll bring, themselves included">
       <input type="text" id="add-phone" placeholder="Cell number" aria-label="Cell number">
       <select id="add-status" aria-label="Status">
         <option value="await">Awaiting reply</option>
@@ -92,9 +91,9 @@
     <div class="crm-import">
       <label class="btn small ghost" for="csv-file" style="cursor:pointer;margin-top:0">Upload a CSV of guests</label>
       <input type="file" id="csv-file" accept=".csv,text/csv,text/plain" style="display:none">
-      <span class="import-note" id="csv-note">columns like name, cell, party — any order; extra columns are ignored</span>
+      <span class="import-note" id="csv-note">columns like name, cell, status — any order; extra columns are ignored</span>
     </div>
-    <p class="crm-note">"Party of" is how many people that guest brings, themselves included — it's what the People-coming total counts. Add a cell number and a <em>text invite</em> link appears under the guest's name; one tap opens Messages with the invitation written and ready to send.</p>
+    <p class="crm-note">Each guest RSVPs for themselves — one invite, one seat. Add a cell number and a <em>text invite</em> link appears under the guest's name; one tap opens Messages with the invitation written and ready to send.</p>
 
     <div class="send-center">
       <h3>Three texts, ready to send</h3>
@@ -138,8 +137,8 @@
 <footer class="colophon">
   a story garden for Baby Boy White · arriving October 14th, 2026
 </footer>
-<script src="assets/config.js?v=12"></script>
-<script src="assets/backend.js?v=12"></script>
-<script src="assets/site.js?v=12"></script>
+<script src="assets/config.js?v=13"></script>
+<script src="assets/backend.js?v=13"></script>
+<script src="assets/site.js?v=13"></script>
 </body>
 </html>
