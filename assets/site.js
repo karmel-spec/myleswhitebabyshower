@@ -495,33 +495,26 @@
       $('s-books').textContent=books;
       $('s-ty').textContent=ty;
     };
+    // each message ends with its link: Messages only renders the big picture
+    // preview (the page's og:image card) when the link sits at the very end
     var SEND_MSGS=(function(){
       var cfg=window.STORY_GARDEN_CONFIG||{};
       var link=cfg.siteUrl||'';
-      var img=function(file){return link?link+'/assets/invites/'+file:''};
       return {
-        invite:{img:img('og-invite.png'),
-          text:'You’re invited! 🌼 A baby shower for Baby Boy White, in honor of Abby White: Saturday, August 15th at 7pm, in Grandma’s garden, Orem.'
-          +(link?' All the details & RSVP: '+link:' RSVP details to follow!')
-          +' Five quick storybook pages, tap Next chapter through to the RSVP (the registry is inside too). 📖'},
-        nudge:{img:img('rsvp-nudge.png'),
-          text:'🌼 A little nudge from the Story Garden: we’re saving you a seat at Baby Boy White’s shower, Saturday, August 15th at 7pm. Kindly RSVP'
-          +(link?': '+link+'/rsvp.html':'! Reply to this text and we’ll pencil you in.')},
-        details:{img:img('two-days.png'),
-          text:'🌙 Two days to go! Baby Boy White’s shower is Saturday at 7pm, Grandma’s garden, Orem. Bring a well-loved children’s book instead of a card.'
-          +(link?' Everything else: '+link:'')}
+        invite:'You’re invited! 🌼 A baby shower for Baby Boy White, in honor of Abby White: Saturday, August 15th at 7pm, in Grandma’s garden, Orem. Five quick storybook pages, tap Next chapter through to the RSVP (the registry is inside too). 📖 Hope you can come!'
+          +(link?' All the details & RSVP: '+link:''),
+        nudge:'🌼 A little nudge from the Story Garden: we’re saving you a seat at Baby Boy White’s shower, Saturday, August 15th at 7pm. Kindly RSVP'
+          +(link?': '+link+'/rsvp.html':'! Reply to this text and we’ll pencil you in.'),
+        details:'🌙 Two days to go! Baby Boy White’s shower is Saturday at 7pm, Grandma’s garden, Orem. Bring a well-loved children’s book instead of a card.'
+          +(link?' Everything else: '+link:'')
       };
     })();
-    // the image link goes first so the text apps show the invite card,
-    // then the hosts' personal line, then the message itself
     var composeMsg=function(kind){
       kind=kind||'invite';
-      var m=SEND_MSGS[kind];
       var inp=document.querySelector('.send-personal[data-kind="'+kind+'"]');
       var parts=[];
-      if(m.img)parts.push(m.img);
       if(inp&&inp.value.trim())parts.push(inp.value.trim());
-      parts.push(m.text);
+      parts.push(SEND_MSGS[kind]);
       return parts.join('\n\n');
     };
     var smsHref=function(phone,kind){
