@@ -105,14 +105,8 @@
       s.textContent=title;
       $('shelf').appendChild(s);
     }
-    // two junk rows from backend testing live in book_claims; RLS blocks
-    // deleting them with the public key, so hide them at render time
-    var junkClaims=['greene house','guess how much i love you'];
     if(SG.enabled){
-      SG.listClaims().then(function(rows){rows.forEach(function(r){
-        if(junkClaims.indexOf((r.title||'').trim().toLowerCase())>-1)return;
-        addSpine(r.title);
-      })}).catch(function(){});
+      SG.listClaims().then(function(rows){rows.forEach(function(r){addSpine(r.title)})}).catch(function(){});
     }
     $('claim-btn').addEventListener('click',function(){
       var btn=this;
