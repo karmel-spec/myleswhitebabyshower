@@ -523,6 +523,18 @@
       return 'sms:+'+digits+'?&body='+encodeURIComponent(composeMsg(kind));
     };
     var crmGuests=[];
+    // tapping any text chip (or a row's "text invite" link) ticks the matching
+    // texted column by itself, so the table tracks itself
+    var KIND_FIELD={invite:'invite_texted',nudge:'nudge_texted',details:'twoday_texted'};
+    var markTexted=function(g,field){
+      if(!field||g[field])return;
+      g[field]=true;
+      if(SG.enabled&&g.id){var u={};u[field]=true;SG.updateGuest(g.id,u).catch(function(){})}
+      if(g.id){
+        var tr=crmBody.querySelector('tr[data-id="'+g.id+'"]');
+        if(tr){var c=tr.querySelector('.txcb[data-field="'+field+'"]');if(c)c.checked=true;}
+      }
+    };
     var renderChips=function(){
       var FILTERS={
         invite:function(g){return !!g.phone},
@@ -552,7 +564,7 @@
           a.href=smsHref(g.phone,kind);
           a.textContent=g.name;
           // rebuild at tap time so a personal line typed after render still rides along
-          a.addEventListener('click',function(){this.href=smsHref(g.phone,kind)});
+          a.addEventListener('click',function(){this.href=smsHref(g.phone,kind);markTexted(g,KIND_FIELD[kind])});
           box.appendChild(a);
         });
       });
@@ -579,6 +591,7 @@
         sms.className='sms-link';
         sms.href=smsHref(g.phone);
         sms.textContent='text invite';
+        sms.addEventListener('click',function(){this.href=smsHref(g.phone);markTexted(g,'invite_texted')});
         tdName.appendChild(sms);
       }
       var tdStatus=document.createElement('td');
@@ -600,7 +613,18 @@
       });
       tdStatus.appendChild(sel);
       var tdBook=document.createElement('td');tdBook.textContent=g.book||'—';
-      var tdAddr=document.createElement('td');tdAddr.textContent=g.address?'on file':'—';
+      var textedCell=function(field,label){
+        var td=document.createElement('td');
+        var c=document.createElement('input');c.type='checkbox';c.className='txcb';
+        c.setAttribute('data-field',field);
+        c.checked=!!g[field];
+        c.setAttribute('aria-label',label+' — '+g.name);
+        td.appendChild(c);
+        return td;
+      };
+      var tdInv=textedCell('invite_texted','Invite texted');
+      var tdNud=textedCell('nudge_texted','Reminder nudge texted');
+      var td2d=textedCell('twoday_texted','Two-day reminder texted');
       var tdTy=document.createElement('td');
       var cb=document.createElement('input');cb.type='checkbox';cb.className='ty';cb.checked=!!g.thank_you;
       cb.setAttribute('aria-label','Thank-you sent to '+g.name);
@@ -624,7 +648,7 @@
         else finish();
       });
       tdDel.appendChild(del);
-      tr.appendChild(tdName);tr.appendChild(tdStatus);tr.appendChild(tdBook);tr.appendChild(tdAddr);tr.appendChild(tdTy);tr.appendChild(tdDel);
+      tr.appendChild(tdName);tr.appendChild(tdStatus);tr.appendChild(tdBook);tr.appendChild(tdInv);tr.appendChild(tdNud);tr.appendChild(td2d);tr.appendChild(tdTy);tr.appendChild(tdDel);
       return tr;
     };
     var normName=function(s){return (s||'').toLowerCase().replace(/[^a-z ]/g,' ').replace(/\s+/g,' ').trim()};
@@ -707,11 +731,18 @@
     };
     crmStats();
     crmBody.addEventListener('change',function(e){
-      if(!e.target.classList.contains('ty'))return;
-      crmStats();
-      var tr=e.target.closest('tr');
-      var id=tr.getAttribute('data-id');
-      if(SG.enabled&&id)SG.updateGuest(id,{thank_you:e.target.checked}).catch(function(){});
+      var t=e.target,tr=t.closest('tr');
+      var id=tr?tr.getAttribute('data-id'):null;
+      if(t.classList.contains('ty')){
+        crmStats();
+        if(SG.enabled&&id)SG.updateGuest(id,{thank_you:t.checked}).catch(function(){});
+      }else if(t.classList.contains('txcb')){
+        var field=t.getAttribute('data-field');
+        var g=crmGuests.find(function(x){return x.id&&String(x.id)===id});
+        if(g)g[field]=t.checked;
+        var u={};u[field]=t.checked;
+        if(SG.enabled&&id)SG.updateGuest(id,u).catch(function(){});
+      }
     });
     document.querySelectorAll('.filter-btn').forEach(function(btn){
       btn.addEventListener('click',function(){
