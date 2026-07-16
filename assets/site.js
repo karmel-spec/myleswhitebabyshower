@@ -101,7 +101,7 @@
   if($('claim-btn')){
     function addSpine(title){
       var s=document.createElement('div');
-      s.className='spine s-sage claimed';
+      s.className='spine claimed';
       s.textContent=title;
       $('shelf').appendChild(s);
     }

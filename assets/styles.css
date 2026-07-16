@@ -172,7 +172,7 @@
   .spine.s-wood{background:var(--wood-deep)}
   .spine.s-tall{min-height:172px}
   .spine.s-short{min-height:138px}
-  .spine.claimed{opacity:.45}
+  .spine.claimed{background:var(--leaf);opacity:1}
   .shelf-board{height:12px;background:var(--wood);border:1px solid rgba(138,107,66,.6);margin:0 -28px;border-radius:0 0 5px 5px}
   .shelf-caption{text-align:center;margin-top:16px;font-size:14.5px;color:var(--soft);font-style:italic}
   .claim-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:30px;align-items:center}
