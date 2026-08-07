@@ -497,7 +497,7 @@
       return {
         invite:'You’re invited! 🌼 A baby shower for Baby Boy White, in honor of Abby White: Saturday, August 15th at 7pm, in Grandma’s garden, Orem. Five quick storybook pages, tap Next chapter through to the RSVP (the registry is inside too). 📖 Hope you can come!'
           +(link?' All the details & RSVP: '+link:''),
-        nudge:'🌼 A little nudge from the Story Garden: we’re saving you a seat at Baby Boy White’s shower, Saturday, August 15th at 7pm. Kindly RSVP'
+        nudge:'🌼 A little nudge from the “Story Garden Baby Boy Shower for Abby White”: we’re saving you a seat for Saturday, August 15th at 7pm. Kindly RSVP'
           +(link?': '+link+'/rsvp.html':'! Reply to this text and we’ll pencil you in.'),
         details:'🌙 Two days to go! Baby Boy White’s shower is Saturday at 7pm, Grandma’s garden, Orem. Bring a well-loved children’s book instead of a card.'
           +(link?' Everything else: '+link:'')
