@@ -33,9 +33,18 @@
   .url{font-family:var(--display);font-size:15px;letter-spacing:.2em;text-transform:uppercase;color:var(--wood-deep);margin:0}
   .daisy{margin-top:22px}
   @media print{
+    @page{size:letter;margin:8mm}
     body{background:#fff}
     .note{display:none}
-    .poster{border-width:4px;margin:0 auto;max-width:none;min-height:96vh}
+    .poster{border-width:4px;margin:0 auto;max-width:none;min-height:auto;padding:34px 36px 24px}
+    h1{font-size:46px}
+    .pull{margin-bottom:18px}
+    .qr-frame img{width:250px;height:250px}
+    .scan{font-size:24px;margin:12px 0 16px}
+    .games{padding:12px 6px;margin-bottom:14px}
+    .games p{font-size:14px;line-height:1.9}
+    .why{font-size:13px;margin-bottom:12px}
+    .daisy{margin-top:12px}
   }
 </style>
 </head>
