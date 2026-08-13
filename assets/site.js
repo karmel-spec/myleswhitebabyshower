@@ -636,7 +636,7 @@
         nudge:'🌼 A little nudge from the “Story Garden Baby Boy Shower for Abby White”: we’re saving you a seat for Saturday, August 15th at 7pm. Kindly RSVP'
           +(link?': '+link+'/rsvp.html':'! Reply to this text and we’ll pencil you in.'),
         details:'🌙 Two days to go! Baby Boy White’s shower is Saturday at 7pm, Grandma’s garden, Orem. Bring a well-loved children’s book instead of a card.'
-          +(link?' Everything else: '+link:'')
+          +(link?' Everything else: '+link+'/two-days.html':'')
       };
     })();
     var composeMsg=function(kind){
