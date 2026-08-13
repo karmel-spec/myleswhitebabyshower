@@ -147,39 +147,69 @@
 
   // --- rsvp ---------------------------------------------------------------
   if($('rsvp-btn')){
-    var faceBaby=null,faceNow=null;
+    var faceBaby=null,faceNow=null,att='';
     if($('face-baby')){
       pickFile($('face-baby'),function(f){faceBaby=f;$('face-baby').classList.add('picked')});
       pickFile($('face-now'),function(f){faceNow=f;$('face-now').classList.add('picked')});
     }
+    var setAtt=function(v){
+      att=v;
+      $('att-yes').classList.toggle('picked',v==='yes');
+      $('att-no').classList.toggle('picked',v==='no');
+      $('rsvp-more').hidden=(v==='no');
+      $('att-need').style.display='none';
+    };
+    $('att-yes').addEventListener('click',function(){setAtt('yes')});
+    $('att-no').addEventListener('click',function(){setAtt('no')});
     var markSent=function(btn){
       btn.disabled=true;
       btn.textContent='Sent 🌼';
       btn.classList.add('sent');
     };
+    var showNext=function(){
+      $('rsvp-next-lede').textContent=(att==='no')
+        ?'We’ll miss you! If you’d like to send a little something his way, the gift table has the registry and Venmo —'
+        :'The story doesn’t stop here —';
+      $('rsvp-next').hidden=false;
+    };
     $('rsvp-btn').addEventListener('click',function(){
       var btn=this;
       if(btn.classList.contains('sent'))return;
+      var name=$('r-name').value.trim();
+      if(!name){$('r-name').focus();return}
+      if(!att){$('att-need').style.display='';return}
       if(SG.enabled){
-        var name=$('r-name').value.trim();
-        if(!name){$('r-name').focus();return}
         busy(btn,true,'Sending…');
         var ok=false;
-        var sent=SG.submitRsvp({
+        var row={
           name:name,
-          party:null,
-          cant_eat:$('r-food').value.trim(),
-          address:''
+          party:att==='no'?null:$('r-party').value.trim()||null,
+          cant_eat:att==='no'?'':$('r-food').value.trim(),
+          address:'',
+          attending:att
+        };
+        // if the attending column hasn't been added yet, retry without it,
+        // carrying the regret in the party field so no reply is ever lost
+        var sent=SG.submitRsvp(row).catch(function(e){
+          if(e&&(e.code==='PGRST204'||/attending/.test(e.message||''))){
+            delete row.attending;
+            if(att==='no')row.party='sadly can’t come';
+            return SG.submitRsvp(row);
+          }
+          throw e;
         });
-        if(faceBaby&&faceNow){
+        if(att==='yes'&&faceBaby&&faceNow){
           sent=sent.then(function(){return SG.addFace(name,faceBaby,faceNow)});
         }
         sent.then(function(){
           ok=true;
-          $('rsvp-confirm').textContent=(faceBaby&&faceNow)
-            ?'you are part of our story now, and you’re in the baby-face game'
-            :'you are part of our story now';
+          $('rsvp-confirm').textContent=(att==='no')
+            ?'thank you for telling us — you’ll be missed'
+            :(faceBaby&&faceNow)
+              ?'you are part of our story now, and you’re in the baby-face game'
+              :'you are part of our story now';
           $('rsvp-confirm').classList.add('show');
+          showNext();
         }).catch(function(){oops($('rsvp-confirm'))}).then(function(){
           busy(btn,false);
           if(ok)markSent(btn);
@@ -187,6 +217,7 @@
         return;
       }
       $('rsvp-confirm').classList.add('show');
+      showNext();
       markSent(btn);
     });
   }
@@ -662,18 +693,20 @@
         rsvps.forEach(function(r){
           var rn=normName(r.name);
           if(!rn)return;
+          r.regret=(r.attending==='no'||/sadly can.t come/i.test(r.party||''));
+          var want=r.regret?'regret':'coming';
           var g=guests.find(function(g2){
             var gn=normName(g2.name);
             return !!gn&&(gn===rn||(rn.length>3&&gn.indexOf(rn)>-1)||(gn.length>3&&rn.indexOf(gn)>-1));
           });
           if(g){
             r.matched='matched';
-            if(g.status!=='coming'){
-              g.status='coming';
-              if(SG.enabled&&g.id)SG.updateGuest(g.id,{status:'coming'}).catch(function(){});
+            if(g.status!==want){
+              g.status=want;
+              if(SG.enabled&&g.id)SG.updateGuest(g.id,{status:want}).catch(function(){});
             }
           }else{
-            var ng={name:r.name,phone:null,party:null,status:'coming'};
+            var ng={name:r.name,phone:null,party:null,status:want};
             guests.push(ng);
             r.matched='added';
             if(SG.enabled)SG.addGuest(ng).then(function(saved){if(saved&&saved.id)ng.id=saved.id}).catch(function(){});
@@ -694,7 +727,8 @@
             var strong=document.createElement('strong');strong.textContent=r.name;
             d.appendChild(strong);
             var bits=[];
-            if(r.party)bits.push(r.party);
+            if(r.regret)bits.push('sadly can’t come 💌');
+            if(r.party&&!/sadly can.t come/i.test(r.party))bits.push(r.party);
             if(r.cant_eat)bits.push('can’t eat: '+r.cant_eat);
             if(r.address)bits.push('address on file');
             var p=document.createElement('p');p.textContent=bits.join(' · ')||'no details';

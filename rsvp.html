@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Chapter four · Help us write the first pages — The Story Garden</title>
-<link rel="stylesheet" href="assets/styles.css?v=20">
+<link rel="stylesheet" href="assets/styles.css?v=24">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/icon/favicon-32.png">
 <link rel="apple-touch-icon" href="assets/icon/apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
@@ -43,18 +43,38 @@
       <div class="inner">
         <label for="r-name" style="margin-top:0">Your name</label>
         <input type="text" id="r-name" placeholder="Margaret Ellison">
-        <label for="r-food">Anything you can't eat</label>
-        <input type="text" id="r-food" placeholder="Walnuts, sadly">
 
-        <label>Two photos for a party game</label>
-        <p class="face-note">At the shower we're playing <em>Whose baby face?</em>, where everyone guesses which baby grew into which guest. Add a photo of you as a baby and one of you now, and you're in the game.</p>
-        <div class="face-drops">
-          <div class="face-drop" id="face-baby" role="button" tabindex="0">you, as a baby</div>
-          <div class="face-drop" id="face-now" role="button" tabindex="0">you, these days</div>
+        <label>Will you be there?</label>
+        <div class="att-row">
+          <button type="button" class="att-btn" id="att-yes">🌼 Wouldn't miss it</button>
+          <button type="button" class="att-btn" id="att-no">Sadly, can't make it</button>
+        </div>
+        <p class="face-note" id="att-need" style="display:none">just tap one of the two, so we know whether to set a place for you</p>
+
+        <div id="rsvp-more">
+          <label for="r-party">Who's coming with you</label>
+          <input type="text" id="r-party" placeholder="Just me, or me and my two littles">
+          <label for="r-food">Anything you can't eat</label>
+          <input type="text" id="r-food" placeholder="Walnuts, sadly">
+
+          <label>Two photos for a party game <span class="opt-tag">totally optional</span></label>
+          <p class="face-note">At the shower we're playing <em>Whose baby face?</em>, where everyone guesses which baby grew into which guest. Add a photo of you as a baby and one of you now, and you're in the game. Can't dig one up right now? No problem, send your reply anyway — photos can join any time before the party.</p>
+          <div class="face-drops">
+            <div class="face-drop" id="face-baby" role="button" tabindex="0">you, as a baby</div>
+            <div class="face-drop" id="face-now" role="button" tabindex="0">you, these days</div>
+          </div>
         </div>
 
         <button class="btn" id="rsvp-btn">Send my reply</button>
         <p class="confirm whisper" id="rsvp-confirm" style="text-align:center">you are part of our story now</p>
+
+        <div id="rsvp-next" hidden>
+          <p class="next-lede" id="rsvp-next-lede">The story doesn't stop here —</p>
+          <div class="next-row">
+            <a class="btn ghost" href="gift-table.html">The gift table · registry &amp; Venmo</a>
+            <a class="btn ghost" href="books-for-baby.html">Books for Baby</a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -71,6 +91,6 @@
 </footer>
 <script src="assets/config.js?v=18"></script>
 <script src="assets/backend.js?v=18"></script>
-<script src="assets/site.js?v=23"></script>
+<script src="assets/site.js?v=24"></script>
 </body>
 </html>
