@@ -1105,53 +1105,59 @@
         ol.appendChild(li);
       }
     };
+    var fmShuffle=function(arr){
+      var a=arr.slice();
+      for(var i=a.length-1;i>0;i--){
+        var j=Math.floor(Math.random()*(i+1));
+        var tmp=a[i];a[i]=a[j];a[j]=tmp;
+      }
+      return a;
+    };
     var fmBuild=function(){
       var grid=$('fm-grid');
       grid.innerHTML='';
-      if(!fmFaces.length){
+      // matching by face needs both photos; a guest with only one can't play
+      var playable=fmFaces.filter(function(f){return f.baby_url&&f.now_url});
+      if(!playable.length){
         var p=document.createElement('p');
         p.className='fm-empty';
-        p.textContent='No baby faces yet. They arrive as guests RSVP with their two photos.';
+        p.textContent='No baby faces yet. They arrive as guests RSVP with both photos.';
         grid.appendChild(p);
         return;
       }
-      var names=fmFaces.map(function(f){return f.name}).sort();
-      // reference gallery of grown-up faces
-      var ref=document.createElement('div');
-      ref.className='fm-ref';
-      fmFaces.slice().sort(function(a,b){return a.name.localeCompare(b.name)}).forEach(function(f){
-        if(!f.now_url)return;
-        var fig=document.createElement('figure');
-        var im=document.createElement('img');im.src=f.now_url;im.alt=f.name+', these days';
-        var cap=document.createElement('figcaption');cap.textContent=f.name;
-        fig.appendChild(im);fig.appendChild(cap);
-        ref.appendChild(fig);
-      });
-      if(ref.children.length)grid.appendChild(ref);
-      // shuffled baby cards
-      var order=fmFaces.slice();
-      for(var i=order.length-1;i>0;i--){
-        var j=Math.floor(Math.random()*(i+1));
-        var tmp=order[i];order[i]=order[j];order[j]=tmp;
-      }
-      order.forEach(function(f){
+      fmShuffle(playable).forEach(function(f){
         var card=document.createElement('div');
         card.className='fm-card';
         card.setAttribute('data-name',f.name);
-        var im=document.createElement('img');
-        im.src=f.baby_url;im.alt='a mystery baby';
-        card.appendChild(im);
-        var sel=document.createElement('select');
-        sel.setAttribute('aria-label','Who is this baby?');
-        var opt=document.createElement('option');
-        opt.value='';opt.textContent='who is this baby?';
-        sel.appendChild(opt);
-        names.forEach(function(n){
-          var o=document.createElement('option');
-          o.value=n;o.textContent=n;
-          sel.appendChild(o);
+        var baby=document.createElement('div');
+        baby.className='fm-baby';
+        var bim=document.createElement('img');
+        bim.src=f.baby_url;bim.alt='a mystery baby';
+        baby.appendChild(bim);
+        card.appendChild(baby);
+        var prompt=document.createElement('p');
+        prompt.className='fm-prompt';
+        prompt.textContent='Tap their grown-up face →';
+        card.appendChild(prompt);
+        var strip=document.createElement('div');
+        strip.className='fm-strip';
+        fmShuffle(playable).forEach(function(opt){
+          var btn=document.createElement('button');
+          btn.type='button';
+          btn.className='fm-opt';
+          btn.setAttribute('data-name',opt.name);
+          btn.setAttribute('aria-label',opt.name);
+          var oim=document.createElement('img');
+          oim.src=opt.now_url;oim.alt='';oim.setAttribute('aria-hidden','true');
+          btn.appendChild(oim);
+          btn.addEventListener('click',function(){
+            strip.querySelectorAll('.fm-opt').forEach(function(b){b.classList.remove('picked')});
+            btn.classList.add('picked');
+            card.setAttribute('data-picked',opt.name);
+          });
+          strip.appendChild(btn);
         });
-        card.appendChild(sel);
+        card.appendChild(strip);
         grid.appendChild(card);
       });
     };
@@ -1188,9 +1194,14 @@
       if(!name){$('fm-name').focus();return}
       var cards=Array.from(document.querySelectorAll('.fm-card'));
       if(!cards.length)return;
+      if(cards.some(function(c){return !c.getAttribute('data-picked')})){
+        $('fm-result').textContent='tap a face for every baby first';
+        $('fm-result').classList.add('show');
+        return;
+      }
       var score=0;
       cards.forEach(function(c){
-        if(c.querySelector('select').value===c.getAttribute('data-name'))score++;
+        if(c.getAttribute('data-picked')===c.getAttribute('data-name'))score++;
       });
       var finish=function(){
         fmScores.push({name:name,score:score,total:cards.length});
