@@ -990,7 +990,27 @@
       {q:'Baby bathwater should be right about…',opts:['90 degrees','100 degrees','110 degrees'],ans:1},
       {q:'On day one, a newborn’s tummy is the size of…',opts:['A cherry','An orange','A cantaloupe'],ans:0},
       {q:'That first true smile usually arrives around…',opts:['Day 3','6 to 8 weeks','6 months'],ans:1},
-      {q:'Which of these can newborns NOT do at first?',opts:['Sneeze','Hiccup','Cry real tears'],ans:2}
+      {q:'Which of these can newborns NOT do at first?',opts:['Sneeze','Hiccup','Cry real tears'],ans:2},
+      {q:'How much might a newborn cry in an average day, totally normal?',opts:['Under 30 minutes','1 to 3 hours','5+ hours, every day'],ans:1},
+      {q:'A safe way to burp a baby is…',opts:['Over the shoulder with gentle back pats','Shake gently side to side','Lay him flat and wait'],ans:0},
+      {q:'Most babies start rolling over around…',opts:['2 to 4 months','Within the first week','Not until their first birthday'],ans:0},
+      {q:'A newborn can typically focus his eyes about as far as…',opts:['8 to 12 inches — about your face when nursing','Clear across the room','Only in bright light'],ans:0},
+      {q:'Babies usually start sleeping a longer 5–6 hour stretch around…',opts:['2 weeks old','3 to 6 months','Not until preschool'],ans:1},
+      {q:'Tummy time is mainly good for…',opts:['Building neck and shoulder strength','Helping digestion after a bottle','Making him cry it out'],ans:0},
+      {q:'Most babies get their first tooth around…',opts:['6 months','Birth — some are born with one!','Age 2'],ans:0},
+      {q:'A newborn should ride in the car seat…',opts:['Rear-facing','Forward-facing','Either way, doesn’t matter'],ans:0},
+      {q:'Cradle cap is…',opts:['Harmless flaky, crusty patches on the scalp','A type of baby hat','A sign of a milk allergy'],ans:0},
+      {q:'Roughly how many diaper changes happen in a baby’s whole first year?',opts:['Around 150','2,000 to 3,000','Just over 500'],ans:1},
+      {q:'Most babies can hold their head up steadily around…',opts:['4 months','Day one','Not until they’re walking'],ans:0},
+      {q:'A sound babies already recognize from before they’re born is…',opts:['Their mother’s voice','The vacuum cleaner','Classical music, specifically'],ans:0},
+      {q:'Pediatricians usually recommend starting solid foods around…',opts:['6 months','2 weeks old','Age 1'],ans:0},
+      {q:'The “witching hour” new parents talk about is…',opts:['A fussy crying stretch, often in the evening','A myth — babies are calm all day','The exact minute he was born'],ans:0},
+      {q:'Babies often hit their first big growth spurt around…',opts:['2 to 3 weeks old','Their first birthday','They grow at a steady rate, no spurts'],ans:0},
+      {q:'A fontanelle is…',opts:['A soft spot where the skull bones haven’t fused yet','A type of baby formula','A newborn reflex'],ans:0},
+      {q:'Most babies start babbling — “ba-ba,” “da-da” — around…',opts:['6 months','The first week','Age 2'],ans:0},
+      {q:'In the first year, a baby’s head…',opts:['Grows quite a lot — nearly by half again','Barely changes size','Gets smaller as the body catches up'],ans:0},
+      {q:'Today’s recommended umbilical cord care is…',opts:['Just keep it clean and dry — no alcohol needed','Scrub it daily with rubbing alcohol','Cover it tightly with a bandage'],ans:0},
+      {q:'The “rooting reflex” is when a baby…',opts:['Turns toward a touch on the cheek, searching for a nipple or bottle','Digs at the ground like a puppy','Only shows up at walking age'],ans:0}
     ];
     var cqPicks=CARE_Q.map(function(){return -1});
     var cqRevealed=CARE_Q.map(function(){return false});
@@ -1045,16 +1065,21 @@
         CARE_Q.forEach(function(item,qi){
           if(cqRevealed[qi]&&e.answers[qi]===item.ans)s++;
         });
-        return {name:e.name,score:s};
-      }).sort(function(a,b){return b.score-a.score||a.name.localeCompare(b.name)});
+        return {name:e.name,score:s,created_at:e.created_at};
+      // ties go to whoever locked in their answers first — created_at is
+      // when they submitted, so this rewards the earliest 100%, not luck
+      }).sort(function(a,b){return b.score-a.score||new Date(a.created_at)-new Date(b.created_at)});
       var ol=$('cq-board');
       ol.innerHTML='';
+      var topScore=scored.length?scored[0].score:null;
       scored.forEach(function(e,i){
         var li=document.createElement('li');
         if(i===0&&shown&&e.score>0)li.className='lead';
         var nm=document.createElement('span');nm.className='b-name';nm.textContent=e.name;
         var sc=document.createElement('span');sc.className='b-score';
-        sc.textContent=e.score+' right'+(i===0&&shown&&e.score>0?' · in the lead':'');
+        var tied=shown&&e.score===topScore&&e.score>0;
+        var t=tied&&e.created_at?new Date(e.created_at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):'';
+        sc.textContent=e.score+' right'+(i===0&&shown&&e.score>0?' · in the lead':'')+(t?' · '+t:'');
         li.appendChild(nm);li.appendChild(sc);
         ol.appendChild(li);
       });

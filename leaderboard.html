@@ -14,14 +14,35 @@
     --body:"Seravek","Avenir Next",Avenir,"Gill Sans",sans-serif;
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--navy-deep);color:var(--paper);font-family:var(--body);min-height:100vh}
-  header{text-align:center;padding:40px 20px 8px}
-  header .eyebrow{font-family:var(--display);font-size:15px;letter-spacing:.4em;text-transform:uppercase;color:var(--dusty);margin:0}
-  header h1{font-family:var(--script);font-weight:400;font-size:clamp(44px,6vw,72px);color:var(--butter);margin:10px 0 0}
-  header .live{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--dusty);margin:12px 0 0}
-  header .live::before{content:'';display:inline-block;width:9px;height:9px;border-radius:50%;background:#7FC383;margin-right:8px;animation:pulse 2s infinite}
+  body{margin:0;background:var(--navy-deep);color:var(--paper);font-family:var(--body);min-height:100vh;padding-bottom:64px}
+  header.top-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap-reverse;gap:20px;padding:34px 30px 8px;max-width:1500px;margin:0 auto}
+  .brand-block{text-align:center;flex:1 1 320px}
+  .brand-block .eyebrow{font-family:var(--display);font-size:15px;letter-spacing:.4em;text-transform:uppercase;color:var(--dusty);margin:0}
+  .brand-block h1{font-family:var(--script);font-weight:400;font-size:clamp(40px,5.4vw,68px);color:var(--butter);margin:10px 0 0}
+  .brand-block .live{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--dusty);margin:12px 0 0}
+  .brand-block .live::before{content:'';display:inline-block;width:9px;height:9px;border-radius:50%;background:#7FC383;margin-right:8px;animation:pulse 2s infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-  .boards{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:26px;max-width:1500px;margin:30px auto 50px;padding:0 30px}
+  .mini-slideshow{flex:0 0 auto;text-align:center}
+  .mini-label{font-family:var(--display);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dusty);margin:0 0 8px}
+  /* the slideshow is built for a TV, so render it at real size in the
+     iframe and shrink the whole picture with a CSS transform — that keeps
+     its proportions correct instead of reflowing into illegible mush */
+  .mini-frame{width:280px;height:158px;overflow:hidden;border:1px solid rgba(233,196,106,.4);border-radius:10px;background:var(--navy);position:relative}
+  .mini-frame iframe{position:absolute;top:0;left:0;width:1280px;height:720px;border:0;transform:scale(.21875);transform-origin:top left;pointer-events:none}
+  @media (max-width:640px){
+    .mini-frame{width:220px;height:124px}
+    .mini-frame iframe{transform:scale(.171875)}
+  }
+
+  /* the spotlight: a rotating hero so the biggest news reads from across the yard */
+  .spotlight{max-width:820px;margin:20px auto 10px;padding:30px 34px;text-align:center;background:rgba(255,253,246,.06);border:1px solid rgba(233,196,106,.35);border-radius:16px}
+  .sp-icon{font-size:40px;line-height:1;margin-bottom:10px;transition:opacity .35s ease}
+  .sp-icon img{width:76px;height:76px;border-radius:50%;object-fit:cover;object-position:center 22%;border:3px solid var(--butter)}
+  .sp-title{font-family:var(--display);font-size:clamp(24px,3.4vw,36px);color:var(--paper);transition:opacity .35s ease}
+  .sp-sub{font-family:var(--script);font-size:clamp(18px,2vw,24px);color:var(--leaf);margin-top:6px;transition:opacity .35s ease}
+  .spotlight.fade .sp-icon,.spotlight.fade .sp-title,.spotlight.fade .sp-sub{opacity:0}
+
+  .boards{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:26px;max-width:1500px;margin:30px auto 30px;padding:0 30px}
   .panel{background:rgba(255,253,246,.05);border:1px solid rgba(255,253,246,.22);border-radius:10px;padding:26px 26px 20px}
   .panel h2{font-family:var(--display);font-size:clamp(19px,1.8vw,25px);letter-spacing:.2em;text-transform:uppercase;color:var(--paper);margin:0 0 4px;text-align:center}
   .panel .sub{font-family:var(--script);font-size:clamp(20px,1.8vw,26px);color:var(--leaf);text-align:center;margin:0 0 18px}
@@ -51,17 +72,57 @@
   .contrib img,.contrib .mono{width:64px;height:64px;border-radius:50%;object-fit:cover;object-position:center 22%;border:2px solid rgba(255,253,246,.25)}
   .contrib .mono{display:flex;align-items:center;justify-content:center;background:rgba(255,253,246,.08);font-family:var(--display);font-size:22px;color:var(--butter)}
   .contrib .cn{font-size:11.5px;color:#C3CCDD;text-align:center;line-height:1.25;max-width:74px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  footer{text-align:center;color:var(--dusty);font-size:13px;letter-spacing:.15em;text-transform:uppercase;padding-bottom:30px}
+
+  /* the combined most-active-guest board gets two-line rows */
+  .active-list li{display:flex;flex-direction:column;align-items:stretch;gap:2px;padding:10px 6px}
+  .active-list .al-top{display:flex;align-items:baseline;gap:14px}
+  .active-list .al-breakdown{font-size:12.5px;color:var(--dusty);padding-left:calc(1.4em + 14px)}
+  .active-list li.lead .al-breakdown{color:#D9C58A}
+
+  footer{text-align:center;color:var(--dusty);font-size:13px;letter-spacing:.15em;text-transform:uppercase;padding-bottom:10px}
+
+  /* the recent-activity ticker, pinned to the bottom of the screen */
+  .ticker{position:fixed;left:0;right:0;bottom:0;background:rgba(15,21,34,.94);backdrop-filter:blur(3px);border-top:1px solid rgba(255,253,246,.18);padding:13px 26px;display:flex;align-items:center;gap:12px;z-index:40}
+  .ticker .dot{width:8px;height:8px;border-radius:50%;background:#7FC383;flex:0 0 auto;animation:pulse 2s infinite}
+  .ticker-text{font-family:var(--display);font-size:clamp(14px,1.6vw,18px);letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:opacity .3s ease}
+  .ticker-text.fade{opacity:0}
+
+  /* milestone celebration overlay */
+  #celebrate-layer{position:fixed;inset:0;pointer-events:none;z-index:80;overflow:hidden}
+  .confetti{position:absolute;top:-30px;font-size:20px;animation:conf-fall 3.4s linear forwards}
+  @keyframes conf-fall{to{transform:translateY(112vh) rotate(360deg);opacity:.15}}
+  .celebrate-banner{position:fixed;top:16%;left:50%;transform:translate(-50%,-16px) scale(.85);opacity:0;background:rgba(20,28,44,.96);border:1px solid rgba(233,196,106,.5);border-radius:16px;padding:26px 40px;text-align:center;font-family:var(--display);font-size:clamp(22px,3.2vw,34px);color:var(--butter);z-index:90;transition:opacity .4s ease,transform .4s ease;box-shadow:0 14px 50px rgba(0,0,0,.45);pointer-events:none}
+  .celebrate-banner.show{opacity:1;transform:translate(-50%,0) scale(1)}
+  .celebrate-banner .cb-sub{display:block;font-family:var(--script);font-size:.62em;color:var(--leaf);margin-top:8px}
 </style>
 </head>
 <body>
-<header>
-  <p class="eyebrow">The Story Garden</p>
-  <h1>tonight&#8217;s champions</h1>
-  <p class="live">live — updates on its own</p>
+<header class="top-row">
+  <div class="brand-block">
+    <p class="eyebrow">The Story Garden</p>
+    <h1>tonight&#8217;s champions</h1>
+    <p class="live">live updates</p>
+  </div>
+  <div class="mini-slideshow">
+    <p class="mini-label">on the big screen</p>
+    <div class="mini-frame">
+      <iframe src="slideshow.html" title="Live slideshow"></iframe>
+    </div>
+  </div>
 </header>
 
+<div class="spotlight" id="spotlight">
+  <div class="sp-icon" id="sp-icon">🌼</div>
+  <div class="sp-title" id="sp-title">Welcome to the party</div>
+  <div class="sp-sub" id="sp-sub">the leaderboards are warming up&#8230;</div>
+</div>
+
 <div class="boards">
+  <div class="panel wide">
+    <h2>Most active guest</h2>
+    <p class="sub">top ten, all night long</p>
+    <ol id="active-lb" class="active-list"></ol>
+  </div>
   <div class="panel">
     <h2>Whose baby face?</h2>
     <p class="sub">match the babies to the guests</p>
@@ -74,23 +135,23 @@
     <ol id="cq-lb"></ol>
   </div>
   <div class="panel">
-    <h2>The Dressing Derby</h2>
-    <p class="sub">fastest onesie in the west</p>
+    <h2>The Baby Dressing Derby</h2>
+    <p class="sub">fastest onesie in the west wins</p>
     <ol id="dd-lb"></ol>
   </div>
   <div class="panel">
-    <h2>The group album</h2>
+    <h2>Our Group Photo Album</h2>
     <p class="sub">most photos shared wins</p>
     <ol id="al-lb"></ol>
   </div>
   <div class="panel">
-    <h2>Messages for him</h2>
+    <h2>Baby Timecapsule Messages</h2>
     <p class="sub" id="tc-sub">so far tonight</p>
     <div class="contrib-row" id="tc-contrib"></div>
   </div>
   <div class="panel wide">
-    <h2>His guesses, so far</h2>
-    <p class="sub">what the room thinks</p>
+    <h2>Baby Predictions&#8230; So Far</h2>
+    <p class="sub">what the baby fans think</p>
     <div class="stat-rows">
       <div class="stat-group">
         <h4 id="hair-count">Hair</h4>
@@ -112,11 +173,19 @@
 
 <footer>babywhiteshower.com</footer>
 
+<div class="ticker">
+  <span class="dot"></span>
+  <span class="ticker-text" id="ticker-text">the party is just getting started&#8230;</span>
+</div>
+<div id="celebrate-layer" aria-hidden="true"></div>
+<div class="celebrate-banner" id="celebrate-banner"></div>
+
 <script src="assets/config.js?v=26"></script>
 <script src="assets/backend.js?v=33"></script>
 <script>
 (function(){
-  var CARE_ANS=[1,0,2,1,1,0,1,2];
+  // must stay in the same order as CARE_Q in assets/site.js
+  var CARE_ANS=[1,0,2,1,1,0,1,2,1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0];
   var MAXROWS=10;
   var isJunk=function(s){return /claude diagnostic|please ignore|\(test\)/i.test(s||'')};
   var fill=function(ol,rows,empty){
@@ -143,102 +212,6 @@
     var s=(sec-m*60).toFixed(1);
     return m+':'+(s<10?'0':'')+s;
   };
-  var refresh=function(){
-    if(!window.SG||!SG.enabled)return;
-    SG.listFaceScores().then(function(rows){
-      var best={};
-      // rows arrive oldest-first (list() default), so a strict > keeps
-      // each person's earliest submission of their top score
-      rows.filter(function(r){return !isJunk(r.name)}).forEach(function(r){
-        var k=r.name.toLowerCase();
-        if(!best[k]||r.score>best[k].score)best[k]={name:r.name,score:r.score,total:r.total,created_at:r.created_at};
-      });
-      var ranked=Object.keys(best).map(function(k){return best[k]})
-        .sort(function(a,b){return b.score-a.score||new Date(a.created_at)-new Date(b.created_at)});
-      var topScore=ranked.length?ranked[0].score:null;
-      var list=ranked.map(function(r){
-        var tied=r.score===topScore;
-        var t=tied&&r.created_at?new Date(r.created_at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):'';
-        return {name:r.name,label:r.score+' of '+r.total+(t?' · '+t:'')};
-      });
-      fill(document.getElementById('fm-lb'),list,'no matches locked yet — be first');
-    }).catch(function(){});
-    Promise.all([
-      SG.listCareQuiz().catch(function(){return []}),
-      SG.quizTallies().catch(function(){return {}})
-    ]).then(function(res){
-      var revealed=[];
-      Object.keys(res[1]).forEach(function(k){
-        var qi=parseInt(k,10)-100;
-        if(qi>=0&&qi<CARE_ANS.length)revealed[qi]=true;
-      });
-      var shown=revealed.filter(Boolean).length;
-      document.getElementById('cq-progress').textContent=shown
-        ?shown+' of '+CARE_ANS.length+' answers revealed'
-        :'scores appear as the host reveals answers';
-      var list=res[0].filter(function(r){return !isJunk(r.name)}).map(function(r){
-        var s=0;
-        CARE_ANS.forEach(function(ans,qi){if(revealed[qi]&&r.answers&&r.answers[qi]===ans)s++});
-        return {name:r.name,score:s,label:s+' right'};
-      }).sort(function(a,b){return b.score-a.score||a.name.localeCompare(b.name)});
-      fill(document.getElementById('cq-lb'),list,'no players locked in yet');
-    });
-    SG.listDollTimes().then(function(rows){
-      var best={};
-      rows.filter(function(r){return !isJunk(r.name)}).forEach(function(r){
-        var k=r.name.toLowerCase();
-        var sec=parseFloat(r.seconds);
-        if(!best[k]||sec<best[k].sec)best[k]={name:r.name,sec:sec};
-      });
-      var list=Object.keys(best).map(function(k){return best[k]})
-        .sort(function(a,b){return a.sec-b.sec})
-        .map(function(r){return {name:r.name,label:ddFmt(r.sec)}});
-      fill(document.getElementById('dd-lb'),list,'no runs on the clock yet');
-    }).catch(function(){});
-    SG.listAlbum().then(function(rows){
-      var counts={};
-      rows.filter(function(r){return r.name&&!isJunk(r.name)}).forEach(function(r){
-        var k=r.name.toLowerCase();
-        counts[k]=counts[k]||{name:r.name,n:0};
-        counts[k].n++;
-      });
-      var list=Object.keys(counts).map(function(k){return counts[k]})
-        .sort(function(a,b){return b.n-a.n||a.name.localeCompare(b.name)})
-        .map(function(r){return {name:r.name,label:r.n+(r.n===1?' photo':' photos')}});
-      fill(document.getElementById('al-lb'),list,'no photos shared yet');
-    }).catch(function(){});
-    SG.listTimeCapsuleContributors().then(function(rows){
-      rows=rows.filter(function(r){return r.name&&!isJunk(r.name)});
-      document.getElementById('tc-sub').textContent=rows.length
-        ?rows.length+(rows.length===1?' message recorded':' messages recorded')
-        :'so far tonight';
-      var box=document.getElementById('tc-contrib');
-      box.innerHTML='';
-      if(!rows.length){
-        box.innerHTML='<p class="empty">none yet — be the first</p>';
-        return;
-      }
-      rows.forEach(function(r){
-        var fig=document.createElement('div');
-        fig.className='contrib';
-        if(r.photo_url){
-          var im=document.createElement('img');
-          im.src=r.photo_url;im.alt=r.name;
-          fig.appendChild(im);
-        }else{
-          var mono=document.createElement('div');
-          mono.className='mono';
-          mono.textContent=r.name.trim().charAt(0).toUpperCase();
-          fig.appendChild(mono);
-        }
-        var nm=document.createElement('span');
-        nm.className='cn';nm.textContent=r.name;
-        fig.appendChild(nm);
-        box.appendChild(fig);
-      });
-    }).catch(function(){});
-    SG.listPredictions().then(renderGuesses).catch(function(){});
-  };
   var parseWeight=function(t){
     if(!t)return null;
     var lb=t.match(/(\d+(?:\.\d+)?)\s*(?:lb|lbs|pound)/i);
@@ -255,6 +228,309 @@
     var n=parseFloat(m[1]);
     return(n>10&&n<28)?n:null;
   };
+
+  // --- the recent-activity ticker -----------------------------------------
+  var tickerLog=[];
+  var tickerIdx=0;
+  var pushTicker=function(text){
+    tickerLog.unshift(text);
+    if(tickerLog.length>14)tickerLog.length=14;
+    tickerIdx=0;
+    showTicker();
+  };
+  var showTicker=function(){
+    var el=document.getElementById('ticker-text');
+    var text=tickerLog.length?tickerLog[tickerIdx%tickerLog.length]:'the party is just getting started…';
+    el.classList.add('fade');
+    setTimeout(function(){el.textContent=text;el.classList.remove('fade')},300);
+  };
+  setInterval(function(){tickerIdx++;showTicker()},5000);
+
+  // --- milestone celebrations ----------------------------------------------
+  var celebrate=function(title,sub){
+    var layer=document.getElementById('celebrate-layer');
+    var emojis=['🎉','✨','🌼','🎈','🏆'];
+    for(var i=0;i<22;i++){
+      var s=document.createElement('span');
+      s.className='confetti';
+      s.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+      s.style.left=(Math.random()*100)+'%';
+      s.style.animationDelay=(Math.random()*0.6)+'s';
+      s.style.fontSize=(15+Math.random()*15)+'px';
+      layer.appendChild(s);
+      (function(el){setTimeout(function(){el.remove()},3900)})(s);
+    }
+    var banner=document.getElementById('celebrate-banner');
+    banner.innerHTML=title+(sub?'<span class="cb-sub">'+sub+'</span>':'');
+    banner.classList.add('show');
+    clearTimeout(banner._t);
+    banner._t=setTimeout(function(){banner.classList.remove('show')},4200);
+  };
+
+  // --- the rotating spotlight ------------------------------------------------
+  var slides=[{icon:'🌼',title:'The party is just getting started',sub:'scan the code and jump in!'}];
+  var spotIdx=0;
+  var showSpotlight=function(){
+    var s=slides[spotIdx%slides.length];
+    var box=document.getElementById('spotlight');
+    box.classList.add('fade');
+    setTimeout(function(){
+      var iconEl=document.getElementById('sp-icon');
+      iconEl.innerHTML=s.img?'<img src="'+s.img+'" alt="">':s.icon;
+      document.getElementById('sp-title').textContent=s.title;
+      document.getElementById('sp-sub').textContent=s.sub;
+      box.classList.remove('fade');
+    },350);
+  };
+  setInterval(function(){spotIdx++;showSpotlight()},7500);
+
+  // --- state carried between refresh cycles, for diffing --------------------
+  var firstRun=true;
+  var seen={faces:{},quiz:{},derby:{},album:{},advice:{},capsule:{}};
+  var prevLeader={active:null,fm:null,cq:null,dd:null};
+  var prevPerfect={fm:{},cq:{}};
+  var prevMilestone={album:0,capsule:0};
+
+  var refresh=function(){
+    if(!window.SG||!SG.enabled)return;
+    Promise.all([
+      SG.listFaceScores().catch(function(){return[]}),
+      SG.listCareQuiz().catch(function(){return[]}),
+      SG.quizTallies().catch(function(){return{}}),
+      SG.listDollTimes().catch(function(){return[]}),
+      SG.listAlbum().catch(function(){return[]}),
+      SG.listAdvice().catch(function(){return[]}),
+      SG.listTimeCapsuleContributors().catch(function(){return[]}),
+      SG.listPredictions().catch(function(){return[]})
+    ]).then(function(res){
+      var faceRows=res[0].filter(function(r){return !isJunk(r.name)});
+      var careRows=res[1].filter(function(r){return !isJunk(r.name)});
+      var tallies=res[2];
+      var dollRows=res[3].filter(function(r){return !isJunk(r.name)});
+      var albumRows=res[4].filter(function(r){return r.name&&!isJunk(r.name)});
+      var adviceRows=res[5].filter(function(r){return r.name&&!isJunk(r.name)});
+      var capsuleRows=res[6].filter(function(r){return r.name&&!isJunk(r.name)});
+      var predRows=res[7];
+      var newTicks=[];
+
+      // ---- Whose baby face? ----
+      var fmBest={};
+      faceRows.forEach(function(r){
+        var k=r.name.toLowerCase();
+        if(!fmBest[k]||r.score>fmBest[k].score)fmBest[k]={name:r.name,score:r.score,total:r.total,created_at:r.created_at};
+      });
+      var fmRanked=Object.keys(fmBest).map(function(k){return fmBest[k]})
+        .sort(function(a,b){return b.score-a.score||new Date(a.created_at)-new Date(b.created_at)});
+      var fmTop=fmRanked.length?fmRanked[0].score:null;
+      var fmList=fmRanked.map(function(r){
+        var tied=r.score===fmTop;
+        var t=tied&&r.created_at?new Date(r.created_at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):'';
+        return {name:r.name,label:r.score+' of '+r.total+(t?' · '+t:'')};
+      });
+      fill(document.getElementById('fm-lb'),fmList,'no matches locked yet — be first');
+
+      // ---- Baby Care Quiz ----
+      var revealed=[];
+      Object.keys(tallies).forEach(function(k){
+        var qi=parseInt(k,10)-100;
+        if(qi>=0&&qi<CARE_ANS.length)revealed[qi]=true;
+      });
+      var shown=revealed.filter(Boolean).length;
+      document.getElementById('cq-progress').textContent=shown
+        ?shown+' of '+CARE_ANS.length+' answers revealed'
+        :'scores appear as the host reveals answers';
+      var cqRanked=careRows.map(function(r){
+        var s=0;
+        CARE_ANS.forEach(function(ans,qi){if(revealed[qi]&&r.answers&&r.answers[qi]===ans)s++});
+        return {name:r.name,score:s,created_at:r.created_at};
+      }).sort(function(a,b){return b.score-a.score||new Date(a.created_at)-new Date(b.created_at)});
+      var cqTop=cqRanked.length?cqRanked[0].score:null;
+      var cqList=cqRanked.map(function(r){
+        var tied=r.score===cqTop;
+        var t=tied&&r.created_at?new Date(r.created_at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):'';
+        return {name:r.name,label:r.score+' right'+(t?' · '+t:'')};
+      });
+      fill(document.getElementById('cq-lb'),cqList,'no players locked in yet');
+
+      // ---- Dressing Derby ----
+      var ddBest={};
+      dollRows.forEach(function(r){
+        var k=r.name.toLowerCase();
+        var sec=parseFloat(r.seconds);
+        if(!ddBest[k]||sec<ddBest[k].sec)ddBest[k]={name:r.name,sec:sec};
+      });
+      var ddList=Object.keys(ddBest).map(function(k){return ddBest[k]})
+        .sort(function(a,b){return a.sec-b.sec})
+        .map(function(r){return {name:r.name,label:ddFmt(r.sec)}});
+      fill(document.getElementById('dd-lb'),ddList,'no runs on the clock yet');
+
+      // ---- The group album ----
+      var albumCounts={};
+      albumRows.forEach(function(r){
+        var k=r.name.toLowerCase();
+        albumCounts[k]=albumCounts[k]||{name:r.name,n:0};
+        albumCounts[k].n++;
+      });
+      var albumList=Object.keys(albumCounts).map(function(k){return albumCounts[k]})
+        .sort(function(a,b){return b.n-a.n||a.name.localeCompare(b.name)})
+        .map(function(r){return {name:r.name,label:r.n+(r.n===1?' photo':' photos')}});
+      fill(document.getElementById('al-lb'),albumList,'no photos shared yet');
+
+      // ---- Messages for him ----
+      document.getElementById('tc-sub').textContent=capsuleRows.length
+        ?capsuleRows.length+(capsuleRows.length===1?' message recorded':' messages recorded')
+        :'so far tonight';
+      var tcBox=document.getElementById('tc-contrib');
+      tcBox.innerHTML='';
+      if(!capsuleRows.length){
+        tcBox.innerHTML='<p class="empty">none yet — be the first</p>';
+      }else{
+        capsuleRows.forEach(function(r){
+          var fig=document.createElement('div');
+          fig.className='contrib';
+          if(r.photo_url){
+            var im=document.createElement('img');
+            im.src=r.photo_url;im.alt=r.name;
+            fig.appendChild(im);
+          }else{
+            var mono=document.createElement('div');
+            mono.className='mono';
+            mono.textContent=r.name.trim().charAt(0).toUpperCase();
+            fig.appendChild(mono);
+          }
+          var nm=document.createElement('span');
+          nm.className='cn';nm.textContent=r.name;
+          fig.appendChild(nm);
+          tcBox.appendChild(fig);
+        });
+      }
+
+      // ---- His guesses, so far ----
+      renderGuesses(predRows);
+
+      // ---- Most active guest (combined) ----
+      var activity={};
+      var bump=function(rows,field){
+        rows.forEach(function(r){
+          var k=r.name.trim().toLowerCase();
+          if(!activity[k])activity[k]={name:r.name.trim(),total:0,faces:0,quiz:0,derby:0,photos:0,advice:0,capsule:0};
+          activity[k][field]++;
+          activity[k].total++;
+        });
+      };
+      bump(faceRows,'faces');bump(careRows,'quiz');bump(dollRows,'derby');
+      bump(albumRows,'photos');bump(adviceRows,'advice');bump(capsuleRows,'capsule');
+      var activeList=Object.keys(activity).map(function(k){return activity[k]})
+        .sort(function(a,b){return b.total-a.total||a.name.localeCompare(b.name)})
+        .slice(0,10);
+      var activeOl=document.getElementById('active-lb');
+      activeOl.innerHTML='';
+      if(!activeList.length){
+        activeOl.innerHTML='<li class="empty">no one on the board yet — dive in!</li>';
+      }else{
+        activeList.forEach(function(r,i){
+          var parts=[];
+          if(r.photos)parts.push(r.photos+(r.photos===1?' photo':' photos'));
+          if(r.faces)parts.push(r.faces+' baby match'+(r.faces===1?'':'es'));
+          if(r.derby)parts.push(r.derby+' derby run'+(r.derby===1?'':'s'));
+          if(r.quiz)parts.push('care quiz');
+          if(r.advice)parts.push(r.advice+' advice');
+          if(r.capsule)parts.push('a message for him');
+          var li=document.createElement('li');
+          if(i===0)li.className='lead';
+          var top=document.createElement('div');top.className='al-top';
+          var rk=document.createElement('span');rk.className='rank';rk.textContent=(i+1)+'.';
+          var nm=document.createElement('span');nm.className='b-name';nm.textContent=r.name;
+          var sc=document.createElement('span');sc.className='b-score';sc.textContent=r.total+(r.total===1?' contribution':' contributions');
+          top.appendChild(rk);top.appendChild(nm);top.appendChild(sc);
+          li.appendChild(top);
+          if(parts.length){
+            var bd=document.createElement('div');bd.className='al-breakdown';bd.textContent=parts.join(' · ');
+            li.appendChild(bd);
+          }
+          activeOl.appendChild(li);
+        });
+      }
+
+      // ---- diff against last cycle: ticker entries + milestones ----
+      var noteNew=function(rows,bucket,mk,tick){
+        rows.forEach(function(r){
+          var id=r.id||(r.name+'|'+r.created_at);
+          if(seen[bucket][id])return;
+          seen[bucket][id]=true;
+          if(!firstRun)newTicks.push(tick(r));
+        });
+      };
+      noteNew(faceRows,'faces',null,function(r){return r.name+' matched '+r.score+' of '+r.total+' baby faces'});
+      noteNew(careRows,'quiz',null,function(r){return r.name+' locked in their Baby Care Quiz answers'});
+      noteNew(dollRows,'derby',null,function(r){return r.name+' ran the Dressing Derby in '+ddFmt(parseFloat(r.seconds))});
+      noteNew(albumRows,'album',null,function(r){return r.name+' added a photo to the album'});
+      noteNew(adviceRows,'advice',null,function(r){return r.name+' left advice for Abby'});
+      noteNew(capsuleRows,'capsule',null,function(r){return r.name+' recorded a message for Baby White'});
+      newTicks.forEach(pushTicker);
+      if(newTicks.length&&tickerLog.length)tickerIdx=0,showTicker();
+
+      // leader-change celebrations
+      var checkLeader=function(list,key,label){
+        var top=list.length?list[0].name:null;
+        if(!firstRun&&top&&top!==prevLeader[key]){
+          celebrate('🏆 NEW LEADER',top+' — '+label);
+        }
+        prevLeader[key]=top;
+      };
+      checkLeader(activeList,'active','most active guest');
+      checkLeader(fmList,'fm','Whose baby face?');
+      checkLeader(cqList,'cq','the Baby Care Quiz');
+      checkLeader(ddList,'dd','the Dressing Derby');
+
+      // perfect-score celebrations
+      fmRanked.forEach(function(r){
+        if(r.score===r.total&&r.total>0&&!prevPerfect.fm[r.name.toLowerCase()]){
+          prevPerfect.fm[r.name.toLowerCase()]=true;
+          if(!firstRun)celebrate('🎉 PERFECT MATCH!',r.name+' matched every baby face');
+        }
+      });
+      if(shown===CARE_ANS.length){
+        cqRanked.forEach(function(r){
+          if(r.score===CARE_ANS.length&&!prevPerfect.cq[r.name.toLowerCase()]){
+            prevPerfect.cq[r.name.toLowerCase()]=true;
+            if(!firstRun)celebrate('🧸 PERFECT SCORE!',r.name+' aced the Baby Care Quiz');
+          }
+        });
+      }
+
+      // count milestones, every 5 or 10
+      var albumMs=Math.floor(albumRows.length/10);
+      if(!firstRun&&albumMs>prevMilestone.album&&albumRows.length>0){
+        celebrate('📸 '+(albumMs*10)+' PHOTOS!',"the album's growing fast");
+      }
+      prevMilestone.album=albumMs;
+      var capMs=Math.floor(capsuleRows.length/5);
+      if(!firstRun&&capMs>prevMilestone.capsule&&capsuleRows.length>0){
+        celebrate('💌 '+(capMs*5)+' MESSAGES!','for him to open someday');
+      }
+      prevMilestone.capsule=capMs;
+
+      // ---- rebuild the spotlight rotation from the freshest state ----
+      var newSlides=[];
+      if(activeList[0])newSlides.push({icon:'🏅',title:activeList[0].name,sub:'most active guest right now · '+activeList[0].total+(activeList[0].total===1?' contribution':' contributions')});
+      if(fmList.length)newSlides.push({icon:'🍼',title:fmRanked[0].name,sub:'leading Whose baby face? · '+fmList[0].label});
+      if(cqRanked.length&&cqRanked[0].score>0)newSlides.push({icon:'🧸',title:cqRanked[0].name,sub:'leading the Baby Care Quiz · '+cqList[0].label});
+      if(ddList.length)newSlides.push({icon:'⏱',title:ddList[0].name,sub:'fastest in the Dressing Derby · '+ddList[0].label});
+      if(albumRows.length){
+        var latestAlbum=albumRows.slice().sort(function(a,b){return new Date(b.created_at)-new Date(a.created_at)})[0];
+        newSlides.push({icon:'📸',title:latestAlbum.name,sub:'just added a photo to the album',img:latestAlbum.photo_url});
+      }
+      if(capsuleRows.length){
+        var latestCap=capsuleRows.slice().sort(function(a,b){return new Date(b.created_at)-new Date(a.created_at)})[0];
+        newSlides.push({icon:'💌',title:latestCap.name,sub:'recorded a message for him',img:latestCap.photo_url});
+      }
+      slides=newSlides.length?newSlides:[{icon:'🌼',title:'The party is just getting started',sub:'scan the code and jump in!'}];
+
+      firstRun=false;
+    });
+  };
+
   var renderGuesses=function(rows){
     rows=rows.filter(function(r){return !isJunk(r.name||r.arrival||'')});
     var hairCounts={};
@@ -299,12 +575,14 @@
       .map(function(r){return {name:r.label,label:r.n+(r.n===1?' guess':' guesses')}});
     fill(document.getElementById('date-lb'),dateList,'no guesses yet');
   };
+
   var boot=function(){
     if(window.SG&&SG.enabled){refresh();setInterval(refresh,6000);}
     else{
       ['fm-lb','cq-lb','dd-lb','al-lb','date-lb'].forEach(function(id){
         fill(document.getElementById(id),[],'connects at the party');
       });
+      document.getElementById('active-lb').innerHTML='<li class="empty">connects at the party</li>';
       document.getElementById('tc-contrib').innerHTML='<p class="empty">connects at the party</p>';
     }
   };
