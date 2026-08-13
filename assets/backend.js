@@ -162,6 +162,9 @@
         return insert('future_messages',{name:name,message:message,photo_url:urls[0],audio_url:urls[1]});
       });
     },
+    // the wall of contributors: names + photos only, never the sealed
+    // message or the recording — reads from a safe public view
+    listTimeCapsuleContributors:function(){return list('future_messages_public')},
     listAlbum:function(){return list('album')},
 
     // games

@@ -208,3 +208,11 @@ alter table album add column if not exists name text;
 -- guesses (hair, weight, length, arrival day) to everyone at the party.
 -- No names are stored on this table, so this stays anonymous either way.
 create policy "anyone reads" on predictions for select using (true);
+
+-- A safe window into the time capsule for the big-screen leaderboard: who
+-- recorded him a message, and their photo, so guests can see themselves on
+-- the wall of contributors. The written words and the voice recording
+-- itself stay sealed for the hosts, and eventually Baby Boy White, only.
+create view public.future_messages_public as
+  select id, created_at, name, photo_url from future_messages;
+grant select on public.future_messages_public to anon, authenticated;

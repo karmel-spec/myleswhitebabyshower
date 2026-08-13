@@ -26,7 +26,7 @@
     el.textContent='hmm, that didn’t save — check your connection and try once more?';
     el.classList.add('show');
   }
-  function showPreview(drop,file){
+  function showPreview(drop,file,extraCount){
     var old=drop.querySelector('img.drop-preview');
     if(old)URL.revokeObjectURL(old.src);
     drop.innerHTML='';
@@ -36,21 +36,26 @@
     img.src=URL.createObjectURL(file);
     var tag=document.createElement('span');
     tag.className='drop-tag';
-    tag.textContent='added · tap to change';
+    tag.textContent=extraCount?'added '+(extraCount+1)+' photos · tap to change':'added · tap to change';
     drop.appendChild(img);
     drop.appendChild(tag);
   }
-  function pickFile(drop,onPick,capture){
+  function pickFile(drop,onPick,capture,multiple){
     var input=document.createElement('input');
     input.type='file';
     input.accept='image/*';
     // hints the phone to open the camera directly instead of the photo
     // library; ignored (falls back to a normal picker) where unsupported
     if(capture)input.setAttribute('capture',capture);
+    if(multiple)input.multiple=true;
     input.style.display='none';
     document.body.appendChild(input);
     input.addEventListener('change',function(){
-      if(input.files[0]){
+      if(!input.files.length)return;
+      if(multiple){
+        showPreview(drop,input.files[0],input.files.length-1);
+        onPick(Array.from(input.files));
+      }else{
         showPreview(drop,input.files[0]);
         onPick(input.files[0]);
       }
@@ -188,11 +193,18 @@
           };
           tcRecorder.start();
           tcSecs=0;
+          var TC_MAX=60;
           tcRecBtn.textContent='■ Stop recording';
-          $('tc-rec-note').textContent='recording… up to thirty seconds, tap stop when you’re done';
+          $('tc-rec-note').textContent='recording… 1:00 left, tap stop when you’re done';
           tcTimer=setInterval(function(){
             tcSecs++;
-            if(tcSecs>=30&&tcRecorder.state==='recording')tcRecorder.stop();
+            var left=TC_MAX-tcSecs;
+            if(left<=0&&tcRecorder.state==='recording'){tcRecorder.stop();return}
+            var mm=Math.floor(left/60),ss=left%60;
+            var timeStr=mm+':'+(ss<10?'0':'')+ss;
+            $('tc-rec-note').textContent=left<=10
+              ?'recording… '+timeStr+' left — wrap it up!'
+              :'recording… '+timeStr+' left, tap stop when you’re done';
           },1000);
         }).catch(function(){
           $('tc-rec-note').textContent='the microphone said no — words on the page work beautifully too';
@@ -328,7 +340,7 @@
 
   // --- the evening: group album --------------------------------------------
   if($('al-drop')){
-    var albumFile=null;
+    var albumFiles=[];
     function albumTile(url,caption){
       var fig=document.createElement('figure');
       fig.className='album-tile';
@@ -343,30 +355,40 @@
       var firstEmpty=document.querySelector('#album .album-tile.empty');
       if(firstEmpty){firstEmpty.replaceWith(fig)}else{$('album').appendChild(fig)}
     }
-    pickFile($('al-drop'),function(f){
-      albumFile=f;
+    pickFile($('al-drop'),function(files){
+      albumFiles=files;
       $('al-drop').style.borderColor='#F9F5EA';
-    });
+    },null,true);
     $('al-btn').addEventListener('click',function(){
       var btn=this;
-      var cap=$('al-cap').value.trim()||'from tonight, under the string lights';
+      var cap=$('al-cap').value.trim(); // optional — a blank caption is fine
       var who=$('al-name')?$('al-name').value.trim():'';
       if(SG.enabled){
-        if(!albumFile){$('al-drop').textContent='pick a photo first';return}
+        if(!albumFiles.length){$('al-drop').textContent='pick a photo first';return}
         if(!who){$('al-name').focus();return}
-        busy(btn,true,'Adding…');
-        SG.addAlbumPhoto(albumFile,cap,who).then(function(){
-          albumTile(URL.createObjectURL(albumFile),cap);
-          albumFile=null;
-          $('al-drop').textContent='add another photo';
-          $('al-cap').value='';
-        }).catch(function(){$('al-drop').textContent='hmm, try that photo again?'}).then(function(){busy(btn,false)});
+        busy(btn,true,albumFiles.length>1?'Adding '+albumFiles.length+' photos…':'Adding…');
+        var fails=0;
+        var addOne=function(i){
+          if(i>=albumFiles.length){
+            busy(btn,false);
+            if(fails)$('al-drop').textContent=fails+' of '+albumFiles.length+' didn’t save — try again?';
+            else $('al-drop').textContent=albumFiles.length>1?'add more photos':'add another photo';
+            albumFiles=[];
+            $('al-cap').value='';
+            return;
+          }
+          var f=albumFiles[i];
+          SG.addAlbumPhoto(f,cap,who).then(function(){
+            albumTile(URL.createObjectURL(f),cap);
+          }).catch(function(){fails++}).then(function(){addOne(i+1)});
+        };
+        addOne(0);
         return;
       }
       var fig=document.createElement('figure');
       fig.className='album-tile empty';
       var s=document.createElement('span');
-      s.textContent='"'+cap+'" (your photo syncs to the screen)';
+      s.textContent=(cap?'"'+cap+'"':'your photo')+' (syncs to the screen)';
       fig.appendChild(s);
       var firstEmpty=document.querySelector('#album .album-tile.empty');
       if(firstEmpty){firstEmpty.replaceWith(fig)}else{$('album').appendChild(fig)}
