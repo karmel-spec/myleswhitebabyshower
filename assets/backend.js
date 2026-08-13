@@ -98,6 +98,7 @@
     claimBook:function(name,title){return insert('book_claims',{guest_name:name,title:title})},
     listClaims:function(){return list('book_claims')},
     submitPrediction:function(f){return insert('predictions',f)},
+    listPredictions:function(){return list('predictions')},
 
     signGuestbook:function(message,file){
       var p=file?uploadPhoto(file):Promise.resolve(null);
@@ -138,8 +139,20 @@
       });
     },
 
-    addAlbumPhoto:function(file,caption){
-      return uploadPhoto(file).then(function(url){return insert('album',{caption:caption,photo_url:url})});
+    addAlbumPhoto:function(file,caption,name){
+      return uploadPhoto(file).then(function(url){
+        var row={caption:caption,photo_url:url};
+        if(name)row.name=name;
+        return insert('album',row).catch(function(e){
+          // the name column may not exist yet on an older album table;
+          // retry without it so the photo still saves either way
+          if(name&&e&&(e.code==='PGRST204'||/column/.test(e.message||''))){
+            delete row.name;
+            return insert('album',row);
+          }
+          throw e;
+        });
+      });
     },
     // the time capsule: words + photo + voice, readable only by the hosts
     addTimeCapsule:function(name,message,photoFile,audioFile){

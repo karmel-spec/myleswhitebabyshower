@@ -199,3 +199,12 @@ alter table future_messages enable row level security;
 create policy "anon insert" on future_messages for insert to anon with check (true);
 create policy "hosts insert" on future_messages for insert to authenticated with check (true);
 create policy "hosts read" on future_messages for select to authenticated using (true);
+
+-- The group album becomes a game: whoever shares the most photos by the
+-- end of the night wins a prize, so each photo now records who added it.
+alter table album add column if not exists name text;
+
+-- The predictions panel on the big-screen leaderboard shows aggregate
+-- guesses (hair, weight, length, arrival day) to everyone at the party.
+-- No names are stored on this table, so this stays anonymous either way.
+create policy "anyone reads" on predictions for select using (true);

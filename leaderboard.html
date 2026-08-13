@@ -35,6 +35,17 @@
   li.lead .b-score::after{content:' 🏆'}
   .empty{color:var(--dusty);font-style:italic;font-size:17px;padding:12px 6px}
   .progress{text-align:center;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--dusty);margin:0 0 12px}
+  .panel.wide{grid-column:1 / -1}
+  .stat-rows{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px}
+  .stat-group h4{font-family:var(--display);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--dusty);margin:0 0 12px;text-align:center}
+  .bar-row{margin-bottom:12px}
+  .bar-row .bl{display:flex;justify-content:space-between;font-size:14px;margin-bottom:5px}
+  .bar-row .bl .n{color:var(--dusty);font-variant-numeric:tabular-nums}
+  .bar-track{background:rgba(255,253,246,.12);border-radius:5px;height:10px;overflow:hidden}
+  .bar-fill{background:var(--butter);height:100%;border-radius:5px;transition:width .5s ease}
+  .stat-tile{text-align:center}
+  .stat-tile .big{font-family:var(--display);font-size:clamp(28px,3vw,38px);color:var(--butter)}
+  .stat-tile .lbl{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--dusty);margin-top:4px}
   footer{text-align:center;color:var(--dusty);font-size:13px;letter-spacing:.15em;text-transform:uppercase;padding-bottom:30px}
 </style>
 </head>
@@ -62,12 +73,37 @@
     <p class="sub">fastest onesie in the west</p>
     <ol id="dd-lb"></ol>
   </div>
+  <div class="panel">
+    <h2>The group album</h2>
+    <p class="sub">most photos shared wins</p>
+    <ol id="al-lb"></ol>
+  </div>
+  <div class="panel wide">
+    <h2>His guesses, so far</h2>
+    <p class="sub">what the room thinks</p>
+    <div class="stat-rows">
+      <div class="stat-group">
+        <h4 id="hair-count">Hair</h4>
+        <div id="hair-bars"></div>
+      </div>
+      <div class="stat-group">
+        <div class="stat-tile"><div class="big" id="weight-avg">—</div><div class="lbl">average weight guess</div></div>
+      </div>
+      <div class="stat-group">
+        <div class="stat-tile"><div class="big" id="length-avg">—</div><div class="lbl">average length guess</div></div>
+      </div>
+      <div class="stat-group">
+        <h4>Top arrival-day guesses</h4>
+        <ol id="date-lb"></ol>
+      </div>
+    </div>
+  </div>
 </div>
 
 <footer>babywhiteshower.com</footer>
 
 <script src="assets/config.js?v=26"></script>
-<script src="assets/backend.js?v=27"></script>
+<script src="assets/backend.js?v=31"></script>
 <script>
 (function(){
   var CARE_ANS=[1,0,2,1,1,0,1,2];
@@ -101,13 +137,20 @@
     if(!window.SG||!SG.enabled)return;
     SG.listFaceScores().then(function(rows){
       var best={};
+      // rows arrive oldest-first (list() default), so a strict > keeps
+      // each person's earliest submission of their top score
       rows.filter(function(r){return !isJunk(r.name)}).forEach(function(r){
         var k=r.name.toLowerCase();
-        if(!best[k]||r.score>best[k].score)best[k]={name:r.name,score:r.score,total:r.total};
+        if(!best[k]||r.score>best[k].score)best[k]={name:r.name,score:r.score,total:r.total,created_at:r.created_at};
       });
-      var list=Object.keys(best).map(function(k){return best[k]})
-        .sort(function(a,b){return b.score-a.score||a.name.localeCompare(b.name)})
-        .map(function(r){return {name:r.name,label:r.score+' of '+r.total}});
+      var ranked=Object.keys(best).map(function(k){return best[k]})
+        .sort(function(a,b){return b.score-a.score||new Date(a.created_at)-new Date(b.created_at)});
+      var topScore=ranked.length?ranked[0].score:null;
+      var list=ranked.map(function(r){
+        var tied=r.score===topScore;
+        var t=tied&&r.created_at?new Date(r.created_at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):'';
+        return {name:r.name,label:r.score+' of '+r.total+(t?' · '+t:'')};
+      });
       fill(document.getElementById('fm-lb'),list,'no matches locked yet — be first');
     }).catch(function(){});
     Promise.all([
@@ -142,11 +185,84 @@
         .map(function(r){return {name:r.name,label:ddFmt(r.sec)}});
       fill(document.getElementById('dd-lb'),list,'no runs on the clock yet');
     }).catch(function(){});
+    SG.listAlbum().then(function(rows){
+      var counts={};
+      rows.filter(function(r){return r.name&&!isJunk(r.name)}).forEach(function(r){
+        var k=r.name.toLowerCase();
+        counts[k]=counts[k]||{name:r.name,n:0};
+        counts[k].n++;
+      });
+      var list=Object.keys(counts).map(function(k){return counts[k]})
+        .sort(function(a,b){return b.n-a.n||a.name.localeCompare(b.name)})
+        .map(function(r){return {name:r.name,label:r.n+(r.n===1?' photo':' photos')}});
+      fill(document.getElementById('al-lb'),list,'no photos shared yet');
+    }).catch(function(){});
+    SG.listPredictions().then(renderGuesses).catch(function(){});
+  };
+  var parseWeight=function(t){
+    if(!t)return null;
+    var lb=t.match(/(\d+(?:\.\d+)?)\s*(?:lb|lbs|pound)/i);
+    var oz=t.match(/(\d+(?:\.\d+)?)\s*(?:oz|ounce)/i);
+    if(lb)return parseFloat(lb[1])+(oz?parseFloat(oz[1])/16:0);
+    var bare=t.match(/(\d+(?:\.\d+)?)/);
+    if(bare){var n=parseFloat(bare[1]);if(n>2&&n<15)return n}
+    return null;
+  };
+  var parseLength=function(t){
+    if(!t)return null;
+    var m=t.match(/(\d+(?:\.\d+)?)/);
+    if(!m)return null;
+    var n=parseFloat(m[1]);
+    return(n>10&&n<28)?n:null;
+  };
+  var renderGuesses=function(rows){
+    rows=rows.filter(function(r){return !isJunk(r.name||r.arrival||'')});
+    var hairCounts={};
+    rows.forEach(function(r){
+      if(!r.hair)return;
+      hairCounts[r.hair]=(hairCounts[r.hair]||0)+1;
+    });
+    var hairTotal=Object.keys(hairCounts).reduce(function(s,k){return s+hairCounts[k]},0);
+    document.getElementById('hair-count').textContent='Hair'+(hairTotal?' · '+hairTotal+' guesses':'');
+    var hairBox=document.getElementById('hair-bars');
+    hairBox.innerHTML='';
+    Object.keys(hairCounts).sort(function(a,b){return hairCounts[b]-hairCounts[a]}).forEach(function(k){
+      var pct=Math.round(100*hairCounts[k]/hairTotal);
+      var row=document.createElement('div');
+      row.className='bar-row';
+      row.innerHTML='<div class="bl"><span>'+k+'</span><span class="n">'+pct+'%</span></div>'
+        +'<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%"></div></div>';
+      hairBox.appendChild(row);
+    });
+    if(!hairTotal)hairBox.innerHTML='<p class="empty">no guesses yet</p>';
+
+    var weights=rows.map(function(r){return parseWeight(r.weight)}).filter(function(n){return n!==null});
+    var wAvg=weights.length?weights.reduce(function(a,b){return a+b})/weights.length:null;
+    document.getElementById('weight-avg').textContent=wAvg
+      ?Math.floor(wAvg)+' lb '+Math.round((wAvg-Math.floor(wAvg))*16)+' oz':'—';
+
+    var lengths=rows.map(function(r){return parseLength(r.length)}).filter(function(n){return n!==null});
+    var lAvg=lengths.length?lengths.reduce(function(a,b){return a+b})/lengths.length:null;
+    document.getElementById('length-avg').textContent=lAvg?lAvg.toFixed(1)+' in':'—';
+
+    var dateCounts={};
+    rows.forEach(function(r){
+      var d=(r.arrival||'').trim().replace(/\s+/g,' ');
+      if(!d)return;
+      var k=d.toLowerCase();
+      dateCounts[k]=dateCounts[k]||{label:d,n:0};
+      dateCounts[k].n++;
+    });
+    var dateList=Object.keys(dateCounts).map(function(k){return dateCounts[k]})
+      .sort(function(a,b){return b.n-a.n||a.label.localeCompare(b.label)})
+      .slice(0,5)
+      .map(function(r){return {name:r.label,label:r.n+(r.n===1?' guess':' guesses')}});
+    fill(document.getElementById('date-lb'),dateList,'no guesses yet');
   };
   var boot=function(){
     if(window.SG&&SG.enabled){refresh();setInterval(refresh,6000);}
     else{
-      ['fm-lb','cq-lb','dd-lb'].forEach(function(id){
+      ['fm-lb','cq-lb','dd-lb','al-lb','date-lb'].forEach(function(id){
         fill(document.getElementById(id),[],'connects at the party');
       });
     }

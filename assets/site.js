@@ -3,6 +3,11 @@
   var DUE=new Date(2026,9,14,0,0,0);
   var SHOWER=new Date(2026,7,15,19,0,0);
   var SG=window.SG||{enabled:false};
+  // Beau-or-Abby and Whose-baby-face stop needing a password once the party
+  // is truly underway, so a phone with a dead battery or a late arrival
+  // never blocks anyone from playing.
+  var PW_FREE_AT=new Date(2026,7,15,17,0,0);
+  var pwFree=function(){return /[?&]preview/.test(location.search)||new Date()>=PW_FREE_AT};
 
   function fmtTime(iso){
     var d=new Date(iso);
@@ -35,10 +40,13 @@
     drop.appendChild(img);
     drop.appendChild(tag);
   }
-  function pickFile(drop,onPick){
+  function pickFile(drop,onPick,capture){
     var input=document.createElement('input');
     input.type='file';
     input.accept='image/*';
+    // hints the phone to open the camera directly instead of the photo
+    // library; ignored (falls back to a normal picker) where unsupported
+    if(capture)input.setAttribute('capture',capture);
     input.style.display='none';
     document.body.appendChild(input);
     input.addEventListener('change',function(){
@@ -302,14 +310,14 @@
       var btn=this;
       if(SG.enabled){
         var hair=document.querySelector('.hair-btn.sel');
-        busy(btn,true,'Sealing…');
+        busy(btn,true,'Sending…');
         SG.submitPrediction({
           arrival:$('p-date').value.trim(),
           weight:$('p-weight').value.trim(),
           length:$('p-length').value.trim(),
           hair:hair?hair.textContent:''
         }).then(function(){
-          $('pred-confirm').textContent='sealed until October. No peeking';
+          $('pred-confirm').textContent='you’re on the board';
           $('pred-confirm').classList.add('show');
         }).catch(function(){oops($('pred-confirm'))}).then(function(){busy(btn,false)});
         return;
@@ -342,10 +350,12 @@
     $('al-btn').addEventListener('click',function(){
       var btn=this;
       var cap=$('al-cap').value.trim()||'from tonight, under the string lights';
+      var who=$('al-name')?$('al-name').value.trim():'';
       if(SG.enabled){
         if(!albumFile){$('al-drop').textContent='pick a photo first';return}
+        if(!who){$('al-name').focus();return}
         busy(btn,true,'Adding…');
-        SG.addAlbumPhoto(albumFile,cap).then(function(){
+        SG.addAlbumPhoto(albumFile,cap,who).then(function(){
           albumTile(URL.createObjectURL(albumFile),cap);
           albumFile=null;
           $('al-drop').textContent='add another photo';
@@ -373,7 +383,7 @@
     pickFile($('gb-drop'),function(f){
       gbFile=f;
       $('gb-drop').style.borderColor='#F9F5EA';
-    });
+    },'user');
     function gbEntry(message,photoUrl,when,prepend){
       var wrap=document.createElement('div');
       wrap.className='gb-entry';
@@ -487,15 +497,20 @@
 
   // --- the evening: beau-or-abby quiz -----------------------------------------
   if($('quiz-unlock')){
-    $('quiz-unlock').addEventListener('click',function(){
-      var v=$('quiz-pw').value.trim().toLowerCase();
-      if(v==='karm0451'){
-        $('quiz').classList.add('open');
-        $('quiz-lock').style.display='none';
-      }else{
-        $('quiz-wrong').classList.add('show');
-      }
-    });
+    if(pwFree()){
+      $('quiz').classList.add('open');
+      $('quiz-lock').style.display='none';
+    }else{
+      $('quiz-unlock').addEventListener('click',function(){
+        var v=$('quiz-pw').value.trim().toLowerCase();
+        if(v==='karm0451'){
+          $('quiz').classList.add('open');
+          $('quiz-lock').style.display='none';
+        }else{
+          $('quiz-wrong').classList.add('show');
+        }
+      });
+    }
   }
   var quizQs=document.querySelectorAll('.quiz-q');
   if(quizQs.length){
@@ -1080,21 +1095,32 @@
   if($('fm-grid')){
     var fmFaces=[];
     var fmScores=SG.enabled?[]:[{name:'Ruth',score:1,total:2},{name:'Kate M.',score:2,total:2}];
+    var fmTime=function(s){
+      if(!s.created_at)return'';
+      try{return new Date(s.created_at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}catch(e){return''}
+    };
     var fmBoard=function(){
       var best={};
       fmScores.forEach(function(s){
+        // rows arrive oldest-first, so a strict > keeps each person's
+        // earliest submission of their top score — the tie-break instant
         if(!(s.name in best)||s.score>best[s.name].score)best[s.name]=s;
       });
       var rows=Object.keys(best).map(function(k){return best[k]})
-        .sort(function(a,b){return b.score-a.score||a.name.localeCompare(b.name)});
+        .sort(function(a,b){return b.score-a.score||new Date(a.created_at)-new Date(b.created_at)});
       var ol=$('fm-board');
       ol.innerHTML='';
+      var topScore=rows.length?rows[0].score:null;
       rows.forEach(function(s,i){
         var li=document.createElement('li');
         if(i===0)li.className='lead';
         var nm=document.createElement('span');nm.className='b-name';nm.textContent=s.name;
         var sc=document.createElement('span');sc.className='b-score';
-        sc.textContent=s.score+' of '+s.total+(i===0?' · in the lead':'');
+        var tied=s.score===topScore;
+        var time=fmTime(s);
+        sc.textContent=s.score+' of '+s.total
+          +(i===0?' · in the lead':'')
+          +(tied&&time?' · '+time:'');
         li.appendChild(nm);li.appendChild(sc);
         ol.appendChild(li);
       });
@@ -1125,6 +1151,18 @@
         grid.appendChild(p);
         return;
       }
+      // once a grown-up is picked anywhere, gray them out everywhere else
+      // so no two babies get matched to the same guest by mistake
+      var fmOptsByName=function(name){
+        return Array.from(grid.querySelectorAll('.fm-opt')).filter(function(b){return b.getAttribute('data-name')===name});
+      };
+      var fmSetUsed=function(name,ownerCard){
+        fmOptsByName(name).forEach(function(b){
+          var mine=b.closest('.fm-card')===ownerCard;
+          b.classList.toggle('used',!!ownerCard&&!mine);
+          b.disabled=!!ownerCard&&!mine;
+        });
+      };
       fmShuffle(playable).forEach(function(f){
         var card=document.createElement('div');
         card.className='fm-card';
@@ -1146,14 +1184,21 @@
           btn.type='button';
           btn.className='fm-opt';
           btn.setAttribute('data-name',opt.name);
-          btn.setAttribute('aria-label',opt.name);
           var oim=document.createElement('img');
-          oim.src=opt.now_url;oim.alt='';oim.setAttribute('aria-hidden','true');
+          oim.src=opt.now_url;oim.alt='';
           btn.appendChild(oim);
+          var cap=document.createElement('span');
+          cap.className='fm-opt-name';
+          cap.textContent=opt.name;
+          btn.appendChild(cap);
           btn.addEventListener('click',function(){
+            if(btn.disabled)return;
+            var prevPicked=card.getAttribute('data-picked');
+            if(prevPicked)fmSetUsed(prevPicked,null);
             strip.querySelectorAll('.fm-opt').forEach(function(b){b.classList.remove('picked')});
             btn.classList.add('picked');
             card.setAttribute('data-picked',opt.name);
+            fmSetUsed(opt.name,card);
           });
           strip.appendChild(btn);
         });
@@ -1166,28 +1211,35 @@
         SG.listFaceScores().then(function(rows){fmScores=rows;fmBoard()}).catch(function(){fmBoard()});
       }else{fmBoard()}
     };
-    $('fm-unlock').addEventListener('click',function(){
-      if($('fm-pw').value.trim().toLowerCase()==='karm0451'){
-        $('fm-lock').style.display='none';
-        $('fm-game').classList.add('open');
-        if(SG.enabled){
-          SG.listFaces().then(function(rows){
-            fmFaces=rows.filter(function(r){return !/claude diagnostic|please ignore|\(test\)/i.test(r.name||'')});
-            fmBuild();
-          }).catch(function(){fmBuild()});
-        }else{
-          fmFaces=[
-            {name:'Abby',baby_url:'assets/photos/baby-abby.jpg',now_url:null},
-            {name:'Beau',baby_url:'assets/photos/baby-beau.jpg',now_url:null}
-          ];
+    var fmDoUnlock=function(){
+      $('fm-lock').style.display='none';
+      $('fm-game').classList.add('open');
+      if(SG.enabled){
+        SG.listFaces().then(function(rows){
+          fmFaces=rows.filter(function(r){return !/claude diagnostic|please ignore|\(test\)/i.test(r.name||'')});
           fmBuild();
-        }
-        fmRefreshScores();
-        if(SG.enabled)setInterval(fmRefreshScores,8000);
+        }).catch(function(){fmBuild()});
       }else{
-        $('fm-wrong').classList.add('show');
+        fmFaces=[
+          {name:'Abby',baby_url:'assets/photos/baby-abby.jpg',now_url:null},
+          {name:'Beau',baby_url:'assets/photos/baby-beau.jpg',now_url:null}
+        ];
+        fmBuild();
       }
-    });
+      fmRefreshScores();
+      if(SG.enabled)setInterval(fmRefreshScores,8000);
+    };
+    if(pwFree()){
+      fmDoUnlock();
+    }else{
+      $('fm-unlock').addEventListener('click',function(){
+        if($('fm-pw').value.trim().toLowerCase()==='karm0451'){
+          fmDoUnlock();
+        }else{
+          $('fm-wrong').classList.add('show');
+        }
+      });
+    }
     $('fm-submit').addEventListener('click',function(){
       var btn=this;
       var name=$('fm-name').value.trim();
