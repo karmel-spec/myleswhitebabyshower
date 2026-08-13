@@ -169,3 +169,33 @@ create policy "anon upload" on storage.objects for insert to anon
   with check (bucket_id = 'album');
 create policy "host upload" on storage.objects for insert to authenticated
   with check (bucket_id = 'album');
+
+-- Signed-in hosts may do everything guests can (added after the guest-list
+-- login shipped: hosts play the games too).
+create policy "hosts insert" on rsvps for insert to authenticated with check (true);
+create policy "hosts insert" on predictions for insert to authenticated with check (true);
+create policy "hosts insert" on book_claims for insert to authenticated with check (true);
+create policy "hosts insert" on guestbook for insert to authenticated with check (true);
+create policy "hosts insert" on advice for insert to authenticated with check (true);
+create policy "hosts insert" on advice_comments for insert to authenticated with check (true);
+create policy "hosts insert" on quiz_votes for insert to authenticated with check (true);
+create policy "hosts insert" on album for insert to authenticated with check (true);
+create policy "hosts insert" on faces for insert to authenticated with check (true);
+create policy "hosts insert" on care_entries for insert to authenticated with check (true);
+create policy "hosts insert" on face_scores for insert to authenticated with check (true);
+create policy "hosts insert" on doll_times for insert to authenticated with check (true);
+
+-- The time capsule: messages for the baby to open someday. Guests seal them;
+-- only the hosts can read them back.
+create table future_messages (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  name text,
+  message text,
+  photo_url text,
+  audio_url text
+);
+alter table future_messages enable row level security;
+create policy "anon insert" on future_messages for insert to anon with check (true);
+create policy "hosts insert" on future_messages for insert to authenticated with check (true);
+create policy "hosts read" on future_messages for select to authenticated using (true);
