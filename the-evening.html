@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Party page two · Let the adventures begin — The Story Garden</title>
-<link rel="stylesheet" href="assets/styles.css?v=26">
+<title>Let the adventures begin — The Story Garden</title>
+<link rel="stylesheet" href="assets/styles.css?v=27">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/icon/favicon-32.png">
 <link rel="apple-touch-icon" href="assets/icon/apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
 <meta name="apple-mobile-web-app-title" content="Story Garden">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="The Story Garden">
-<meta property="og:title" content="Party page two · Let the adventures begin — The Story Garden">
+<meta property="og:title" content="Let the adventures begin — The Story Garden">
 <meta property="og:description" content="Saturday, August 15th at 7 pm · Grandma's garden, Orem · details, registry, and RSVP inside.">
 <meta property="og:url" content="https://babywhiteshower.com/the-evening.html">
 <meta property="og:image" content="https://babywhiteshower.com/assets/invites/og-invite.png">
@@ -48,179 +48,122 @@
   <div class="wrap" style="padding-top:40px;padding-bottom:80px">
     <header>
       <h2>Let the <span class="script" style="color:#E9C46A">adventures</span> begin</h2>
+      <p class="lede" style="color:#BBC5D8">Tap an activity. Each one opens its own page, and the top of every page brings you back here.</p>
     </header>
 
-    <div class="feature">
-      <h3>The guest book: a selfie and a line</h3>
-      <p>Before dessert, sign the book: one photo under the string lights and a note in a book for Baby. Entries appear below as the evening goes.</p>
-      <div class="gb-new">
-        <div class="gb-drop" id="gb-drop" role="button" tabindex="0">add your selfie</div>
-        <div class="gb-fields">
-          <label for="gb-msg" style="margin-top:0">Your line for the album</label>
-          <input type="text" id="gb-msg" placeholder="The tiny socks undid me completely" style="width:100%;min-width:0">
-          <button class="btn small ghost" id="gb-btn" style="margin-top:16px">Sign the guest book</button>
-        </div>
-      </div>
-      <p class="confirm whisper" id="gb-confirm">signed! See you in the album</p>
-      <div class="gb-entries"></div>
-    </div>
+    <div class="activity-grid">
 
-    <div class="feature">
-      <h3>Advice for the new mama</h3>
-      <p>Leave Abby a note of hard-won wisdom, and second another guest's advice in the comments.</p>
-      <div id="adv-wall"></div>
-      <div class="adv-new">
-        <label for="adv-text" style="margin-top:0">Your advice</label>
-        <textarea id="adv-text" placeholder="What do you know now that you wish you'd known then?"></textarea>
-        <div class="c-row" style="margin-top:12px"><input type="text" id="adv-name" placeholder="Your name"><button class="btn small" id="adv-btn" type="button">Post your advice</button></div>
-      </div>
-    </div>
+      <a class="activity-tile" data-pv href="party-baby-faces.html">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <circle cx="32" cy="34" r="19" fill="#F9F5EA"/>
+          <path d="M24 18 C26 12 36 10 40 15 C36 14 30 15 28 19 Z" fill="#E9C46A"/>
+          <circle cx="26" cy="32" r="2.2" fill="#22304A"/><circle cx="38" cy="32" r="2.2" fill="#22304A"/>
+          <path d="M27 41 C30 44 34 44 37 41" stroke="#22304A" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <circle cx="21" cy="38" r="3" fill="#C24B33" opacity=".35"/><circle cx="43" cy="38" r="3" fill="#C24B33" opacity=".35"/>
+        </svg>
+        <span class="t-name">Whose baby face?</span>
+        <span class="t-sub">match the babies</span>
+      </a>
 
-    <div class="feature">
-      <h3>The games</h3>
-      <p>Four contests, one evening, eternal bragging rights. Phones out! Every leaderboard updates as the night goes on. The games stay locked until the day of the shower.</p>
-    </div>
+      <a class="activity-tile" data-pv href="party-quiz.html">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <path d="M10 16 h22 a5 5 0 0 1 5 5 v10 a5 5 0 0 1 -5 5 h-10 l-7 7 v-7 h-5 a5 5 0 0 1 -5 -5 v-10 a5 5 0 0 1 5 -5 Z" fill="#E9C46A"/>
+          <text x="21" y="33" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#22304A">A</text>
+          <path d="M54 26 h-22 a5 5 0 0 0 -5 5 v10 a5 5 0 0 0 5 5 h10 l7 7 v-7 h5 a5 5 0 0 0 5 -5 v-10 a5 5 0 0 0 -5 -5 Z" fill="#8FA3BF"/>
+          <text x="43" y="43" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#22304A">B</text>
+        </svg>
+        <span class="t-name">Beau or Abby?</span>
+        <span class="t-sub">vote, then the truth</span>
+      </a>
 
-    <div class="quiz-lock" id="games-daylock" hidden>
-      <p class="eyebrow" style="margin:0 0 18px">Locked until the party</p>
-      <p style="margin:0">The games open on the day of the shower. Come back Saturday, August 15th, once you're in the garden.</p>
-    </div>
+      <a class="activity-tile" data-pv href="party-care-quiz.html">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <rect x="24" y="20" width="16" height="34" rx="5" fill="#F9F5EA"/>
+          <rect x="26" y="30" width="12" height="3" fill="#8FA3BF"/><rect x="26" y="37" width="12" height="3" fill="#8FA3BF"/><rect x="26" y="44" width="12" height="3" fill="#8FA3BF"/>
+          <rect x="25" y="14" width="14" height="7" rx="2" fill="#E9C46A"/>
+          <path d="M32 6 C29 8 29 12 32 14 C35 12 35 8 32 6 Z" fill="#C77E4A"/>
+        </svg>
+        <span class="t-name">The Baby Care Quiz</span>
+        <span class="t-sub">eight questions</span>
+      </a>
 
-    <div id="games-block">
+      <a class="activity-tile" data-pv href="party-derby.html">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <path d="M22 16 h20 l8 8 -7 6 v22 a3 3 0 0 1 -3 3 h-16 a3 3 0 0 1 -3 -3 v-22 l-7 -6 Z" fill="#F9F5EA"/>
+          <path d="M27 16 c1 4 9 4 10 0" stroke="#8FA3BF" stroke-width="2" fill="none"/>
+          <circle cx="32" cy="40" r="2" fill="#8FA3BF"/><circle cx="32" cy="48" r="2" fill="#8FA3BF"/>
+          <circle cx="49" cy="17" r="9" fill="#E9C46A"/>
+          <path d="M49 12 v5 l4 3" stroke="#22304A" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </svg>
+        <span class="t-name">The Dressing Derby</span>
+        <span class="t-sub">beat the stopwatch</span>
+      </a>
 
-    <div class="feature">
-      <h3>Beau or Abby?</h3>
-      <p>When the host gives the word (and the password), answer on your phone. The room's running totals appear under each question before the truth comes out.</p>
-      <div class="quiz-lock" id="quiz-lock">
-        <p class="eyebrow" style="margin:0 0 18px">Locked until game time</p>
-        <input type="text" id="quiz-pw" placeholder="The password">
-        <div><button class="btn small" id="quiz-unlock" type="button" style="margin-top:18px">Unlock the quiz</button></div>
-        <p class="confirm whisper" id="quiz-wrong" style="text-align:center">not yet. Wait for the host</p>
-      </div>
-      <div class="quiz" id="quiz">
-        <div class="quiz-q" data-a="25" data-b="13" data-ans="a">
-          <h4>Who was the bigger baby?</h4>
-          <div class="q-btns">
-            <button class="q-btn" data-side="a" type="button">Abby</button>
-            <button class="q-btn" data-side="b" type="button">Beau</button>
-          </div>
-          <div class="tally">
-            <div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div>
-            <div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div>
-          </div>
-          <div><button class="reveal" type="button">Host: reveal the answer</button></div>
-        </div>
-        <div class="quiz-q" data-a="9" data-b="29" data-ans="b">
-          <h4>Who will handle the 2 a.m. feedings?</h4>
-          <div class="q-btns">
-            <button class="q-btn" data-side="a" type="button">Abby</button>
-            <button class="q-btn" data-side="b" type="button">Beau</button>
-          </div>
-          <div class="tally">
-            <div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div>
-            <div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div>
-          </div>
-          <div><button class="reveal" type="button">Host: reveal the answer</button></div>
-        </div>
-        <div class="quiz-q" data-a="18" data-b="18" data-ans="b">
-          <h4>Who cried first at the ultrasound?</h4>
-          <div class="q-btns">
-            <button class="q-btn" data-side="a" type="button">Abby</button>
-            <button class="q-btn" data-side="b" type="button">Beau</button>
-          </div>
-          <div class="tally">
-            <div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div>
-            <div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div>
-          </div>
-          <div><button class="reveal" type="button">Host: reveal the answer</button></div>
-        </div>
-      </div>
-    </div>
+      <a class="activity-tile" data-pv href="party-guest-book.html">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <rect x="10" y="20" width="44" height="30" rx="6" fill="#8FA3BF"/>
+          <rect x="24" y="14" width="16" height="8" rx="3" fill="#8FA3BF"/>
+          <circle cx="32" cy="35" r="10" fill="#22304A"/><circle cx="32" cy="35" r="6" fill="#F9F5EA"/>
+          <circle cx="47" cy="27" r="3" fill="#E9C46A"/>
+        </svg>
+        <span class="t-name">The guest book</span>
+        <span class="t-sub">a selfie &amp; a line</span>
+      </a>
 
-    <div class="feature">
-      <h3>The Baby Care Quiz</h3>
-      <p>Eight questions on the fine art of keeping a brand-new human happy. Lock in your answers, then the host reveals the truth one question at a time, and the leaderboard crowns a new expert (or dethrones one) with every reveal.</p>
-      <div class="cq-join">
-        <label for="cq-name" style="margin-top:0">Your name, for the leaderboard</label>
-        <input type="text" id="cq-name" placeholder="Aunt Susan">
-      </div>
-      <div id="cq-questions"></div>
-      <button class="btn small" id="cq-submit" type="button" style="margin-top:22px">Lock in my answers</button>
-      <p class="confirm whisper" id="cq-confirm">locked. Now watch the reveals</p>
-      <div class="board-panel">
-        <h4>The leaderboard</h4>
-        <p class="board-sub" id="cq-progress">no answers revealed yet. Scores appear as the host reveals them</p>
-        <ol class="board" id="cq-board"></ol>
-      </div>
-    </div>
+      <a class="activity-tile" data-pv href="party-album.html">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <rect x="18" y="12" width="34" height="28" rx="3" fill="#DCE3EC" transform="rotate(6 35 26)"/>
+          <rect x="12" y="20" width="34" height="28" rx="3" fill="#F9F5EA"/>
+          <circle cx="22" cy="30" r="4" fill="#E9C46A"/>
+          <path d="M14 44 l9 -9 6 6 8 -10 9 13 Z" fill="#98A68B"/>
+        </svg>
+        <span class="t-name">The group album</span>
+        <span class="t-sub">photos to the big screen</span>
+      </a>
 
-    <div class="feature">
-      <h3>Whose baby face?</h3>
-      <p>Every guest who added two photos with their RSVP is hiding in this game. Match each baby photo to the guest they grew into. It stays locked until the host shares the password.</p>
-      <div class="quiz-lock" id="fm-lock">
-        <p class="eyebrow" style="margin:0 0 18px">Locked until game time</p>
-        <input type="text" id="fm-pw" placeholder="The password">
-        <div><button class="btn small" id="fm-unlock" type="button" style="margin-top:18px">Unlock the game</button></div>
-        <p class="confirm whisper" id="fm-wrong" style="text-align:center">not yet. Wait for the host</p>
-      </div>
-      <div class="fm-game" id="fm-game">
-        <div id="fm-grid"></div>
-        <div class="c-row" style="margin-top:26px">
-          <input type="text" id="fm-name" placeholder="Your name">
-          <button class="btn small" id="fm-submit" type="button">Lock in my matches</button>
-        </div>
-        <p class="confirm whisper" id="fm-result" style="font-size:26px"></p>
-        <div class="board-panel">
-          <h4>The leaderboard</h4>
-          <ol class="board" id="fm-board"></ol>
-        </div>
-      </div>
-    </div>
+      <a class="activity-tile" data-pv href="party-advice.html">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <rect x="10" y="18" width="44" height="30" rx="4" fill="#F9F5EA"/>
+          <path d="M10 20 L32 38 L54 20" stroke="#8FA3BF" stroke-width="2.5" fill="none"/>
+          <path d="M32 30 c-4 -5 -11 -1 -8 4 c2 3 8 6 8 6 c0 0 6 -3 8 -6 c3 -5 -4 -9 -8 -4 Z" fill="#C24B33" opacity=".85"/>
+        </svg>
+        <span class="t-name">Advice for the new mama</span>
+        <span class="t-sub">the wisdom wall</span>
+      </a>
 
-    <div class="feature">
-      <h3>The Dressing Derby</h3>
-      <p>One baby doll. One tiny outfit. One merciless stopwatch. Undress and re-dress the doll; the clock runs from the moment you first touch it until the last snap is snapped. Sound easy? The snaps have opinions. Come back for another attempt any time tonight. Only your best time counts, but the leaderboard remembers how many tries it took.</p>
-      <div class="dd-clockbox">
-        <div class="dd-clock" id="dd-clock" aria-live="off">0:00.0</div>
-        <button class="btn small" id="dd-start" type="button">Start the clock</button>
-      </div>
-      <div class="dd-log">
-        <input type="text" id="dd-name" placeholder="Dresser's name">
-        <input type="text" id="dd-time" class="short" placeholder="0:58.2">
-        <button class="btn small ghost" id="dd-log-btn" type="button">Log the time</button>
-      </div>
-      <p class="confirm whisper" id="dd-confirm">logged. The derby continues</p>
-      <div class="board-panel">
-        <h4>The leaderboard</h4>
-        <ol class="board" id="dd-board"></ol>
-      </div>
-    </div>
+      <a class="activity-tile" data-pv href="party-time-capsule.html">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <rect x="18" y="20" width="28" height="36" rx="7" fill="none" stroke="#F9F5EA" stroke-width="2.5"/>
+          <rect x="16" y="12" width="32" height="8" rx="3" fill="#E9C46A"/>
+          <path d="M32 30 l2.6 5.4 6 .8 -4.4 4.2 1.1 5.9 -5.3 -2.8 -5.3 2.8 1.1 -5.9 -4.4 -4.2 6 -.8 Z" fill="#E9C46A"/>
+          <path d="M26 50 c4 -2 8 -2 12 0" stroke="#8FA3BF" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </svg>
+        <span class="t-name">A message for someday</span>
+        <span class="t-sub">words, photo &amp; your voice</span>
+      </a>
 
-    </div><!-- /games-block -->
+      <a class="activity-tile" data-pv href="what-we-know.html">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <circle cx="32" cy="28" r="16" fill="#DCE3EC"/>
+          <circle cx="32" cy="28" r="16" fill="none" stroke="#F9F5EA" stroke-width="2"/>
+          <path d="M32 20 l1.8 3.8 4.2 .6 -3 3 .7 4.1 -3.7 -2 -3.7 2 .7 -4.1 -3 -3 4.2 -.6 Z" fill="#E9C46A"/>
+          <path d="M22 46 h20 l3 8 h-26 Z" fill="#8A6B42"/>
+        </svg>
+        <span class="t-name">Your predictions</span>
+        <span class="t-sub">call his arrival</span>
+      </a>
 
-    <div class="feature">
-      <h3>The group album, live on the big screen</h3>
-      <p>One shared album, everyone's eyes. Add photos from your phone all evening. Each one lands in the album below and floats onto the screen by the dessert table moments later. It starts tonight, and it becomes the family's first album.</p>
-      <div class="gb-new">
-        <div class="gb-drop" id="al-drop" role="button" tabindex="0">add a photo</div>
-        <div class="gb-fields">
-          <label for="al-cap" style="margin-top:0">A line for the caption</label>
-          <input type="text" id="al-cap" placeholder="Golden hour at the gift table" style="width:100%;min-width:0">
-          <button class="btn small ghost" id="al-btn" style="margin-top:16px" type="button">Add to the album</button>
-        </div>
-      </div>
-      <div class="album-grid" id="album">
-        <figure class="album-tile"><img src="assets/photos/baby-abby.jpg" alt="Abby as a baby"><figcaption>the album begins with Abby, once upon a time</figcaption></figure>
-        <figure class="album-tile"><img src="assets/photos/baby-beau.jpg" alt="Beau as a baby"><figcaption>and Beau, already in his blues</figcaption></figure>
-        <figure class="album-tile empty"><span>your photo lands here tonight</span></figure>
-        <figure class="album-tile empty"><span>and here</span></figure>
-      </div>
-      <a class="btn" href="slideshow.html">Open the big-screen slideshow</a>
-    </div>
+      <a class="activity-tile" href="growing.html#portraits">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <rect x="12" y="10" width="40" height="44" rx="3" fill="none" stroke="#E9C46A" stroke-width="4"/>
+          <rect x="18" y="16" width="28" height="32" fill="#22304A"/>
+          <path d="M28 40 c-2 -6 1 -13 6 -14 c4 -1 7 3 5 7 c-2 4 -7 4 -8 9 Z" fill="#F9F5EA" opacity=".9"/>
+          <circle cx="42" cy="22" r="3" fill="#E9C46A"/>
+        </svg>
+        <span class="t-name">His first portraits</span>
+        <span class="t-sub">the ultrasound gallery</span>
+      </a>
 
-    <div class="feature">
-      <h3>And all evening long</h3>
-      <p><em>A page for his story</em>: write Baby Boy White one page for the printed book he'll grow up reading. <em>The recording nook</em>: twenty seconds of your voice, saved for him.</p>
     </div>
   </div>
 </section>
@@ -235,7 +178,7 @@
   arriving October 14th, 2026
 </footer>
 <script src="assets/config.js?v=18"></script>
-<script src="assets/backend.js?v=18"></script>
-<script src="assets/site.js?v=26"></script>
+<script src="assets/backend.js?v=27"></script>
+<script src="assets/site.js?v=27"></script>
 </body>
 </html>

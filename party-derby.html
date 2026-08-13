@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Dressing Derby — The Story Garden</title>
+<link rel="stylesheet" href="assets/styles.css?v=27">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/icon/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/icon/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Story Garden">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The Story Garden">
+<meta property="og:title" content="The Dressing Derby — The Story Garden">
+<meta property="og:description" content="Saturday, August 15th at 7 pm · Grandma's garden, Orem.">
+<meta property="og:image" content="https://babywhiteshower.com/assets/invites/og-invite.png">
+</head>
+<body data-dayof>
+<header class="site-bar">
+  <a class="site-mark" href="index.html">The Story Garden</a>
+  <a class="toc-link" href="index.html#contents">Table of contents</a>
+</header>
+<div class="gingham gingham-band" role="presentation"></div>
+
+<section class="chapter evening">
+  <span class="firefly" style="left:12%;top:30%"></span>
+  <span class="firefly" style="left:80%;top:22%"></span>
+  <svg class="lights" viewBox="0 0 960 50" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 8 Q240 42 480 20 T960 12" stroke="rgba(249,245,234,.35)" stroke-width="1.5" fill="none"/>
+    <g fill="#E9C46A">
+      <circle cx="120" cy="28" r="4"/><circle cx="120" cy="28" r="8" opacity=".25"/>
+      <circle cx="300" cy="34" r="4"/><circle cx="300" cy="34" r="8" opacity=".25"/>
+      <circle cx="480" cy="24" r="4"/><circle cx="480" cy="24" r="8" opacity=".25"/>
+      <circle cx="660" cy="22" r="4"/><circle cx="660" cy="22" r="8" opacity=".25"/>
+      <circle cx="840" cy="18" r="4"/><circle cx="840" cy="18" r="8" opacity=".25"/>
+    </g>
+  </svg>
+  <div class="wrap" style="padding-top:34px;padding-bottom:80px">
+    <a class="back-hub" data-pv href="the-evening.html">← all the games &amp; activities</a>
+    <div class="feature">
+      <h3>The Dressing Derby</h3>
+      <p>One baby doll. One tiny outfit. One merciless stopwatch. Undress and re-dress the doll; the clock runs from the moment you first touch it until the last snap is snapped. Sound easy? The snaps have opinions. Come back for another attempt any time tonight. Only your best time counts, but the leaderboard remembers how many tries it took.</p>
+      <div class="dd-clockbox">
+        <div class="dd-clock" id="dd-clock" aria-live="off">0:00.0</div>
+        <button class="btn small" id="dd-start" type="button">Start the clock</button>
+      </div>
+      <div class="dd-log">
+        <input type="text" id="dd-name" placeholder="Dresser's name">
+        <input type="text" id="dd-time" class="short" placeholder="0:58.2">
+        <button class="btn small ghost" id="dd-log-btn" type="button">Log the time</button>
+      </div>
+      <p class="confirm whisper" id="dd-confirm">logged. The derby continues</p>
+      <div class="board-panel">
+        <h4>The leaderboard</h4>
+        <ol class="board" id="dd-board"></ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<nav class="chapter-nav">
+  <a data-pv href="the-evening.html">← the games &amp; activities</a>
+  <a class="mid" href="index.html#contents" style="text-decoration:none">table of contents</a>
+  <a data-pv href="the-evening.html">back to the grid →</a>
+</nav>
+<footer class="colophon">
+  a story garden for Baby Boy White<br>
+  arriving October 14th, 2026
+</footer>
+<script src="assets/config.js?v=18"></script>
+<script src="assets/backend.js?v=27"></script>
+<script src="assets/site.js?v=27"></script>
+</body>
+</html>

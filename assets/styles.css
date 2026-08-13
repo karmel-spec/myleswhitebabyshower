@@ -517,3 +517,23 @@
     .btn,button.reveal{min-height:44px}
     input[type=text],textarea,select{min-height:44px}
   }
+  /* the party hub: grid of activities */
+  .back-hub{display:inline-block;font-family:var(--body);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--butter);text-decoration:none;border-bottom:1px dashed rgba(233,196,106,.5);padding-bottom:3px;margin-bottom:10px}
+  .back-hub:hover{border-bottom-style:solid}
+  .activity-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:38px}
+  .activity-tile{display:block;text-decoration:none;text-align:center;background:rgba(255,253,246,.05);border:1px solid rgba(255,253,246,.25);border-radius:12px;padding:24px 14px 20px;color:var(--cream);transition:transform .15s ease,background .2s ease}
+  .activity-tile:hover{transform:translateY(-3px);background:rgba(255,253,246,.12)}
+  .activity-tile svg{width:62px;height:62px;display:block;margin:0 auto 12px}
+  .activity-tile .t-name{display:block;font-family:var(--display);font-size:14.5px;letter-spacing:.14em;text-transform:uppercase;line-height:1.5}
+  .activity-tile .t-sub{display:block;font-family:var(--script);font-size:19px;color:var(--butter);margin-top:4px}
+  @media (max-width:560px){
+    .activity-grid{grid-template-columns:1fr 1fr;gap:12px}
+    .activity-tile{padding:18px 10px 16px}
+    .activity-tile svg{width:50px;height:50px}
+    .activity-tile .t-name{font-size:12px;letter-spacing:.1em}
+    .activity-tile .t-sub{font-size:17px}
+  }
+  /* the time capsule */
+  .tc-recorder{margin-top:26px}
+  .tc-recorder audio{width:100%;margin-top:12px}
+  .tc-note{font-size:13.5px;color:var(--dusty);margin:8px 0 0}

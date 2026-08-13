@@ -145,6 +145,74 @@
     $('shelf-right').addEventListener('click',function(){sShelf.scrollBy({left:220,behavior:'smooth'})});
   }
 
+  // --- hosts' preview key rides along on marked links ----------------------
+  if(/[?&]preview/.test(location.search)){
+    Array.prototype.forEach.call(document.querySelectorAll('a[data-pv]'),function(a){
+      a.href+=(a.href.indexOf('?')>-1?'&':'?')+'preview';
+    });
+  }
+
+  // --- the time capsule: a message for him to open someday -----------------
+  if($('tc-btn')){
+    var tcPhoto=null,tcAudio=null,tcRecorder=null,tcTimer=null,tcSecs=0;
+    pickFile($('tc-photo'),function(f){tcPhoto=f;$('tc-photo').classList.add('picked')});
+    var tcRecBtn=$('tc-rec');
+    if(!(navigator.mediaDevices&&window.MediaRecorder)){
+      tcRecBtn.disabled=true;
+      $('tc-rec-note').textContent='this phone’s browser can’t record here — your written words carry it beautifully';
+    }else{
+      tcRecBtn.addEventListener('click',function(){
+        if(tcRecorder&&tcRecorder.state==='recording'){tcRecorder.stop();return}
+        navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+          var chunks=[];
+          tcRecorder=new MediaRecorder(stream);
+          tcRecorder.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data)};
+          tcRecorder.onstop=function(){
+            stream.getTracks().forEach(function(t){t.stop()});
+            clearInterval(tcTimer);
+            var type=tcRecorder.mimeType||'audio/mp4';
+            var blob=new Blob(chunks,{type:type});
+            tcAudio=new File([blob],'voice.'+(type.indexOf('webm')>-1?'webm':'m4a'),{type:type});
+            $('tc-play').src=URL.createObjectURL(blob);
+            $('tc-play').hidden=false;
+            tcRecBtn.textContent='● Record again';
+            $('tc-rec-note').textContent='listen back below — recording again replaces it';
+          };
+          tcRecorder.start();
+          tcSecs=0;
+          tcRecBtn.textContent='■ Stop recording';
+          $('tc-rec-note').textContent='recording… up to thirty seconds, tap stop when you’re done';
+          tcTimer=setInterval(function(){
+            tcSecs++;
+            if(tcSecs>=30&&tcRecorder.state==='recording')tcRecorder.stop();
+          },1000);
+        }).catch(function(){
+          $('tc-rec-note').textContent='the microphone said no — words on the page work beautifully too';
+        });
+      });
+    }
+    $('tc-btn').addEventListener('click',function(){
+      var btn=this;
+      if(btn.classList.contains('sent'))return;
+      var name=$('tc-name').value.trim();
+      var msg=$('tc-msg').value.trim();
+      if(!msg&&!tcAudio&&!tcPhoto){$('tc-msg').focus();return}
+      var finish=function(){
+        $('tc-confirm').classList.add('show');
+        btn.disabled=true;
+        btn.textContent='Sealed 🌼';
+        btn.classList.add('sent');
+      };
+      if(SG.enabled){
+        busy(btn,true,'Sealing…');
+        SG.addTimeCapsule(name,msg,tcPhoto,tcAudio).then(function(){busy(btn,false);finish()})
+          .catch(function(){busy(btn,false);oops($('tc-confirm'))});
+        return;
+      }
+      finish();
+    });
+  }
+
   // --- rsvp ---------------------------------------------------------------
   if($('rsvp-btn')){
     var faceBaby=null,faceNow=null,att='';

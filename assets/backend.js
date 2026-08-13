@@ -141,6 +141,14 @@
     addAlbumPhoto:function(file,caption){
       return uploadPhoto(file).then(function(url){return insert('album',{caption:caption,photo_url:url})});
     },
+    // the time capsule: words + photo + voice, readable only by the hosts
+    addTimeCapsule:function(name,message,photoFile,audioFile){
+      var pu=photoFile?uploadPhoto(photoFile):Promise.resolve(null);
+      var au=audioFile?uploadPhoto(audioFile):Promise.resolve(null);
+      return Promise.all([pu,au]).then(function(urls){
+        return insert('future_messages',{name:name,message:message,photo_url:urls[0],audio_url:urls[1]});
+      });
+    },
     listAlbum:function(){return list('album')},
 
     // games
