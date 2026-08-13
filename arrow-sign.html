@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Arrow sign to print — The Story Garden</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/icon/favicon-32.png">
+<style>
+  :root{
+    --cream:#F9F5EA;--paper:#FFFDF6;--navy:#22304A;--dusty-deep:#4F6584;--leaf:#5C7046;
+    --butter:#E9C46A;--soft:#5E6678;
+    --display:"Hoefler Text",Baskerville,"Iowan Old Style",Georgia,serif;
+    --script:"Snell Roundhand","Apple Chancery",cursive;
+    --body:"Seravek","Avenir Next",Avenir,"Gill Sans",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#E2D6BB;font-family:var(--body);color:var(--navy)}
+  .note{max-width:640px;margin:0 auto;padding:26px 24px 6px;text-align:center;font-size:15px;color:var(--soft)}
+  .sign{
+    background:var(--paper);border:5px double var(--navy);border-radius:8px;
+    max-width:860px;margin:20px auto 40px;padding:54px 50px 44px;text-align:center;
+  }
+  .eyebrow{font-family:var(--display);font-size:14px;letter-spacing:.34em;text-transform:uppercase;color:var(--dusty-deep);margin:0}
+  h1{font-family:var(--script);font-weight:400;font-size:74px;line-height:1.05;color:var(--navy);margin:16px 0 4px}
+  .to{font-family:var(--display);font-size:24px;letter-spacing:.3em;text-transform:uppercase;margin:8px 0 30px;color:var(--navy)}
+  .arrow{display:block;margin:0 auto}
+  .under{font-family:var(--script);font-size:30px;color:var(--leaf);margin:24px 0 0}
+  @media print{
+    @page{size:letter landscape;margin:8mm}
+    body{background:#fff}
+    .note{display:none}
+    .sign{border-width:4px;margin:0 auto;max-width:none;padding:44px 40px 34px}
+  }
+</style>
+</head>
+<body>
+<p class="note"><strong>Hosts:</strong> print this page (⌘P) — it prints sideways (landscape) for a gate or fence. Flip it in any copy app if the garden ends up to the left!</p>
+
+<div class="sign">
+  <p class="eyebrow">The Story Garden</p>
+  <h1>this way</h1>
+  <p class="to">To the backyard story garden</p>
+
+  <svg class="arrow" width="560" height="120" viewBox="0 0 560 120" aria-hidden="true">
+    <path d="M14 66 C120 42 300 42 470 58" fill="none" stroke="#22304A" stroke-width="10" stroke-linecap="round"/>
+    <path d="M446 24 L522 62 L438 92" fill="#22304A" stroke="#22304A" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="60" cy="98" r="7" fill="#E9C46A"/>
+    <g fill="#FFFDF6" stroke="#22304A" stroke-width=".8">
+      <ellipse cx="60" cy="86" rx="4" ry="7"/><ellipse cx="60" cy="110" rx="4" ry="7"/>
+      <ellipse cx="48" cy="98" rx="7" ry="4"/><ellipse cx="72" cy="98" rx="7" ry="4"/>
+    </g>
+    <circle cx="60" cy="98" r="7" fill="#E9C46A"/>
+    <circle cx="250" cy="94" r="6" fill="#E9C46A"/>
+    <g fill="#FFFDF6" stroke="#22304A" stroke-width=".8">
+      <ellipse cx="250" cy="83" rx="3.5" ry="6"/><ellipse cx="250" cy="105" rx="3.5" ry="6"/>
+      <ellipse cx="239" cy="94" rx="6" ry="3.5"/><ellipse cx="261" cy="94" rx="6" ry="3.5"/>
+    </g>
+    <circle cx="250" cy="94" r="6" fill="#E9C46A"/>
+  </svg>
+
+  <p class="under">the stories, supper, and string lights are back here</p>
+</div>
+</body>
+</html>

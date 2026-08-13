@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The leaderboards — The Story Garden</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/icon/favicon-32.png">
+<style>
+  :root{
+    --paper:#FFFDF6;--navy:#22304A;--navy-deep:#1B2438;--dusty:#8FA3BF;--leaf:#98A68B;
+    --butter:#E9C46A;--red:#C24B33;
+    --display:"Hoefler Text",Baskerville,"Iowan Old Style",Georgia,serif;
+    --script:"Snell Roundhand","Apple Chancery",cursive;
+    --body:"Seravek","Avenir Next",Avenir,"Gill Sans",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--navy-deep);color:var(--paper);font-family:var(--body);min-height:100vh}
+  header{text-align:center;padding:40px 20px 8px}
+  header .eyebrow{font-family:var(--display);font-size:15px;letter-spacing:.4em;text-transform:uppercase;color:var(--dusty);margin:0}
+  header h1{font-family:var(--script);font-weight:400;font-size:clamp(44px,6vw,72px);color:var(--butter);margin:10px 0 0}
+  header .live{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--dusty);margin:12px 0 0}
+  header .live::before{content:'';display:inline-block;width:9px;height:9px;border-radius:50%;background:#7FC383;margin-right:8px;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .boards{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:26px;max-width:1500px;margin:30px auto 50px;padding:0 30px}
+  .panel{background:rgba(255,253,246,.05);border:1px solid rgba(255,253,246,.22);border-radius:10px;padding:26px 26px 20px}
+  .panel h2{font-family:var(--display);font-size:clamp(19px,1.8vw,25px);letter-spacing:.2em;text-transform:uppercase;color:var(--paper);margin:0 0 4px;text-align:center}
+  .panel .sub{font-family:var(--script);font-size:clamp(20px,1.8vw,26px);color:var(--leaf);text-align:center;margin:0 0 18px}
+  ol{list-style:none;margin:0;padding:0}
+  ol li{display:flex;align-items:baseline;gap:14px;padding:10px 6px;border-bottom:1px dashed rgba(255,253,246,.18);font-size:clamp(18px,1.7vw,24px)}
+  ol li:last-child{border-bottom:none}
+  .rank{font-family:var(--display);color:var(--dusty);min-width:1.4em;text-align:right}
+  .b-name{font-family:var(--display);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .b-score{color:var(--butter);font-variant-numeric:tabular-nums}
+  li.lead .b-name,li.lead .rank{color:var(--butter)}
+  li.lead .b-score::after{content:' 🏆'}
+  .empty{color:var(--dusty);font-style:italic;font-size:17px;padding:12px 6px}
+  .progress{text-align:center;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--dusty);margin:0 0 12px}
+  footer{text-align:center;color:var(--dusty);font-size:13px;letter-spacing:.15em;text-transform:uppercase;padding-bottom:30px}
+</style>
+</head>
+<body>
+<header>
+  <p class="eyebrow">The Story Garden</p>
+  <h1>tonight&#8217;s champions</h1>
+  <p class="live">live — updates on its own</p>
+</header>
+
+<div class="boards">
+  <div class="panel">
+    <h2>Whose baby face?</h2>
+    <p class="sub">match the babies to the guests</p>
+    <ol id="fm-lb"></ol>
+  </div>
+  <div class="panel">
+    <h2>The Baby Care Quiz</h2>
+    <p class="sub">eight questions, one expert</p>
+    <p class="progress" id="cq-progress">&nbsp;</p>
+    <ol id="cq-lb"></ol>
+  </div>
+  <div class="panel">
+    <h2>The Dressing Derby</h2>
+    <p class="sub">fastest onesie in the west</p>
+    <ol id="dd-lb"></ol>
+  </div>
+</div>
+
+<footer>babywhiteshower.com</footer>
+
+<script src="assets/config.js?v=26"></script>
+<script src="assets/backend.js?v=26"></script>
+<script>
+(function(){
+  var CARE_ANS=[1,0,2,1,1,0,1,2];
+  var MAXROWS=10;
+  var isJunk=function(s){return /claude diagnostic|please ignore|\(test\)/i.test(s||'')};
+  var fill=function(ol,rows,empty){
+    ol.innerHTML='';
+    if(!rows.length){
+      var li=document.createElement('li');
+      li.className='empty';li.textContent=empty;
+      ol.appendChild(li);
+      return;
+    }
+    rows.slice(0,MAXROWS).forEach(function(r,i){
+      var li=document.createElement('li');
+      if(i===0)li.className='lead';
+      var rk=document.createElement('span');rk.className='rank';rk.textContent=(i+1)+'.';
+      var nm=document.createElement('span');nm.className='b-name';nm.textContent=r.name;
+      var sc=document.createElement('span');sc.className='b-score';sc.textContent=r.label;
+      li.appendChild(rk);li.appendChild(nm);li.appendChild(sc);
+      ol.appendChild(li);
+    });
+  };
+  var ddFmt=function(sec){
+    sec=parseFloat(sec);
+    var m=Math.floor(sec/60);
+    var s=(sec-m*60).toFixed(1);
+    return m+':'+(s<10?'0':'')+s;
+  };
+  var refresh=function(){
+    if(!window.SG||!SG.enabled)return;
+    SG.listFaceScores().then(function(rows){
+      var best={};
+      rows.filter(function(r){return !isJunk(r.name)}).forEach(function(r){
+        var k=r.name.toLowerCase();
+        if(!best[k]||r.score>best[k].score)best[k]={name:r.name,score:r.score,total:r.total};
+      });
+      var list=Object.keys(best).map(function(k){return best[k]})
+        .sort(function(a,b){return b.score-a.score||a.name.localeCompare(b.name)})
+        .map(function(r){return {name:r.name,label:r.score+' of '+r.total}});
+      fill(document.getElementById('fm-lb'),list,'no matches locked yet — be first');
+    }).catch(function(){});
+    Promise.all([
+      SG.listCareQuiz().catch(function(){return []}),
+      SG.quizTallies().catch(function(){return {}})
+    ]).then(function(res){
+      var revealed=[];
+      Object.keys(res[1]).forEach(function(k){
+        var qi=parseInt(k,10)-100;
+        if(qi>=0&&qi<CARE_ANS.length)revealed[qi]=true;
+      });
+      var shown=revealed.filter(Boolean).length;
+      document.getElementById('cq-progress').textContent=shown
+        ?shown+' of '+CARE_ANS.length+' answers revealed'
+        :'scores appear as the host reveals answers';
+      var list=res[0].filter(function(r){return !isJunk(r.name)}).map(function(r){
+        var s=0;
+        CARE_ANS.forEach(function(ans,qi){if(revealed[qi]&&r.answers&&r.answers[qi]===ans)s++});
+        return {name:r.name,score:s,label:s+' right'};
+      }).sort(function(a,b){return b.score-a.score||a.name.localeCompare(b.name)});
+      fill(document.getElementById('cq-lb'),list,'no players locked in yet');
+    });
+    SG.listDollTimes().then(function(rows){
+      var best={};
+      rows.filter(function(r){return !isJunk(r.name)}).forEach(function(r){
+        var k=r.name.toLowerCase();
+        var sec=parseFloat(r.seconds);
+        if(!best[k]||sec<best[k].sec)best[k]={name:r.name,sec:sec};
+      });
+      var list=Object.keys(best).map(function(k){return best[k]})
+        .sort(function(a,b){return a.sec-b.sec})
+        .map(function(r){return {name:r.name,label:ddFmt(r.sec)}});
+      fill(document.getElementById('dd-lb'),list,'no runs on the clock yet');
+    }).catch(function(){});
+  };
+  var boot=function(){
+    if(window.SG&&SG.enabled){refresh();setInterval(refresh,6000);}
+    else{
+      ['fm-lb','cq-lb','dd-lb'].forEach(function(id){
+        fill(document.getElementById(id),[],'connects at the party');
+      });
+    }
+  };
+  boot();
+})();
+</script>
+</body>
+</html>

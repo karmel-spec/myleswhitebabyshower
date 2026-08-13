@@ -894,6 +894,7 @@
       {name:'Ruth',answers:[1,0,0,1,1,0,1,1]},
       {name:'Aunt Susan',answers:[0,0,2,1,1,1,1,2]}
     ];
+    var cqRows=[],cqRevBtns=[];
     CARE_Q.forEach(function(item,qi){
       var card=document.createElement('div');
       card.className='quiz-q';
@@ -920,9 +921,13 @@
         cqRevealed[qi]=true;
         row.children[item.ans].classList.add('correct');
         this.style.display='none';
+        // broadcast the reveal (as quiz_votes rows 100+) so every phone and
+        // the big-screen leaderboard see it within seconds
+        if(SG.enabled)SG.voteQuiz(100+qi,'a').catch(function(){});
         cqRefresh();
       });
       card.appendChild(document.createElement('div')).appendChild(rev);
+      cqRows[qi]=row;cqRevBtns[qi]=rev;
       $('cq-questions').appendChild(card);
     });
     var cqBoard=function(){
@@ -957,10 +962,21 @@
     };
     var cqRefresh=function(){
       if(SG.enabled){
-        SG.listCareQuiz().then(function(rows){
-          cqEntries=rows.map(function(r){return {name:r.name,answers:r.answers}});
+        Promise.all([
+          SG.listCareQuiz().catch(function(){return null}),
+          SG.quizTallies().catch(function(){return null})
+        ]).then(function(res){
+          if(res[0])cqEntries=res[0].map(function(r){return {name:r.name,answers:r.answers}});
+          if(res[1])Object.keys(res[1]).forEach(function(k){
+            var qi=parseInt(k,10)-100;
+            if(qi>=0&&qi<CARE_Q.length&&!cqRevealed[qi]){
+              cqRevealed[qi]=true;
+              cqRows[qi].children[CARE_Q[qi].ans].classList.add('correct');
+              cqRevBtns[qi].style.display='none';
+            }
+          });
           cqBoard();
-        }).catch(function(){cqBoard()});
+        });
       }else{cqBoard()}
     };
     $('cq-submit').addEventListener('click',function(){
