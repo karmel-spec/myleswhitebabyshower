@@ -537,3 +537,6 @@
   .tc-recorder{margin-top:26px}
   .tc-recorder audio{width:100%;margin-top:12px}
   .tc-note{font-size:13.5px;color:var(--dusty);margin:8px 0 0}
+  .hub-section-h{color:var(--cream);font-family:var(--display);font-size:15px;letter-spacing:.26em;text-transform:uppercase;text-align:center;margin:40px 0 20px;padding-bottom:12px;border-bottom:1px solid rgba(255,253,246,.22)}
+  .activity-grid + .hub-section-h{margin-top:44px}
+  .hub-prize{display:block;font-family:var(--script);font-size:19px;letter-spacing:0;text-transform:none;color:var(--butter);margin-top:6px}
