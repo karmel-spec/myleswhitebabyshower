@@ -263,7 +263,7 @@
   .t-row .t-name{width:52px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#C3CCDD;flex:none}
   .t-bar{height:8px;background:var(--butter);border-radius:4px;width:0;transition:width .4s ease}
   .t-row .t-n{font-size:13px;color:#C3CCDD}
-  .reveal{display:inline-block;margin-top:16px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--butter);background:none;border:none;cursor:pointer;padding:0 0 2px;border-bottom:1px solid var(--butter)}
+  .reveal{display:inline-block;margin-top:12px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--butter);background:none;border:1px solid rgba(233,196,106,.5);border-radius:6px;cursor:pointer;padding:12px 16px;min-height:42px}
   .lights{display:block;width:100%;height:50px}
   .firefly{position:absolute;width:4px;height:4px;border-radius:50%;background:var(--butter);box-shadow:0 0 8px 2px rgba(233,196,106,.5);opacity:0;animation:drift 10s ease-in-out infinite}
   .firefly:nth-of-type(2){animation-delay:3s;animation-duration:12s}
@@ -512,3 +512,8 @@
   .send-chips .chip{font-family:var(--body);font-size:13px;color:var(--navy);background:#FBF0D6;border:1px solid var(--butter-deep);border-radius:999px;padding:7px 16px;text-decoration:none}
   .send-chips .chip:hover{background:var(--butter)}
   .chip-empty{font-size:13.5px;font-style:italic;color:var(--soft)}
+  /* party night is all phones: full thumb-size tap targets */
+  @media (max-width:560px){
+    .btn,button.reveal{min-height:44px}
+    input[type=text],textarea,select{min-height:44px}
+  }
