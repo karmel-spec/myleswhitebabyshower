@@ -39,8 +39,17 @@
   /* ---- the board ---- */
   .grid{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr 1fr;grid-template-rows:1fr 1fr;
     gap:12px;padding:0 24px 12px;min-height:0}
-  #p-pred{grid-column:span 2}
-  #p-pred .pred-grid{grid-template-columns:repeat(4,1fr);grid-template-rows:1fr}
+  #p-show{grid-column:span 2}
+  .show-frame{position:relative;flex:1;min-height:0;overflow:hidden;border-radius:8px;
+    border:1px solid rgba(233,196,106,.3);background:var(--navy)}
+  .show-frame iframe{position:absolute;top:0;left:0;width:1280px;height:720px;border:0;
+    transform-origin:top left;pointer-events:none}
+  /* predictions, compacted into the header corner */
+  .head-pred{display:grid;grid-template-columns:1fr 1fr;gap:2px 8px}
+  .head-pred .tile{text-align:center;min-width:0;overflow:hidden}
+  .head-pred .big{font-family:var(--display);font-size:clamp(11px,1.5vh,15px);color:var(--butter);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .head-pred .lbl{font-size:clamp(7px,.9vh,9px);letter-spacing:.08em;text-transform:uppercase;color:var(--dusty)}
   .panel{position:relative;background:rgba(255,253,246,.06);border:1px solid rgba(255,253,246,.2);
     border-radius:12px;padding:14px 16px 10px;display:flex;flex-direction:column;min-height:0;overflow:hidden;
     transition:background .5s ease,border-color .5s ease,box-shadow .5s ease}
@@ -155,9 +164,14 @@
     <h1>tonight&#8217;s champions</h1>
     <p class="live">live updates</p>
   </div>
-  <div class="head-side">
-    <p class="mini-label">on the big screen</p>
-    <div class="mini-frame"><iframe src="slideshow.html" title="Live slideshow"></iframe></div>
+  <div class="head-side" id="p-pred">
+    <p class="mini-label">baby predictions</p>
+    <div class="head-pred">
+      <div class="tile"><div class="big" id="hair-top">—</div><div class="lbl" id="hair-lbl">hair guess</div></div>
+      <div class="tile"><div class="big" id="weight-avg">—</div><div class="lbl">avg weight</div></div>
+      <div class="tile"><div class="big" id="length-avg">—</div><div class="lbl">avg length</div></div>
+      <div class="tile"><div class="big" id="date-top">—</div><div class="lbl">top arrival day</div></div>
+    </div>
   </div>
 </header>
 
@@ -213,16 +227,10 @@
     <div class="contrib-row" id="tc-contrib"></div>
   </div>
 
-  <div class="panel" id="p-pred">
-    <span class="crown-badge" id="badge-pred">New guess!</span>
-    <h2>Baby Predictions</h2>
-    <p class="sub">what the baby fans think</p>
-    <div class="pred-grid">
-      <div class="tile"><div class="big" id="hair-top">—</div><div class="lbl" id="hair-lbl">hair guess</div></div>
-      <div class="tile"><div class="big" id="weight-avg">—</div><div class="lbl">avg weight</div></div>
-      <div class="tile"><div class="big" id="length-avg">—</div><div class="lbl">avg length</div></div>
-      <div class="tile"><div class="big" id="date-top">—</div><div class="lbl">top arrival day</div></div>
-    </div>
+  <div class="panel" id="p-show">
+    <h2>On the big screen</h2>
+    <p class="sub">the album, floating by live</p>
+    <div class="show-frame"><iframe src="slideshow.html" title="Live slideshow"></iframe></div>
   </div>
 </div>
 
@@ -250,14 +258,17 @@
   var SHOW_ALL=/[?&]test\b/.test(location.search);
   var isJunk=function(s){return !SHOW_ALL&&/claude|please ignore|\(test\)/i.test(s||'')};
 
-  // scale the mini slideshow to whatever width the header gave it
-  var sizeMini=function(){
-    var f=document.querySelector('.mini-frame');
+  // the slideshow is built for a TV — render it full size inside the iframe
+  // and shrink the whole picture to fit its panel, centered
+  var sizeShow=function(){
+    var f=document.querySelector('.show-frame');
     var i=f&&f.querySelector('iframe');
-    if(f&&i)i.style.transform='scale('+(f.clientWidth/1280)+')';
+    if(!f||!i)return;
+    var s=Math.min(f.clientWidth/1280,f.clientHeight/720);
+    i.style.transform='translate('+((f.clientWidth-1280*s)/2)+'px,'+((f.clientHeight-720*s)/2)+'px) scale('+s+')';
   };
-  window.addEventListener('resize',sizeMini);
-  sizeMini();setTimeout(sizeMini,400);
+  window.addEventListener('resize',sizeShow);
+  sizeShow();setTimeout(sizeShow,400);
 
   var fill=function(ol,rows,empty){
     ol.innerHTML='';
@@ -318,7 +329,7 @@
     }
   };
   // an ambient glow that walks the board, so a quiet moment still moves
-  var spotPanels=['p-active','p-fm','p-cq','p-boa','p-dd','p-al','p-tc','p-pred'];
+  var spotPanels=['p-active','p-fm','p-cq','p-boa','p-dd','p-al','p-tc','p-show'];
   var spotAt=0;
   setInterval(function(){
     spotPanels.forEach(function(id){
@@ -587,15 +598,19 @@
       settle('dd','p-dd','badge-dd',sig(ddList),lead(ddList));
       settle('al','p-al','badge-al',sig(albumList),lead(albumList));
       settle('tc','p-tc','badge-tc',sig(capsuleRows.map(function(r){return r.name})),null);
-      settle('pred','p-pred','badge-pred',predSig,null);
+      settle('pred','p-pred',null,predSig,null);
 
       // ---- diff against last cycle: ticker entries + milestones ----
+      // On the very first cycle nothing is "new", which left the ticker
+      // stuck on its placeholder — so seed it with the latest happenings.
+      var seedTicks=[];
       var noteNew=function(rows,bucket,tick){
         rows.forEach(function(r){
           var id=r.id||(r.name+'|'+r.created_at);
           if(seen[bucket][id])return;
           seen[bucket][id]=true;
           if(!firstRun)newTicks.push(tick(r));
+          else seedTicks.push({t:r.created_at||'',text:tick(r)});
         });
       };
       noteNew(faceRows,'faces',function(r){return r.name+' matched '+r.score+' of '+r.total+' baby faces'});
@@ -606,6 +621,10 @@
       noteNew(adviceRows,'advice',function(r){return r.name+' left advice for Abby'});
       noteNew(capsuleRows,'capsule',function(r){return r.name+' recorded a message for Baby White'});
       newTicks.forEach(pushTicker);
+      if(firstRun&&seedTicks.length){
+        seedTicks.sort(function(a,b){return new Date(a.t)-new Date(b.t)});
+        seedTicks.slice(-8).forEach(function(e){pushTicker(e.text)});
+      }
 
       // big-moment celebrations for a new overall leader
       if(!firstRun&&activeList.length&&activeList[0].name!==prevLeader.activeCelebrated){
