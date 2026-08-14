@@ -173,7 +173,24 @@
         return insert('faces',{name:name,baby_url:urls[0],now_url:urls[1]});
       });
     },
-    listFaces:function(){return list('faces')},
+    // round-two face crops live in storage as crop2-<original>.jpg —
+    // tight, centered, uniform face size. Swap them in wherever faces load.
+    listFaces:function(){
+      var RECROPPED={'1784075209778-tt5y8r.jpeg':1,'1784075209782-qx5xmf.jpeg':1,'1784138165860-wsxtj1.png':1,'1784138165861-6smd3e.png':1,'1784257616610-ye4v45.jpeg':1,'1784257616612-jp7wli.jpeg':1,'1784394863840-6jeopv.jpeg':1,'1784394863844-tunn7n.png':1,'1784401418659-9bbg34.jpeg':1,'1784401418661-fjn671.jpeg':1,'1784403394567-v70fjt.jpeg':1,'1784403394570-rl7xup.jpeg':1,'1784856255119-z69df0.jpeg':1,'1784856255125-siy33k.jpeg':1,'1785685021731-oqf63q.jpeg':1,'1785685021736-ttyn5v.jpeg':1,'1785818653523-itqoic.png':1,'1785818653527-olar7m.jpeg':1,'1785874682781-n4rd0s.jpg':1,'1785874682786-1kz5u4.jpg':1,'1785897645685-3krfnv.jpg':1,'1785897645697-mep2tg.jpg':1,'1785963657212-c99fb0.jpeg':1,'1785963657216-5r9i37.jpeg':1,'1786140877432-whk4pl.jpeg':1,'1786140877436-aimdlt.jpeg':1,'1786143292849-5vsafp.jpeg':1,'1786143292854-7gh7jj.jpeg':1,'1786209426794-uhpocl.jpeg':1,'1786209426797-3qfbiq.jpeg':1,'1786223111569-ul853u.png':1,'1786223111572-g7rzs8.png':1,'1786382296284-qfzrz8.jpeg':1,'1786382296294-xupb4t.jpeg':1,'1786393101227-ptglev.png':1,'1786393101229-ce5zqm.jpeg':1,'1786631845293-82f4aj.png':1,'1786631845295-gk7aeh.png':1,'1786663877729-vi5x0f.jpg':1,'1786663877735-ep910w.jpg':1};
+      var recrop=function(u){
+        if(!u)return u;
+        var m=u.match(/\/album\/([^\/?]+)$/);
+        if(!m||!RECROPPED[m[1]])return u;
+        return u.replace(m[1],'crop2-'+m[1].replace(/\.[a-z]+$/i,'.jpg'));
+      };
+      return list('faces').then(function(rows){
+        return rows.map(function(r){
+          r.baby_url=recrop(r.baby_url);
+          r.now_url=recrop(r.now_url);
+          return r;
+        });
+      });
+    },
     submitCareQuiz:function(name,answers){return insert('care_entries',{name:name,answers:answers})},
     listCareQuiz:function(){return list('care_entries')},
     submitFaceScore:function(name,score,total){return insert('face_scores',{name:name,score:score,total:total})},

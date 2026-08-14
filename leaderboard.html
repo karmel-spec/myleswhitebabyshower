@@ -245,7 +245,7 @@
 <div class="celebrate-banner" id="celebrate-banner"></div>
 
 <script src="assets/config.js?v=26"></script>
-<script src="assets/backend.js?v=33"></script>
+<script src="assets/backend.js?v=34"></script>
 <script>
 (function(){
   // must stay in the same order as CARE_Q in assets/site.js
@@ -386,7 +386,7 @@
 
   // --- state carried between refresh cycles, for diffing --------------------
   var firstRun=true;
-  var seen={faces:{},quiz:{},boa:{},derby:{},album:{},advice:{},capsule:{}};
+  var seen={faces:{},quiz:{},boa:{},derby:{},album:{},advice:{},twocents:{},capsule:{}};
   var prevLeader={active:null,fm:null,cq:null,boa:null,dd:null,al:null};
   var prevSig={active:'',fm:'',cq:'',boa:'',dd:'',al:'',tc:'',pred:''};
   var prevPerfect={fm:{},cq:{}};
@@ -422,6 +422,14 @@
       var dollRows=res[3].filter(function(r){return !isJunk(r.name)});
       var albumRows=res[4].filter(function(r){return r.name&&!isJunk(r.name)});
       var adviceRows=res[5].filter(function(r){return r.name&&!isJunk(r.name)});
+      // "two cents" comments carry their author as a "Name — text" prefix
+      var commentRows=[];
+      res[5].forEach(function(a){
+        (a.advice_comments||[]).forEach(function(c){
+          var m=(c.message||'').match(/^(.{1,40}?) — [\s\S]+$/);
+          if(m&&!isJunk(m[1]))commentRows.push({name:m[1],id:c.id,created_at:c.created_at});
+        });
+      });
       var capsuleRows=res[6].filter(function(r){return r.name&&!isJunk(r.name)});
       var predRows=res[7];
       var newTicks=[];
@@ -553,13 +561,13 @@
       var bump=function(rows,field){
         rows.forEach(function(r){
           var k=r.name.trim().toLowerCase();
-          if(!activity[k])activity[k]={name:r.name.trim(),total:0,faces:0,quiz:0,boa:0,derby:0,photos:0,advice:0,capsule:0};
+          if(!activity[k])activity[k]={name:r.name.trim(),total:0,faces:0,quiz:0,boa:0,derby:0,photos:0,advice:0,twocents:0,capsule:0};
           activity[k][field]++;
           activity[k].total++;
         });
       };
       bump(faceRows,'faces');bump(careRows,'quiz');bump(boaRows,'boa');bump(dollRows,'derby');
-      bump(albumRows,'photos');bump(adviceRows,'advice');bump(capsuleRows,'capsule');
+      bump(albumRows,'photos');bump(adviceRows,'advice');bump(commentRows,'twocents');bump(capsuleRows,'capsule');
       var activeList=Object.keys(activity).map(function(k){return activity[k]})
         .sort(function(a,b){return b.total-a.total||a.name.localeCompare(b.name)})
         .slice(0,10);
@@ -576,6 +584,7 @@
           if(r.quiz)parts.push('care quiz');
           if(r.boa)parts.push('Beau or Abby');
           if(r.advice)parts.push(r.advice+' advice');
+          if(r.twocents)parts.push(r.twocents+' × two cents');
           if(r.capsule)parts.push('a message for him');
           var li=document.createElement('li');
           if(i===0)li.className='lead';
@@ -624,6 +633,7 @@
       noteNew(dollRows,'derby',function(r){return r.name+' ran the Dressing Derby in '+ddFmt(parseFloat(r.seconds))});
       noteNew(albumRows,'album',function(r){return r.name+' added a photo to the album'});
       noteNew(adviceRows,'advice',function(r){return r.name+' left advice for Abby'});
+      noteNew(commentRows,'twocents',function(r){return r.name+' added their two cents'});
       noteNew(capsuleRows,'capsule',function(r){return r.name+' recorded a message for Baby White'});
       newTicks.forEach(pushTicker);
       if(firstRun&&seedTicks.length){

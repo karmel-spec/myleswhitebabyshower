@@ -556,3 +556,6 @@
 
   /* a quiz card the guest skipped, flagged at lock-in time */
   .quiz-q.missing{box-shadow:0 0 0 2px rgba(233,196,106,.85);border-radius:10px}
+
+  /* two-cents rows: name + comment share the row */
+  .c-row .c-name{flex:0 0 32%;min-width:90px}

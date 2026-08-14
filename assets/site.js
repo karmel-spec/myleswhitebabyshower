@@ -466,7 +466,7 @@
     var q=document.createElement('blockquote');q.textContent=text;
     var w=document.createElement('div');w.className='who';w.textContent=name;
     var cm=document.createElement('div');cm.className='adv-comments';
-    cm.innerHTML='<div class="c-row"><input type="text" placeholder="Add your two cents" aria-label="Comment on this advice"><button class="btn small ghost c-post" type="button">Post</button></div>';
+    cm.innerHTML='<div class="c-row"><input type="text" class="c-name" placeholder="Your name" aria-label="Your name"><input type="text" class="c-text" placeholder="Add your two cents" aria-label="Comment on this advice"><button class="btn small ghost c-post" type="button">Post</button></div>';
     card.appendChild(q);card.appendChild(w);card.appendChild(cm);
     return card;
   }
@@ -484,7 +484,11 @@
           var card=adviceCard(rows[i].message,rows[i].name||'A guest',rows[i].id);
           (rows[i].advice_comments||[]).forEach(function(c){
             var row=card.querySelector('.c-row');
-            row.parentElement.insertBefore(commentLine(c.message,'a guest'),row);
+            // comments carry their author as a "Name — text" prefix (the
+            // table predates names); older ones without it stay "a guest"
+            var m=(c.message||'').match(/^(.{1,40}?) — ([\s\S]+)$/);
+            row.parentElement.insertBefore(
+              m?commentLine(m[2],m[1]):commentLine(c.message,'a guest'),row);
           });
           $('adv-wall').prepend(card);
         }
@@ -510,14 +514,19 @@
   document.addEventListener('click',function(e){
     if(!e.target.classList.contains('c-post'))return;
     var row=e.target.parentElement;
-    var inp=row.querySelector('input');
+    var nameInp=row.querySelector('.c-name');
+    var inp=row.querySelector('.c-text')||row.querySelector('input');
     var v=inp.value.trim();
     if(!v)return;
+    var name=nameInp?nameInp.value.trim():'';
+    if(!name){if(nameInp)nameInp.focus();return}
     var card=e.target.closest('.adv-card');
     var id=card?card.getAttribute('data-id'):null;
-    row.parentElement.insertBefore(commentLine(v,'you'),row);
+    row.parentElement.insertBefore(commentLine(v,name),row);
     inp.value='';
-    if(SG.enabled&&id)SG.postComment(id,v).catch(function(){});
+    // name rides inside the message ("Name — text") so the leaderboard can
+    // count two-cents points without a schema change
+    if(SG.enabled&&id)SG.postComment(id,name+' — '+v).catch(function(){});
   });
 
   // --- the evening: beau-or-abby quiz -----------------------------------------
