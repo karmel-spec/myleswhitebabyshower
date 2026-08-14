@@ -631,7 +631,24 @@
       noteNew(careRows,'quiz',function(r){return r.name+' locked in their Baby Care Quiz answers'});
       noteNew(boaRows,'boa',function(r){return r.name+' locked in their Beau or Abby guesses'});
       noteNew(dollRows,'derby',function(r){return r.name+' ran the Dressing Derby in '+ddFmt(parseFloat(r.seconds))});
-      noteNew(albumRows,'album',function(r){return r.name+' added a photo to the album'});
+      // album adds coalesce into one tick per guest per cycle — a bulk
+      // upload of a dozen photos shouldn't crawl by a dozen times
+      var albumNew={};
+      albumRows.forEach(function(r){
+        var id=r.id||(r.name+'|'+r.created_at);
+        if(seen.album[id])return;
+        seen.album[id]=true;
+        var k=r.name.trim().toLowerCase();
+        if(!albumNew[k])albumNew[k]={name:r.name.trim(),n:0,t:r.created_at||''};
+        albumNew[k].n++;
+        if((r.created_at||'')>albumNew[k].t)albumNew[k].t=r.created_at;
+      });
+      Object.keys(albumNew).forEach(function(k){
+        var e=albumNew[k];
+        var text=e.name+(e.n===1?' added a photo to the album':' added '+e.n+' photos to the album');
+        if(!firstRun)newTicks.push(text);
+        else seedTicks.push({t:e.t,text:text});
+      });
       noteNew(adviceRows,'advice',function(r){return r.name+' left advice for Abby'});
       noteNew(commentRows,'twocents',function(r){return r.name+' added their two cents'});
       noteNew(capsuleRows,'capsule',function(r){return r.name+' recorded a message for Baby White'});
