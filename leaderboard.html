@@ -141,8 +141,10 @@
     align-items:center;gap:12px;overflow:hidden;min-height:0}
   .ticker .dot{width:8px;height:8px;border-radius:50%;background:var(--navy-deep);flex:0 0 auto;animation:pulse 2s infinite}
   .ticker-text{font-family:var(--display);font-weight:700;font-size:clamp(12px,1.7vh,17px);
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:opacity .3s ease}
-  .ticker-text.fade{opacity:0}
+    white-space:nowrap;flex:0 0 auto;display:inline-block;will-change:transform}
+  .ticker-text.scrolling{animation:ticker-run linear infinite}
+  /* content is doubled, so -50% → 0 loops seamlessly, drifting rightward */
+  @keyframes ticker-run{from{transform:translateX(-50%)}to{transform:translateX(0)}}
 
   /* ---- celebration overlay ---- */
   #celebrate-layer{position:fixed;inset:0;pointer-events:none;z-index:80;overflow:hidden}
@@ -343,20 +345,23 @@
 
   // --- the recent-activity ticker -----------------------------------------
   var tickerLog=[];
-  var tickerIdx=0;
+  var renderTicker=function(){
+    var el=document.getElementById('ticker-text');
+    var items=tickerLog.length?tickerLog:['the party is just getting started…'];
+    var line=items.join('  🌼  ');
+    // doubled so the crawl loops seamlessly; duration scales with length
+    el.textContent=line+'  🌼  '+line+'  🌼  ';
+    el.style.animationDuration=Math.max(14,Math.round(el.scrollWidth/2/55))+'s';
+    el.classList.remove('scrolling');
+    void el.offsetWidth; // restart the crawl with the fresh content
+    el.classList.add('scrolling');
+  };
   var pushTicker=function(text){
     tickerLog.unshift(text);
     if(tickerLog.length>14)tickerLog.length=14;
-    tickerIdx=0;
-    showTicker();
+    renderTicker();
   };
-  var showTicker=function(){
-    var el=document.getElementById('ticker-text');
-    var text=tickerLog.length?tickerLog[tickerIdx%tickerLog.length]:'the party is just getting started…';
-    el.classList.add('fade');
-    setTimeout(function(){el.textContent=text;el.classList.remove('fade')},300);
-  };
-  setInterval(function(){tickerIdx++;showTicker()},5000);
+  renderTicker();
 
   // --- milestone celebrations ----------------------------------------------
   var celebrate=function(title,sub){
