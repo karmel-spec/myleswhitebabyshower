@@ -544,8 +544,7 @@
   if($('boa-questions')){
     // 'a' = Abby, 'b' = Beau. abby: what Abby answered; beau: what Beau
     // answered — from the lists they filled out before the party.
-    // ⚠ PROVISIONAL, confirm with the hosts: Q3 beau (missing from their
-    // list) and Q18 beau (list said "Beau fs") are both set to 'b' for now.
+    // (Q3 and Q18 confirmed by the hosts on Aug 13: Beau said Beau on both.)
     var BOA_Q=[
       {q:'Who will change the baby’s diapers more?',abby:'a',beau:'b'},
       {q:'Who will be better at functioning on no sleep?',abby:'b',beau:'b'},
