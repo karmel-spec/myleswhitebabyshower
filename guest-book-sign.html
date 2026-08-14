@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Guest book sign to print — The Story Garden</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/icon/favicon-32.png">
+<style>
+  :root{
+    --cream:#F9F5EA;--paper:#FFFDF6;--navy:#22304A;--dusty-deep:#4F6584;--leaf:#5C7046;
+    --wood-deep:#8A6B42;--butter:#E9C46A;--soft:#5E6678;
+    --display:"Hoefler Text",Baskerville,"Iowan Old Style",Georgia,serif;
+    --script:"Snell Roundhand","Apple Chancery",cursive;
+    --body:"Seravek","Avenir Next",Avenir,"Gill Sans",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#E2D6BB;font-family:var(--body);color:var(--navy)}
+  .note{max-width:640px;margin:0 auto;padding:26px 24px 6px;text-align:center;font-size:15px;color:var(--soft)}
+  .sign{
+    background:var(--paper);border:5px double var(--navy);border-radius:8px;
+    max-width:640px;margin:20px auto 40px;padding:64px 44px 48px;text-align:center;
+  }
+  .bunting{display:block;margin:0 auto 30px}
+  .eyebrow{font-family:var(--display);font-size:14px;letter-spacing:.34em;text-transform:uppercase;color:var(--dusty-deep);margin:0}
+  h1{font-family:var(--script);font-weight:400;font-size:84px;line-height:1;color:var(--navy);margin:20px 0 6px}
+  .to{font-family:var(--display);font-size:20px;letter-spacing:.32em;text-transform:uppercase;margin:6px 0 34px;color:var(--navy)}
+  .rule{border:none;border-top:1px solid rgba(34,48,74,.25);max-width:340px;margin:0 auto 28px}
+  .for{font-family:var(--display);font-size:19px;letter-spacing:.14em;line-height:2;margin:0 0 4px}
+  .honor{font-family:var(--script);font-size:34px;color:var(--leaf);margin:6px 0 34px}
+  .come{font-size:15.5px;color:var(--soft);margin:0 0 6px;line-height:1.8}
+  .daisy{margin-top:26px}
+  @media print{
+    @page{size:letter;margin:8mm}
+    body{background:#fff}
+    .note{display:none}
+    .sign{border-width:4px;margin:0 auto;max-width:none;min-height:auto;padding:56px 40px 40px}
+  }
+</style>
+</head>
+<body>
+<p class="note"><strong>Hosts:</strong> print this page (⌘P) for the guest book table.</p>
+
+<div class="sign">
+  <svg class="bunting" width="420" height="46" viewBox="0 0 420 46" aria-hidden="true">
+    <path d="M6 8 Q105 30 210 20 T414 10" stroke="rgba(34,48,74,.4)" stroke-width="1.5" fill="none"/>
+    <g stroke="#22304A" stroke-opacity=".5" stroke-width="1">
+      <path d="M40 12 L52 40 L64 13 Z" fill="#22304A"/>
+      <path d="M110 18 L122 45 L134 18 Z" fill="#8FA3BF"/>
+      <path d="M180 21 L192 46 L204 20 Z" fill="#E9C46A"/>
+      <path d="M250 19 L262 45 L274 18 Z" fill="#FFFDF6"/>
+      <path d="M320 15 L332 42 L344 15 Z" fill="#98A68B"/>
+      <path d="M380 11 L390 36 L400 11 Z" fill="#C24B33"/>
+    </g>
+  </svg>
+
+  <p class="eyebrow">The Story Garden</p>
+  <h1>the guest book</h1>
+  <p class="to">A selfie &amp; a line for Baby</p>
+
+  <hr class="rule">
+
+  <p class="for">Sign tonight&rsquo;s pages</p>
+  <p class="honor">one photo, one line</p>
+
+  <p class="come">Snap a selfie under the string lights and write him one line —<br>it all happens from the party page on your phone.</p>
+
+  <svg class="daisy" width="40" height="40" viewBox="0 0 40 40" aria-hidden="true">
+    <g fill="#FFFDF6" stroke="#22304A" stroke-width=".8">
+      <ellipse cx="20" cy="9" rx="4.5" ry="8"/><ellipse cx="20" cy="31" rx="4.5" ry="8"/>
+      <ellipse cx="9" cy="20" rx="8" ry="4.5"/><ellipse cx="31" cy="20" rx="8" ry="4.5"/>
+      <ellipse cx="12" cy="12" rx="6" ry="5"/><ellipse cx="28" cy="12" rx="6" ry="5"/>
+      <ellipse cx="12" cy="28" rx="6" ry="5"/><ellipse cx="28" cy="28" rx="6" ry="5"/>
+    </g>
+    <circle cx="20" cy="20" r="6" fill="#E9C46A" stroke="#B98F2E" stroke-width=".8"/>
+  </svg>
+</div>
+</body>
+</html>
