@@ -351,7 +351,7 @@
     var line=items.join('  🌼  ');
     // doubled so the crawl loops seamlessly; duration scales with length
     el.textContent=line+'  🌼  '+line+'  🌼  ';
-    el.style.animationDuration=Math.max(14,Math.round(el.scrollWidth/2/55))+'s';
+    el.style.animationDuration=Math.max(20,Math.round(el.scrollWidth/2/38))+'s';
     el.classList.remove('scrolling');
     void el.offsetWidth; // restart the crawl with the fresh content
     el.classList.add('scrolling');
