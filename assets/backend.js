@@ -165,6 +165,8 @@
     // the wall of contributors: names + photos only, never the sealed
     // message or the recording — reads from a safe public view
     listTimeCapsuleContributors:function(){return list('future_messages_public')},
+    // the sealed capsule itself: rows only come back for a signed-in host
+    listTimeCapsule:function(){return list('future_messages')},
     listAlbum:function(){return list('album')},
 
     // games

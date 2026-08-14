@@ -727,6 +727,70 @@
     if(SG.enabled)setInterval(boaRefresh,8000);
   }
 
+  // --- open the capsule: hosts-only reader for the sealed messages ------------
+  if($('cap-gate')){
+    var capRender=function(rows){
+      var list=$('cap-list');
+      list.innerHTML='';
+      $('cap-count').textContent=rows.length
+        ?rows.length+(rows.length===1?' sealed message':' sealed messages')+', in the order they arrived'
+        :'nothing sealed yet — the capsule fills up at the shower';
+      rows.forEach(function(r){
+        var card=document.createElement('div');
+        card.className='cap-card';
+        var head=document.createElement('div');
+        head.className='cap-head';
+        if(r.photo_url){
+          var im=document.createElement('img');
+          im.src=r.photo_url;im.alt=r.name||'a guest';im.loading='lazy';
+          head.appendChild(im);
+        }else{
+          var mono=document.createElement('div');
+          mono.className='cap-mono';
+          mono.textContent=(r.name||'?').trim().charAt(0).toUpperCase();
+          head.appendChild(mono);
+        }
+        var who=document.createElement('div');
+        var nm=document.createElement('div');nm.className='cap-name';nm.textContent=r.name||'A guest';
+        var dt=document.createElement('div');dt.className='cap-date';
+        dt.textContent=r.created_at?new Date(r.created_at).toLocaleDateString([],{month:'long',day:'numeric'})+' · '+fmtTime(r.created_at):'';
+        who.appendChild(nm);who.appendChild(dt);
+        head.appendChild(who);
+        card.appendChild(head);
+        if(r.message){
+          var q=document.createElement('blockquote');
+          q.className='cap-msg';q.textContent=r.message;
+          card.appendChild(q);
+        }
+        if(r.audio_url){
+          var au=document.createElement('audio');
+          au.controls=true;au.preload='none';au.src=r.audio_url;
+          card.appendChild(au);
+        }
+        list.appendChild(card);
+      });
+    };
+    var capUnlock=function(){
+      $('cap-gate').hidden=true;
+      $('cap-app').hidden=false;
+      SG.listTimeCapsule().then(capRender).catch(function(){
+        $('cap-count').textContent='hmm, the capsule wouldn’t open — check your connection and reload';
+      });
+    };
+    SG.hostSession().then(function(ok){if(ok)capUnlock()});
+    var capTry=function(){
+      var pw=$('cap-pw').value;
+      if(!pw)return;
+      var btn=$('cap-btn');
+      busy(btn,true,'Opening…');
+      SG.hostSignIn(pw).then(capUnlock).catch(function(){
+        $('cap-wrong').classList.add('show');
+      }).then(function(){busy(btn,false)});
+    };
+    $('cap-btn').addEventListener('click',capTry);
+    $('cap-pw').addEventListener('keydown',function(e){if(e.key==='Enter')capTry()});
+  }
+
   // --- guest list: host gate + crm ---------------------------------------------
   if($('gate')){
     var unlock=function(){
