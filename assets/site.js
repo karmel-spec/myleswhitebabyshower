@@ -8,6 +8,9 @@
   // never blocks anyone from playing.
   var PW_FREE_AT=new Date(2026,7,15,17,0,0);
   var pwFree=function(){return /[?&]preview/.test(location.search)||new Date()>=PW_FREE_AT};
+  // host mode: reveal buttons only appear when the page is opened with ?host
+  // (guests were tapping "reveal" and spoiling answers for every phone)
+  var HOST=/[?&]host\b/.test(location.search);
 
   function fmtTime(iso){
     var d=new Date(iso);
@@ -534,55 +537,186 @@
       });
     }
   }
-  var quizQs=document.querySelectorAll('.quiz-q');
-  if(quizQs.length){
-    var tallies={};
-    quizQs.forEach(function(q,idx){
-      var a=parseInt(q.getAttribute('data-a'),10);
-      var b=parseInt(q.getAttribute('data-b'),10);
-      if(SG.enabled){a=0;b=0}
-      tallies[idx]={a:a,b:b};
-      function paint(){
-        var t=tallies[idx];
-        var total=(t.a+t.b)||1;
-        q.querySelector('.t-a').style.width=Math.round(t.a/total*70)+'%';
-        q.querySelector('.t-b').style.width=Math.round(t.b/total*70)+'%';
-        q.querySelector('.n-a').textContent=t.a;
-        q.querySelector('.n-b').textContent=t.b;
-      }
-      q.paint=paint;
-      q.querySelectorAll('.q-btn').forEach(function(btn){
-        btn.addEventListener('click',function(){
-          if(q.getAttribute('data-voted'))return;
-          q.setAttribute('data-voted','1');
-          var side=btn.getAttribute('data-side');
-          tallies[idx][side]++;
-          btn.classList.add('voted');
-          paint();
-          q.querySelector('.tally').classList.add('show');
-          if(SG.enabled)SG.voteQuiz(idx,side).catch(function(){});
-        });
-      });
-      q.querySelector('.reveal').addEventListener('click',function(){
-        var ans=q.getAttribute('data-ans');
-        q.querySelectorAll('.q-btn').forEach(function(btn){
-          if(btn.getAttribute('data-side')===ans)btn.classList.add('correct');
-        });
-        this.style.display='none';
-      });
-    });
-    if(SG.enabled){
-      var refreshTallies=function(){
-        SG.quizTallies().then(function(t){
-          quizQs.forEach(function(q,idx){
-            tallies[idx]={a:(t[idx]&&t[idx].a)||0,b:(t[idx]&&t[idx].b)||0};
-            q.paint();
+  // Guests guess what ABBY said and what BEAU said on every question —
+  // a point for each right guess, 40 points on the table. Entries live in
+  // care_entries with answers={boa:1,a:[…],b:[…]} (arrays = care quiz rows,
+  // objects with boa = this game), so no new table was needed.
+  if($('boa-questions')){
+    // 'a' = Abby, 'b' = Beau. abby: what Abby answered; beau: what Beau
+    // answered — from the lists they filled out before the party.
+    // ⚠ PROVISIONAL, confirm with the hosts: Q3 beau (missing from their
+    // list) and Q18 beau (list said "Beau fs") are both set to 'b' for now.
+    var BOA_Q=[
+      {q:'Who will change the baby’s diapers more?',abby:'a',beau:'b'},
+      {q:'Who will be better at functioning on no sleep?',abby:'b',beau:'b'},
+      {q:'Who will be more likely to wake up when the baby makes the tiniest noise?',abby:'b',beau:'b'},
+      {q:'Who will be more likely to sleep right through the baby crying?',abby:'a',beau:'a'},
+      {q:'Who will be the first to get up when the baby cries?',abby:'b',beau:'b'},
+      {q:'Who will be the bigger worrier?',abby:'a',beau:'a'},
+      {q:'Who will be the first to figure out that one weird trick that helps calm him down?',abby:'b',beau:'a'},
+      {q:'Who will be more likely to call Grandma for advice?',abby:'b',beau:'b'},
+      {q:'Who will spoil him more?',abby:'a',beau:'a'},
+      {q:'Who will be the stricter parent?',abby:'a',beau:'a'},
+      {q:'Who will take more pictures and videos of him?',abby:'a',beau:'a'},
+      {q:'Who will be better at getting him to sleep?',abby:'a',beau:'a'},
+      {q:'Who will embarrass him more when he’s a teenager?',abby:'b',beau:'b'},
+      {q:'Who is more likely to dress him in an outfit the other one hates?',abby:'b',beau:'a'},
+      {q:'Who will be the more patient parent?',abby:'a',beau:'a'},
+      {q:'Who will be more likely to keep holding him rather than put him down for a nap, because they don’t want to let go?',abby:'a',beau:'a'},
+      {q:'Who will the baby look more like?',abby:'b',beau:'a'},
+      {q:'Who will he call first when he gets into trouble as a teenager?',abby:'a',beau:'b'},
+      {q:'Who will he say is the softie, even if that parent insists they’re the strict one?',abby:'a',beau:'a'},
+      {q:'Who will be more likely to want another baby first, once they survive the newborn stage?',abby:'a',beau:'a'}
+    ];
+    var BOA_NAME={a:'Abby',b:'Beau'};
+    var boaGA=BOA_Q.map(function(){return ''});
+    var boaGB=BOA_Q.map(function(){return ''});
+    var boaRevealed=BOA_Q.map(function(){return false});
+    var boaEntries=[];
+    var boaRows=[],boaRevBtns=[];
+    BOA_Q.forEach(function(item,qi){
+      var card=document.createElement('div');
+      card.className='quiz-q';
+      var h=document.createElement('h4');
+      h.textContent=(qi+1)+'. '+item.q;
+      card.appendChild(h);
+      var rows={};
+      ['a','b'].forEach(function(who){
+        var lab=document.createElement('p');
+        lab.className='boa-who';
+        lab.textContent=BOA_NAME[who]+' said…';
+        card.appendChild(lab);
+        var row=document.createElement('div');
+        row.className='q-btns';
+        ['a','b'].forEach(function(side){
+          var btn=document.createElement('button');
+          btn.type='button';btn.className='q-btn';btn.textContent=BOA_NAME[side];
+          btn.addEventListener('click',function(){
+            if($('boa-submit').disabled)return;
+            if(who==='a')boaGA[qi]=side;else boaGB[qi]=side;
+            row.querySelectorAll('.q-btn').forEach(function(o){o.classList.remove('voted')});
+            btn.classList.add('voted');
+            card.classList.remove('missing');
           });
-        }).catch(function(){});
+          row.appendChild(btn);
+        });
+        card.appendChild(row);
+        rows[who]=row;
+      });
+      var rev=document.createElement('button');
+      rev.type='button';rev.className='reveal';rev.textContent='Host: reveal what they said';
+      if(!HOST)rev.style.display='none';
+      rev.addEventListener('click',function(){
+        boaMarkRevealed(qi);
+        // broadcast (as quiz_votes rows 500+) so every phone sees it
+        if(SG.enabled)SG.voteQuiz(500+qi,'a').catch(function(){});
+        boaBoard();
+      });
+      card.appendChild(document.createElement('div')).appendChild(rev);
+      boaRows[qi]=rows;boaRevBtns[qi]=rev;
+      $('boa-questions').appendChild(card);
+    });
+    var boaMarkRevealed=function(qi){
+      if(boaRevealed[qi])return;
+      boaRevealed[qi]=true;
+      var item=BOA_Q[qi];
+      boaRows[qi].a.children[item.abby==='a'?0:1].classList.add('correct');
+      boaRows[qi].b.children[item.beau==='a'?0:1].classList.add('correct');
+      boaRevBtns[qi].style.display='none';
+    };
+    var boaScore=function(e){
+      var s=0;
+      BOA_Q.forEach(function(item,qi){
+        if(!boaRevealed[qi])return;
+        if(e.a&&e.a[qi]===item.abby)s++;
+        if(e.b&&e.b[qi]===item.beau)s++;
+      });
+      return s;
+    };
+    var boaBoard=function(){
+      var shown=boaRevealed.filter(Boolean).length;
+      $('boa-progress').textContent=shown
+        ?shown+' of '+BOA_Q.length+' questions revealed · 2 points each'
+        :'nothing revealed yet. Points appear as the host reveals what they said';
+      var scored=boaEntries.map(function(e){
+        return {name:e.name,score:boaScore(e),created_at:e.created_at};
+      }).sort(function(a,b){return b.score-a.score||new Date(a.created_at)-new Date(b.created_at)});
+      var ol=$('boa-board');
+      ol.innerHTML='';
+      var topScore=scored.length?scored[0].score:null;
+      scored.forEach(function(e,i){
+        var li=document.createElement('li');
+        if(i===0&&shown&&e.score>0)li.className='lead';
+        var nm=document.createElement('span');nm.className='b-name';nm.textContent=e.name;
+        var sc=document.createElement('span');sc.className='b-score';
+        var tied=shown&&e.score===topScore&&e.score>0;
+        var t=tied&&e.created_at?new Date(e.created_at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):'';
+        sc.textContent=e.score+' of '+(BOA_Q.length*2)+(i===0&&shown&&e.score>0?' · knows them best (so far)':'')+(t?' · '+t:'');
+        li.appendChild(nm);li.appendChild(sc);
+        ol.appendChild(li);
+      });
+      if(!scored.length){
+        var li=document.createElement('li');
+        li.className='b-empty';
+        li.textContent='no players yet. Be the first to lock in';
+        ol.appendChild(li);
+      }
+    };
+    var boaRefresh=function(){
+      if(SG.enabled){
+        Promise.all([
+          SG.listCareQuiz().catch(function(){return null}),
+          SG.quizTallies().catch(function(){return null})
+        ]).then(function(res){
+          if(res[0])boaEntries=res[0]
+            .filter(function(r){return r.answers&&!Array.isArray(r.answers)&&r.answers.boa})
+            .map(function(r){return {name:r.name,a:r.answers.a,b:r.answers.b,created_at:r.created_at}});
+          if(res[1])Object.keys(res[1]).forEach(function(k){
+            var qi=parseInt(k,10)-500;
+            if(qi>=0&&qi<BOA_Q.length)boaMarkRevealed(qi);
+          });
+          boaBoard();
+        });
+      }else{boaBoard()}
+    };
+    $('boa-submit').addEventListener('click',function(){
+      var btn=this;
+      var name=$('boa-name').value.trim();
+      if(!name){$('boa-name').focus();return}
+      var answered=0,firstMissing=null;
+      BOA_Q.forEach(function(_,qi){
+        if(boaGA[qi])answered++;
+        if(boaGB[qi])answered++;
+        if(!boaGA[qi]||!boaGB[qi]){
+          var card=boaRows[qi].a.closest('.quiz-q');
+          card.classList.add('missing');
+          if(!firstMissing)firstMissing=card;
+        }
+      });
+      if(firstMissing){
+        $('boa-confirm').textContent='you’ve picked '+answered+' of '+(BOA_Q.length*2)+' — guess both of their answers on every question (the blank ones are marked)';
+        $('boa-confirm').classList.add('show');
+        firstMissing.scrollIntoView({behavior:'smooth',block:'center'});
+        return;
+      }
+      var finish=function(){
+        boaEntries.push({name:name,a:boaGA.slice(),b:boaGB.slice(),created_at:new Date().toISOString()});
+        btn.disabled=true;
+        btn.textContent='Guesses locked';
+        $('boa-confirm').textContent='locked. Now watch the reveals';
+        $('boa-confirm').classList.add('show');
+        boaBoard();
       };
-      refreshTallies();
-      setInterval(refreshTallies,5000);
-    }
+      if(SG.enabled){
+        busy(btn,true,'Locking…');
+        SG.submitCareQuiz(name,{boa:1,a:boaGA.slice(),b:boaGB.slice()}).then(function(){busy(btn,false);finish()})
+          .catch(function(){busy(btn,false);oops($('boa-confirm'))});
+        return;
+      }
+      finish();
+    });
+    boaRefresh();
+    if(SG.enabled)setInterval(boaRefresh,8000);
   }
 
   // --- guest list: host gate + crm ---------------------------------------------
@@ -982,35 +1116,38 @@
 
   // --- the games: baby care quiz ------------------------------------------------
   if($('cq-questions')){
+    // Distractors deliberately sit close to the truth — most guests are
+    // mothers, so joke options made it too easy. If you change any `ans`,
+    // update CARE_ANS in leaderboard.html to match.
     var CARE_Q=[
-      {q:'How many hours a day does a brand-new baby sleep (in bits and pieces)?',opts:['About 8','14 to 17','A solid 12, all night'],ans:1},
+      {q:'How many hours a day does a brand-new baby sleep (in bits and pieces)?',opts:['11 to 13','14 to 17','18 to 20'],ans:1},
       {q:'The safest way to lay a baby down to sleep is…',opts:['On his back','On his tummy','On his side'],ans:0},
       {q:'How many diapers will he go through in his first month?',opts:['Around 100','Around 200','Around 300'],ans:2},
-      {q:'The umbilical cord stump usually falls off after…',opts:['2 or 3 days','1 to 3 weeks','2 months'],ans:1},
+      {q:'The umbilical cord stump usually falls off after…',opts:['4 or 5 days','1 to 3 weeks','5 to 6 weeks'],ans:1},
       {q:'Baby bathwater should be right about…',opts:['90 degrees','100 degrees','110 degrees'],ans:1},
-      {q:'On day one, a newborn’s tummy is the size of…',opts:['A cherry','An orange','A cantaloupe'],ans:0},
-      {q:'That first true smile usually arrives around…',opts:['Day 3','6 to 8 weeks','6 months'],ans:1},
+      {q:'On day one, a newborn’s tummy is the size of…',opts:['A cherry','A golf ball','A lemon'],ans:0},
+      {q:'That first true smile usually arrives around…',opts:['2 to 3 weeks','6 to 8 weeks','3 to 4 months'],ans:1},
       {q:'Which of these can newborns NOT do at first?',opts:['Sneeze','Hiccup','Cry real tears'],ans:2},
-      {q:'How much might a newborn cry in an average day, totally normal?',opts:['Under 30 minutes','1 to 3 hours','5+ hours, every day'],ans:1},
-      {q:'A safe way to burp a baby is…',opts:['Over the shoulder with gentle back pats','Shake gently side to side','Lay him flat and wait'],ans:0},
-      {q:'Most babies start rolling over around…',opts:['2 to 4 months','Within the first week','Not until their first birthday'],ans:0},
-      {q:'A newborn can typically focus his eyes about as far as…',opts:['8 to 12 inches — about your face when nursing','Clear across the room','Only in bright light'],ans:0},
-      {q:'Babies usually start sleeping a longer 5–6 hour stretch around…',opts:['2 weeks old','3 to 6 months','Not until preschool'],ans:1},
-      {q:'Tummy time is mainly good for…',opts:['Building neck and shoulder strength','Helping digestion after a bottle','Making him cry it out'],ans:0},
-      {q:'Most babies get their first tooth around…',opts:['6 months','Birth — some are born with one!','Age 2'],ans:0},
-      {q:'A newborn should ride in the car seat…',opts:['Rear-facing','Forward-facing','Either way, doesn’t matter'],ans:0},
-      {q:'Cradle cap is…',opts:['Harmless flaky, crusty patches on the scalp','A type of baby hat','A sign of a milk allergy'],ans:0},
-      {q:'Roughly how many diaper changes happen in a baby’s whole first year?',opts:['Around 150','2,000 to 3,000','Just over 500'],ans:1},
-      {q:'Most babies can hold their head up steadily around…',opts:['4 months','Day one','Not until they’re walking'],ans:0},
-      {q:'A sound babies already recognize from before they’re born is…',opts:['Their mother’s voice','The vacuum cleaner','Classical music, specifically'],ans:0},
-      {q:'Pediatricians usually recommend starting solid foods around…',opts:['6 months','2 weeks old','Age 1'],ans:0},
-      {q:'The “witching hour” new parents talk about is…',opts:['A fussy crying stretch, often in the evening','A myth — babies are calm all day','The exact minute he was born'],ans:0},
-      {q:'Babies often hit their first big growth spurt around…',opts:['2 to 3 weeks old','Their first birthday','They grow at a steady rate, no spurts'],ans:0},
-      {q:'A fontanelle is…',opts:['A soft spot where the skull bones haven’t fused yet','A type of baby formula','A newborn reflex'],ans:0},
-      {q:'Most babies start babbling — “ba-ba,” “da-da” — around…',opts:['6 months','The first week','Age 2'],ans:0},
-      {q:'In the first year, a baby’s head…',opts:['Grows quite a lot — nearly by half again','Barely changes size','Gets smaller as the body catches up'],ans:0},
-      {q:'Today’s recommended umbilical cord care is…',opts:['Just keep it clean and dry — no alcohol needed','Scrub it daily with rubbing alcohol','Cover it tightly with a bandage'],ans:0},
-      {q:'The “rooting reflex” is when a baby…',opts:['Turns toward a touch on the cheek, searching for a nipple or bottle','Digs at the ground like a puppy','Only shows up at walking age'],ans:0}
+      {q:'How much might a newborn cry in an average day, totally normal?',opts:['30 to 60 minutes','1 to 3 hours','4 to 5 hours'],ans:1},
+      {q:'A safe way to burp a baby is…',opts:['Over the shoulder with gentle back pats','Face-up on your knees with soft chest taps','Bouncing him gently on your hip'],ans:0},
+      {q:'Most babies start rolling over around…',opts:['2 to 4 months','5 to 7 months','8 to 10 months'],ans:0},
+      {q:'A newborn can typically focus his eyes about as far as…',opts:['8 to 12 inches — about your face when nursing','2 to 3 feet — an arm’s length away','6 to 8 feet — across the nursery'],ans:0},
+      {q:'Babies usually start sleeping a longer 5–6 hour stretch around…',opts:['6 to 8 weeks','3 to 6 months','9 to 12 months'],ans:1},
+      {q:'Tummy time is mainly good for…',opts:['Building neck and shoulder strength','Preventing reflux after feeds','Deepening his daytime naps'],ans:0},
+      {q:'Most babies get their first tooth around…',opts:['6 months','9 months','12 months'],ans:0},
+      {q:'A newborn should ride in the car seat…',opts:['Rear-facing','Forward-facing','Rear-facing only until 6 months, then forward'],ans:0},
+      {q:'Cradle cap is…',opts:['Harmless flaky, crusty patches on the scalp','An early form of eczema that needs a prescription','A scalp reaction to bath soap'],ans:0},
+      {q:'Roughly how many diaper changes happen in a baby’s whole first year?',opts:['1,000 to 1,500','2,000 to 3,000','4,000 to 5,000'],ans:1},
+      {q:'Most babies can hold their head up steadily around…',opts:['4 months','6 weeks','7 to 8 months'],ans:0},
+      {q:'A sound babies already recognize from before they’re born is…',opts:['Their mother’s voice','Their own crying','White noise, like the washer'],ans:0},
+      {q:'Pediatricians usually recommend starting solid foods around…',opts:['6 months','4 months','9 months'],ans:0},
+      {q:'The “witching hour” new parents talk about is…',opts:['A fussy crying stretch, often in the evening','The late-night feed between midnight and 1 am','The first hour after his morning nap'],ans:0},
+      {q:'Babies often hit their first big growth spurt around…',opts:['2 to 3 weeks old','2 to 3 months old','6 months old'],ans:0},
+      {q:'A fontanelle is…',opts:['A soft spot where the skull bones haven’t fused yet','The dimple some babies have at the base of the spine','The little ridge on a newborn’s upper lip'],ans:0},
+      {q:'Most babies start babbling — “ba-ba,” “da-da” — around…',opts:['6 months','3 months','12 months'],ans:0},
+      {q:'In the first year, a baby’s head…',opts:['Grows quite a lot — nearly by half again','Grows about 10 percent','Grows fastest in the second year, not the first'],ans:0},
+      {q:'Today’s recommended umbilical cord care is…',opts:['Just keep it clean and dry — no alcohol needed','A dab of rubbing alcohol at every diaper change','A little antibiotic ointment morning and night'],ans:0},
+      {q:'The “rooting reflex” is when a baby…',opts:['Turns toward a touch on the cheek, searching for milk','Curls his toes when you stroke his foot','Grips your finger when you press his palm'],ans:0}
     ];
     var cqPicks=CARE_Q.map(function(){return -1});
     var cqRevealed=CARE_Q.map(function(){return false});
@@ -1036,19 +1173,23 @@
           cqPicks[qi]=oi;
           row.querySelectorAll('.q-btn').forEach(function(o){o.classList.remove('voted')});
           b.classList.add('voted');
+          card.classList.remove('missing');
         });
         row.appendChild(b);
       });
       card.appendChild(row);
       var rev=document.createElement('button');
       rev.type='button';rev.className='reveal';rev.textContent='Host: reveal the answer';
+      if(!HOST)rev.style.display='none';
       rev.addEventListener('click',function(){
         cqRevealed[qi]=true;
         row.children[item.ans].classList.add('correct');
         this.style.display='none';
-        // broadcast the reveal (as quiz_votes rows 100+) so every phone and
-        // the big-screen leaderboard see it within seconds
-        if(SG.enabled)SG.voteQuiz(100+qi,'a').catch(function(){});
+        // broadcast the reveal (as quiz_votes rows 300+) so every phone and
+        // the big-screen leaderboard see it within seconds. 300 (not the old
+        // 100) because test-night reveals on the 100 channel pre-revealed
+        // the first eight questions for everyone — fresh channel, clean slate
+        if(SG.enabled)SG.voteQuiz(300+qi,'a').catch(function(){});
         cqRefresh();
       });
       card.appendChild(document.createElement('div')).appendChild(rev);
@@ -1096,9 +1237,12 @@
           SG.listCareQuiz().catch(function(){return null}),
           SG.quizTallies().catch(function(){return null})
         ]).then(function(res){
-          if(res[0])cqEntries=res[0].map(function(r){return {name:r.name,answers:r.answers}});
+          // arrays = care quiz rows; objects with .boa belong to Beau-or-Abby
+          if(res[0])cqEntries=res[0]
+            .filter(function(r){return Array.isArray(r.answers)})
+            .map(function(r){return {name:r.name,answers:r.answers,created_at:r.created_at}});
           if(res[1])Object.keys(res[1]).forEach(function(k){
-            var qi=parseInt(k,10)-100;
+            var qi=parseInt(k,10)-300;
             if(qi>=0&&qi<CARE_Q.length&&!cqRevealed[qi]){
               cqRevealed[qi]=true;
               cqRows[qi].children[CARE_Q[qi].ans].classList.add('correct');
@@ -1114,8 +1258,17 @@
       var name=$('cq-name').value.trim();
       if(!name){$('cq-name').focus();return}
       if(cqPicks.indexOf(-1)!==-1){
-        $('cq-confirm').textContent='answer all eight first, no half experts';
+        var blank=0,firstBlank=null;
+        CARE_Q.forEach(function(_,qi){
+          if(cqPicks[qi]!==-1)return;
+          blank++;
+          var card=cqRows[qi].closest('.quiz-q');
+          card.classList.add('missing');
+          if(!firstBlank)firstBlank=card;
+        });
+        $('cq-confirm').textContent='answer all '+CARE_Q.length+' first, no half experts — '+blank+' still blank (they’re marked)';
         $('cq-confirm').classList.add('show');
+        if(firstBlank)firstBlank.scrollIntoView({behavior:'smooth',block:'center'});
         return;
       }
       var finish=function(){

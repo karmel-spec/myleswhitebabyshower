@@ -545,3 +545,14 @@
   .hub-section-h{color:var(--cream);font-family:var(--display);font-size:15px;letter-spacing:.26em;text-transform:uppercase;text-align:center;margin:40px 0 20px;padding-bottom:12px;border-bottom:1px solid rgba(255,253,246,.22)}
   .activity-grid + .hub-section-h{margin-top:44px}
   .hub-prize{display:block;font-family:var(--script);font-size:19px;letter-spacing:0;text-transform:none;color:var(--butter);margin-top:6px}
+
+  /* the album photo drop: full-width, readable (the 110px square cut the text off) */
+  .gb-drop.wide{width:100%;height:auto;min-height:84px;flex-direction:column;gap:5px;font-size:13px;letter-spacing:.18em}
+  .gb-drop.wide .drop-sub{display:block;font-family:inherit;font-size:10.5px;letter-spacing:.08em;text-transform:none;color:rgba(249,245,234,.72);line-height:1.4}
+
+  /* beau-or-abby: the "Abby said… / Beau said…" row labels */
+  .boa-who{font-family:var(--display);font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--butter);margin:16px 0 2px}
+  .quiz-q .boa-who:first-of-type{margin-top:10px}
+
+  /* a quiz card the guest skipped, flagged at lock-in time */
+  .quiz-q.missing{box-shadow:0 0 0 2px rgba(233,196,106,.85);border-radius:10px}

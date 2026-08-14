@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Beau or Abby? — The Story Garden</title>
-<link rel="stylesheet" href="assets/styles.css?v=35">
+<link rel="stylesheet" href="assets/styles.css?v=36">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/icon/favicon-32.png">
 <link rel="apple-touch-icon" href="assets/icon/apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
@@ -39,7 +39,7 @@
     <a class="back-hub" data-pv href="the-evening.html">← all the games &amp; activities</a>
     <div class="feature">
       <h3>Beau or Abby?</h3>
-      <p>When the host gives the word, answer on your phone. The room's running totals appear under each question before the truth comes out.</p>
+      <p>Before the party, Beau and Abby each answered all twenty of these questions. Your job: guess what <em>each</em> of them said — what Abby answered, and what Beau answered. A point for every right guess, forty points on the table. Highest score officially knows them best.</p>
       <div class="quiz-lock" id="quiz-lock">
         <p class="eyebrow" style="margin:0 0 18px">Locked until game time</p>
         <input type="text" id="quiz-pw" placeholder="The password">
@@ -47,129 +47,17 @@
         <p class="confirm whisper" id="quiz-wrong" style="text-align:center">not yet. Wait for the host</p>
       </div>
       <div class="quiz" id="quiz">
-        <!-- Abby and Beau each answered these themselves. Where they agreed,
-             that's the revealed answer. Four questions (marked below) had
-             them pick DIFFERENT people — provisionally set to Abby's pick
-             until she and Beau settle on the real answer to reveal. -->
-        <div class="quiz-q" data-a="0" data-b="0" data-ans="a">
-          <h4>Who will change the baby's diapers more?</h4>
-          <div class="q-btns"><button class="q-btn" data-side="a" type="button">Abby</button><button class="q-btn" data-side="b" type="button">Beau</button></div>
-          <div class="tally"><div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div><div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div></div>
-          <div><button class="reveal" type="button">Host: reveal the answer</button></div>
+        <div class="cq-join">
+          <label for="boa-name" style="margin-top:0">Your name, for the leaderboard</label>
+          <input type="text" id="boa-name" placeholder="Aunt Susan">
         </div>
-        <div class="quiz-q" data-a="0" data-b="0" data-ans="b">
-          <h4>Who will be better at functioning on no sleep?</h4>
-          <div class="q-btns"><button class="q-btn" data-side="a" type="button">Abby</button><button class="q-btn" data-side="b" type="button">Beau</button></div>
-          <div class="tally"><div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div><div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div></div>
-          <div><button class="reveal" type="button">Host: reveal the answer</button></div>
-        </div>
-        <div class="quiz-q" data-a="0" data-b="0" data-ans="b">
-          <h4>Who will be more likely to wake up when the baby makes the tiniest noise?</h4>
-          <div class="q-btns"><button class="q-btn" data-side="a" type="button">Abby</button><button class="q-btn" data-side="b" type="button">Beau</button></div>
-          <div class="tally"><div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div><div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div></div>
-          <div><button class="reveal" type="button">Host: reveal the answer</button></div>
-        </div>
-        <div class="quiz-q" data-a="0" data-b="0" data-ans="a">
-          <h4>Who will be more likely to sleep right through the baby crying?</h4>
-          <div class="q-btns"><button class="q-btn" data-side="a" type="button">Abby</button><button class="q-btn" data-side="b" type="button">Beau</button></div>
-          <div class="tally"><div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div><div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div></div>
-          <div><button class="reveal" type="button">Host: reveal the answer</button></div>
-        </div>
-        <div class="quiz-q" data-a="0" data-b="0" data-ans="b">
-          <h4>Who will be the first to get up when the baby cries?</h4>
-          <div class="q-btns"><button class="q-btn" data-side="a" type="button">Abby</button><button class="q-btn" data-side="b" type="button">Beau</button></div>
-          <div class="tally"><div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div><div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div></div>
-          <div><button class="reveal" type="button">Host: reveal the answer</button></div>
-        </div>
-        <div class="quiz-q" data-a="0" data-b="0" data-ans="a">
-          <h4>Who will be the bigger worrier?</h4>
-          <div class="q-btns"><button class="q-btn" data-side="a" type="button">Abby</button><button class="q-btn" data-side="b" type="button">Beau</button></div>
-          <div class="tally"><div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div><div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div></div>
-          <div><button class="reveal" type="button">Host: reveal the answer</button></div>
-        </div>
-        <div class="quiz-q" data-a="0" data-b="0" data-ans="a">
-          <h4>Who will be the first to figure out that one weird trick that helps calm him down?</h4>
-          <div class="q-btns"><button class="q-btn" data-side="a" type="button">Abby</button><button class="q-btn" data-side="b" type="button">Beau</button></div>
-          <div class="tally"><div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div><div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div></div>
-          <div><button class="reveal" type="button">Host: reveal the answer</button></div>
-        </div>
-        <div class="quiz-q" data-a="0" data-b="0" data-ans="b">
-          <h4>Who will be more likely to call Grandma for advice?</h4>
-          <div class="q-btns"><button class="q-btn" data-side="a" type="button">Abby</button><button class="q-btn" data-side="b" type="button">Beau</button></div>
-          <div class="tally"><div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div><div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div></div>
-          <div><button class="reveal" type="button">Host: reveal the answer</button></div>
-        </div>
-        <div class="quiz-q" data-a="0" data-b="0" data-ans="a">
-          <h4>Who will spoil him more?</h4>
-          <div class="q-btns"><button class="q-btn" data-side="a" type="button">Abby</button><button class="q-btn" data-side="b" type="button">Beau</button></div>
-          <div class="tally"><div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div><div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div></div>
-          <div><button class="reveal" type="button">Host: reveal the answer</button></div>
-        </div>
-        <div class="quiz-q" data-a="0" data-b="0" data-ans="a">
-          <h4>Who will be the stricter parent?</h4>
-          <div class="q-btns"><button class="q-btn" data-side="a" type="button">Abby</button><button class="q-btn" data-side="b" type="button">Beau</button></div>
-          <div class="tally"><div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div><div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div></div>
-          <div><button class="reveal" type="button">Host: reveal the answer</button></div>
-        </div>
-        <div class="quiz-q" data-a="0" data-b="0" data-ans="a">
-          <h4>Who will take more pictures and videos of him?</h4>
-          <div class="q-btns"><button class="q-btn" data-side="a" type="button">Abby</button><button class="q-btn" data-side="b" type="button">Beau</button></div>
-          <div class="tally"><div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div><div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div></div>
-          <div><button class="reveal" type="button">Host: reveal the answer</button></div>
-        </div>
-        <div class="quiz-q" data-a="0" data-b="0" data-ans="a">
-          <h4>Who will be better at getting him to sleep?</h4>
-          <div class="q-btns"><button class="q-btn" data-side="a" type="button">Abby</button><button class="q-btn" data-side="b" type="button">Beau</button></div>
-          <div class="tally"><div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div><div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div></div>
-          <div><button class="reveal" type="button">Host: reveal the answer</button></div>
-        </div>
-        <div class="quiz-q" data-a="0" data-b="0" data-ans="b">
-          <h4>Who will embarrass him more when he's a teenager?</h4>
-          <div class="q-btns"><button class="q-btn" data-side="a" type="button">Abby</button><button class="q-btn" data-side="b" type="button">Beau</button></div>
-          <div class="tally"><div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div><div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div></div>
-          <div><button class="reveal" type="button">Host: reveal the answer</button></div>
-        </div>
-        <div class="quiz-q" data-a="0" data-b="0" data-ans="a">
-          <h4>Who is more likely to dress him in an outfit the other one hates?</h4>
-          <div class="q-btns"><button class="q-btn" data-side="a" type="button">Abby</button><button class="q-btn" data-side="b" type="button">Beau</button></div>
-          <div class="tally"><div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div><div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div></div>
-          <div><button class="reveal" type="button">Host: reveal the answer</button></div>
-        </div>
-        <div class="quiz-q" data-a="0" data-b="0" data-ans="a">
-          <h4>Who will be the more patient parent?</h4>
-          <div class="q-btns"><button class="q-btn" data-side="a" type="button">Abby</button><button class="q-btn" data-side="b" type="button">Beau</button></div>
-          <div class="tally"><div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div><div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div></div>
-          <div><button class="reveal" type="button">Host: reveal the answer</button></div>
-        </div>
-        <div class="quiz-q" data-a="0" data-b="0" data-ans="a">
-          <h4>Who will be more likely to keep holding him rather than put him down for a nap, because they don't want to let go?</h4>
-          <div class="q-btns"><button class="q-btn" data-side="a" type="button">Abby</button><button class="q-btn" data-side="b" type="button">Beau</button></div>
-          <div class="tally"><div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div><div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div></div>
-          <div><button class="reveal" type="button">Host: reveal the answer</button></div>
-        </div>
-        <div class="quiz-q" data-a="0" data-b="0" data-ans="a">
-          <h4>Who will he look more like?</h4>
-          <div class="q-btns"><button class="q-btn" data-side="a" type="button">Abby</button><button class="q-btn" data-side="b" type="button">Beau</button></div>
-          <div class="tally"><div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div><div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div></div>
-          <div><button class="reveal" type="button">Host: reveal the answer</button></div>
-        </div>
-        <div class="quiz-q" data-a="0" data-b="0" data-ans="a">
-          <h4>Who will he call first when he gets into trouble as a teenager?</h4>
-          <div class="q-btns"><button class="q-btn" data-side="a" type="button">Abby</button><button class="q-btn" data-side="b" type="button">Beau</button></div>
-          <div class="tally"><div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div><div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div></div>
-          <div><button class="reveal" type="button">Host: reveal the answer</button></div>
-        </div>
-        <div class="quiz-q" data-a="0" data-b="0" data-ans="a">
-          <h4>Who will he say is the softie, even if that parent insists they're the strict one?</h4>
-          <div class="q-btns"><button class="q-btn" data-side="a" type="button">Abby</button><button class="q-btn" data-side="b" type="button">Beau</button></div>
-          <div class="tally"><div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div><div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div></div>
-          <div><button class="reveal" type="button">Host: reveal the answer</button></div>
-        </div>
-        <div class="quiz-q" data-a="0" data-b="0" data-ans="a">
-          <h4>Who will be more likely to want another baby first, once they survive the newborn stage?</h4>
-          <div class="q-btns"><button class="q-btn" data-side="a" type="button">Abby</button><button class="q-btn" data-side="b" type="button">Beau</button></div>
-          <div class="tally"><div class="t-row"><span class="t-name">Abby</span><div class="t-bar t-a"></div><span class="t-n n-a"></span></div><div class="t-row"><span class="t-name">Beau</span><div class="t-bar t-b"></div><span class="t-n n-b"></span></div></div>
-          <div><button class="reveal" type="button">Host: reveal the answer</button></div>
+        <div id="boa-questions"></div>
+        <button class="btn small" id="boa-submit" type="button" style="margin-top:22px">Lock in my guesses</button>
+        <p class="confirm whisper" id="boa-confirm">locked. Now watch the reveals</p>
+        <div class="board-panel">
+          <h4>Who knows them best?</h4>
+          <p class="board-sub" id="boa-progress">nothing revealed yet. Points appear as the host reveals what they said</p>
+          <ol class="board" id="boa-board"></ol>
         </div>
       </div>
     </div>
@@ -187,6 +75,6 @@
 </footer>
 <script src="assets/config.js?v=18"></script>
 <script src="assets/backend.js?v=33"></script>
-<script src="assets/site.js?v=35"></script>
+<script src="assets/site.js?v=36"></script>
 </body>
 </html>

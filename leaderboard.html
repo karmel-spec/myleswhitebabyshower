@@ -37,8 +37,10 @@
   .mini-frame iframe{position:absolute;top:0;left:0;width:1280px;height:720px;border:0;transform-origin:top left;pointer-events:none}
 
   /* ---- the board ---- */
-  .grid{display:grid;grid-template-columns:1.35fr 1fr 1fr 1fr;grid-template-rows:1fr 1fr;
+  .grid{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr 1fr;grid-template-rows:1fr 1fr;
     gap:12px;padding:0 24px 12px;min-height:0}
+  #p-pred{grid-column:span 2}
+  #p-pred .pred-grid{grid-template-columns:repeat(4,1fr);grid-template-rows:1fr}
   .panel{position:relative;background:rgba(255,253,246,.06);border:1px solid rgba(255,253,246,.2);
     border-radius:12px;padding:14px 16px 10px;display:flex;flex-direction:column;min-height:0;overflow:hidden;
     transition:background .5s ease,border-color .5s ease,box-shadow .5s ease}
@@ -182,6 +184,14 @@
     <ol id="cq-lb"></ol>
   </div>
 
+  <div class="panel" id="p-boa">
+    <span class="crown-badge" id="badge-boa">New leader!</span>
+    <h2>Beau or Abby?</h2>
+    <p class="sub">who knows them best</p>
+    <p class="progress" id="boa-progress">&nbsp;</p>
+    <ol id="boa-lb"></ol>
+  </div>
+
   <div class="panel" id="p-dd">
     <span class="crown-badge" id="badge-dd">New leader!</span>
     <h2>Baby Dressing Derby</h2>
@@ -230,8 +240,12 @@
 (function(){
   // must stay in the same order as CARE_Q in assets/site.js
   var CARE_ANS=[1,0,2,1,1,0,1,2,1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0];
+  // must stay in the same order as BOA_Q in assets/site.js — what Abby
+  // answered and what Beau answered, one letter per question
+  var BOA_ABBY=['a','b','b','a','b','a','b','b','a','a','a','a','b','b','a','a','b','a','a','a'];
+  var BOA_BEAU=['b','b','b','a','b','a','a','b','a','a','a','a','b','a','a','a','a','b','a','a'];
   var MAXROWS=10;
-  var isJunk=function(s){return /claude diagnostic|please ignore|\(test\)/i.test(s||'')};
+  var isJunk=function(s){return /claude|please ignore|\(test\)/i.test(s||'')};
 
   // scale the mini slideshow to whatever width the header gave it
   var sizeMini=function(){
@@ -301,7 +315,7 @@
     }
   };
   // an ambient glow that walks the board, so a quiet moment still moves
-  var spotPanels=['p-active','p-fm','p-cq','p-dd','p-al','p-tc','p-pred'];
+  var spotPanels=['p-active','p-fm','p-cq','p-boa','p-dd','p-al','p-tc','p-pred'];
   var spotAt=0;
   setInterval(function(){
     spotPanels.forEach(function(id){
@@ -353,9 +367,9 @@
 
   // --- state carried between refresh cycles, for diffing --------------------
   var firstRun=true;
-  var seen={faces:{},quiz:{},derby:{},album:{},advice:{},capsule:{}};
-  var prevLeader={active:null,fm:null,cq:null,dd:null,al:null};
-  var prevSig={active:'',fm:'',cq:'',dd:'',al:'',tc:'',pred:''};
+  var seen={faces:{},quiz:{},boa:{},derby:{},album:{},advice:{},capsule:{}};
+  var prevLeader={active:null,fm:null,cq:null,boa:null,dd:null,al:null};
+  var prevSig={active:'',fm:'',cq:'',boa:'',dd:'',al:'',tc:'',pred:''};
   var prevPerfect={fm:{},cq:{}};
   var prevMilestone={album:0,capsule:0};
 
@@ -382,7 +396,9 @@
       SG.listPredictions().catch(function(){return[]})
     ]).then(function(res){
       var faceRows=res[0].filter(function(r){return !isJunk(r.name)});
-      var careRows=res[1].filter(function(r){return !isJunk(r.name)});
+      // care_entries holds both quizzes: arrays = care quiz, {boa:1,…} = Beau or Abby
+      var careRows=res[1].filter(function(r){return !isJunk(r.name)&&Array.isArray(r.answers)});
+      var boaRows=res[1].filter(function(r){return !isJunk(r.name)&&r.answers&&!Array.isArray(r.answers)&&r.answers.boa});
       var tallies=res[2];
       var dollRows=res[3].filter(function(r){return !isJunk(r.name)});
       var albumRows=res[4].filter(function(r){return r.name&&!isJunk(r.name)});
@@ -410,7 +426,7 @@
       // ---- Baby Care Quiz ----
       var revealed=[];
       Object.keys(tallies).forEach(function(k){
-        var qi=parseInt(k,10)-100;
+        var qi=parseInt(k,10)-300;
         if(qi>=0&&qi<CARE_ANS.length)revealed[qi]=true;
       });
       var shown=revealed.filter(Boolean).length;
@@ -429,6 +445,33 @@
         return {name:r.name,label:r.score+' right'+(t?' · '+t:'')};
       });
       fill(document.getElementById('cq-lb'),cqList,'no players locked in yet');
+
+      // ---- Beau or Abby? ----
+      var boaRevealed=[];
+      Object.keys(tallies).forEach(function(k){
+        var qi=parseInt(k,10)-500;
+        if(qi>=0&&qi<BOA_ABBY.length)boaRevealed[qi]=true;
+      });
+      var boaShown=boaRevealed.filter(Boolean).length;
+      document.getElementById('boa-progress').textContent=boaShown
+        ?boaShown+' of '+BOA_ABBY.length+' revealed · 2 points each'
+        :'points appear as the host reveals their answers';
+      var boaRanked=boaRows.map(function(r){
+        var s=0;
+        BOA_ABBY.forEach(function(ans,qi){
+          if(!boaRevealed[qi])return;
+          if(r.answers.a&&r.answers.a[qi]===ans)s++;
+          if(r.answers.b&&r.answers.b[qi]===BOA_BEAU[qi])s++;
+        });
+        return {name:r.name,score:s,created_at:r.created_at};
+      }).sort(function(a,b){return b.score-a.score||new Date(a.created_at)-new Date(b.created_at)});
+      var boaTop=boaRanked.length?boaRanked[0].score:null;
+      var boaList=boaRanked.map(function(r){
+        var tied=r.score===boaTop;
+        var t=tied&&r.created_at?new Date(r.created_at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):'';
+        return {name:r.name,label:r.score+' of '+(BOA_ABBY.length*2)+(t?' · '+t:'')};
+      });
+      fill(document.getElementById('boa-lb'),boaList,'no guesses locked in yet');
 
       // ---- Baby Dressing Derby ----
       var ddBest={};
@@ -491,12 +534,12 @@
       var bump=function(rows,field){
         rows.forEach(function(r){
           var k=r.name.trim().toLowerCase();
-          if(!activity[k])activity[k]={name:r.name.trim(),total:0,faces:0,quiz:0,derby:0,photos:0,advice:0,capsule:0};
+          if(!activity[k])activity[k]={name:r.name.trim(),total:0,faces:0,quiz:0,boa:0,derby:0,photos:0,advice:0,capsule:0};
           activity[k][field]++;
           activity[k].total++;
         });
       };
-      bump(faceRows,'faces');bump(careRows,'quiz');bump(dollRows,'derby');
+      bump(faceRows,'faces');bump(careRows,'quiz');bump(boaRows,'boa');bump(dollRows,'derby');
       bump(albumRows,'photos');bump(adviceRows,'advice');bump(capsuleRows,'capsule');
       var activeList=Object.keys(activity).map(function(k){return activity[k]})
         .sort(function(a,b){return b.total-a.total||a.name.localeCompare(b.name)})
@@ -512,6 +555,7 @@
           if(r.faces)parts.push(r.faces+' baby match'+(r.faces===1?'':'es'));
           if(r.derby)parts.push(r.derby+' derby run'+(r.derby===1?'':'s'));
           if(r.quiz)parts.push('care quiz');
+          if(r.boa)parts.push('Beau or Abby');
           if(r.advice)parts.push(r.advice+' advice');
           if(r.capsule)parts.push('a message for him');
           var li=document.createElement('li');
@@ -536,6 +580,7 @@
       settle('active','p-active','badge-active',sig(activeList),lead(activeList));
       settle('fm','p-fm','badge-fm',sig(fmList),lead(fmList));
       settle('cq','p-cq','badge-cq',sig(cqList)+'|'+shown,lead(cqList));
+      settle('boa','p-boa','badge-boa',sig(boaList)+'|'+boaShown,lead(boaList));
       settle('dd','p-dd','badge-dd',sig(ddList),lead(ddList));
       settle('al','p-al','badge-al',sig(albumList),lead(albumList));
       settle('tc','p-tc','badge-tc',sig(capsuleRows.map(function(r){return r.name})),null);
@@ -552,6 +597,7 @@
       };
       noteNew(faceRows,'faces',function(r){return r.name+' matched '+r.score+' of '+r.total+' baby faces'});
       noteNew(careRows,'quiz',function(r){return r.name+' locked in their Baby Care Quiz answers'});
+      noteNew(boaRows,'boa',function(r){return r.name+' locked in their Beau or Abby guesses'});
       noteNew(dollRows,'derby',function(r){return r.name+' ran the Dressing Derby in '+ddFmt(parseFloat(r.seconds))});
       noteNew(albumRows,'album',function(r){return r.name+' added a photo to the album'});
       noteNew(adviceRows,'advice',function(r){return r.name+' left advice for Abby'});
