@@ -128,12 +128,25 @@
   @media (max-width:900px){
     body{height:auto;min-height:100vh;overflow:auto;grid-template-rows:auto auto auto}
     header{flex-wrap:wrap}
-    .head-side{flex:0 0 160px;order:2;margin:0 auto}
+    .head-side{flex:1 1 100%;order:2;margin:0 auto;max-width:360px}
     .brand{flex:1 1 100%;order:1}
-    .grid{grid-template-columns:1fr;grid-template-rows:none;padding-bottom:18px}
-    .panel{grid-row:auto !important;min-height:150px}
+    .head-pred{grid-template-columns:repeat(4,1fr);gap:2px 10px;margin-top:4px}
+    .head-pred .big{font-size:14px}
+    .head-pred .lbl{font-size:8px}
+    .grid{grid-template-columns:1fr;grid-template-rows:none;padding:0 14px 18px;gap:10px}
+    .panel{grid-row:auto !important;grid-column:auto !important;min-height:0}
     ol{overflow:visible}
+    li{font-size:14px}
+    .panel h2{font-size:15px}
+    .panel .sub{font-size:16px}
+    .progress{font-size:10px}
+    .hero li{font-size:15px}
+    .hero .al-breakdown{font-size:11px}
     .contrib{width:23%}
+    /* the slideshow panel keeps TV proportions instead of collapsing */
+    .show-frame{flex:none;aspect-ratio:16/9}
+    /* the gold crawl rides along while you scroll */
+    .ticker{position:sticky;bottom:0;z-index:10}
   }
 
   /* ---- gold ticker ---- */

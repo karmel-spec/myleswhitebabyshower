@@ -26,7 +26,17 @@
   .slide .quote{font-family:var(--display);font-size:clamp(30px,4.6vw,52px);letter-spacing:.06em;text-align:center;max-width:22ch;line-height:1.3}
   .slide .quote-sub{font-family:var(--script);font-size:clamp(22px,3vw,32px);color:var(--butter)}
   .brand{position:fixed;bottom:26px;left:0;width:100%;text-align:center;font-size:13px;letter-spacing:.28em;text-transform:uppercase;color:#8390A8;z-index:2}
-  .brand .add{display:block;font-family:var(--script);font-size:19px;letter-spacing:0;text-transform:none;color:var(--butter);margin-top:6px}
+  /* scan-to-add corner: QR + the invitation to pile on photos */
+  .scanme{position:fixed;left:26px;bottom:22px;z-index:3;display:flex;align-items:center;gap:16px}
+  .scanme img{width:112px;height:112px;background:#FFFDF6;padding:8px;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+  .scanme p{font-family:var(--script);font-size:23px;color:var(--butter);line-height:1.3;margin:0;text-align:left;text-shadow:0 2px 8px rgba(0,0,0,.4)}
+  .scanme strong{display:block;color:var(--cream);font-weight:400;margin-top:4px}
+  /* on a phone the corner would collide with captions — tuck it in smaller */
+  @media (max-width:700px){
+    .scanme{bottom:64px;gap:10px}
+    .scanme img{width:64px;height:64px;padding:5px}
+    .scanme p{font-size:15px}
+  }
   .firefly{position:fixed;width:4px;height:4px;border-radius:50%;background:var(--butter);box-shadow:0 0 8px 2px rgba(233,196,106,.5);opacity:0;animation:drift 11s ease-in-out infinite;z-index:1}
   .firefly:nth-of-type(2){animation-delay:3s;animation-duration:13s}
   .firefly:nth-of-type(3){animation-delay:7s;animation-duration:15s}
@@ -73,9 +83,12 @@
 
 <div class="stage" id="stage" role="img" aria-label="Slideshow of the Story Garden shared album"></div>
 
-<p class="brand">The Story Garden · August 15th, 2026
-  <span class="add">add your photo from the party page and it lands here</span>
-</p>
+<p class="brand">The Story Garden · August 15th, 2026</p>
+
+<div class="scanme">
+  <img src="assets/invites/qr-evening.png" alt="Scan to open the party page">
+  <p>add your photos from tonight<br>and they land here…<strong>most photos shared wins a prize!!</strong></p>
+</div>
 
 <script src="assets/config.js?v=18"></script>
 <script src="assets/backend.js?v=35"></script>
