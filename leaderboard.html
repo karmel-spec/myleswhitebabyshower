@@ -245,7 +245,10 @@
   var BOA_ABBY=['a','b','b','a','b','a','b','b','a','a','a','a','b','b','a','a','b','a','a','a'];
   var BOA_BEAU=['b','b','b','a','b','a','a','b','a','a','a','a','b','a','a','a','a','b','a','a'];
   var MAXROWS=10;
-  var isJunk=function(s){return /claude|please ignore|\(test\)/i.test(s||'')};
+  // ?test on the URL shows every entry, junk included — for dry runs.
+  // The bare URL (party night) keeps test rows off the board.
+  var SHOW_ALL=/[?&]test\b/.test(location.search);
+  var isJunk=function(s){return !SHOW_ALL&&/claude|please ignore|\(test\)/i.test(s||'')};
 
   // scale the mini slideshow to whatever width the header gave it
   var sizeMini=function(){
