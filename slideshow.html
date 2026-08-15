@@ -154,6 +154,17 @@
     toggleFs();
   });
 
+  // hold a screen wake lock so the screensaver can't interrupt the show;
+  // re-acquire it whenever the tab becomes visible again
+  function keepAwake(){
+    if(!('wakeLock' in navigator))return;
+    navigator.wakeLock.request('screen').catch(function(){});
+  }
+  keepAwake();
+  document.addEventListener('visibilitychange',function(){
+    if(document.visibilityState==='visible')keepAwake();
+  });
+
   // live sync: photos guests add on the party page join the loop
   if(window.SG&&SG.enabled){
     var seen={};

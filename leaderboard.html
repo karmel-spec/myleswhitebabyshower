@@ -754,6 +754,17 @@
     return JSON.stringify([hairCounts,wAvg,lAvg,dateList.length?dateList[0].label:'']);
   };
 
+  // hold a screen wake lock so the screensaver can't interrupt the board;
+  // re-acquire it whenever the tab becomes visible again
+  var keepAwake=function(){
+    if(!('wakeLock' in navigator))return;
+    navigator.wakeLock.request('screen').catch(function(){});
+  };
+  keepAwake();
+  document.addEventListener('visibilitychange',function(){
+    if(document.visibilityState==='visible')keepAwake();
+  });
+
   var boot=function(){
     if(window.SG&&SG.enabled){refresh();setInterval(refresh,6000);}
     else{
