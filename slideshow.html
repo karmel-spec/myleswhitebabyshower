@@ -53,6 +53,10 @@
   }
   .exit{position:fixed;top:16px;right:16px;z-index:5;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;color:rgba(249,245,234,.55);background:rgba(34,48,74,.5);border:1px solid rgba(249,245,234,.3);border-radius:50%;text-decoration:none}
   .exit:hover,.exit:focus-visible{color:var(--cream);border-color:var(--cream)}
+  /* presentation mode: one tap, everything but the garden disappears */
+  .fs{position:fixed;top:16px;left:16px;z-index:5;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:20px;line-height:1;color:rgba(249,245,234,.55);background:rgba(34,48,74,.5);border:1px solid rgba(249,245,234,.3);border-radius:50%;cursor:pointer;padding:0}
+  .fs:hover,.fs:focus-visible{color:var(--cream);border-color:var(--cream)}
+  :fullscreen .fs,:fullscreen .exit{opacity:0;pointer-events:none}
 </style>
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="The Story Garden">
@@ -80,6 +84,7 @@
 <span class="firefly" style="left:50%;top:78%"></span>
 
 <a class="exit" href="the-evening.html" aria-label="Leave the slideshow" title="Back to the party page">×</a>
+<button class="fs" id="fs-btn" type="button" aria-label="Play full screen" title="Play full screen (Esc to leave)">⛶</button>
 
 <div class="stage" id="stage" role="img" aria-label="Slideshow of the Story Garden shared album"></div>
 
@@ -133,7 +138,20 @@
     next();
   });
   document.addEventListener('keydown',function(e){
-    if(e.key==='Escape')window.location.href='the-evening.html';
+    // in fullscreen, Escape leaves fullscreen (the browser handles it);
+    // only bounce back to the party page from the windowed view
+    if(e.key==='Escape'&&!document.fullscreenElement)window.location.href='the-evening.html';
+    if(e.key==='f'||e.key==='F')toggleFs();
+  });
+  function toggleFs(){
+    var el=document.documentElement;
+    if(document.fullscreenElement){document.exitFullscreen()}
+    else if(el.requestFullscreen){el.requestFullscreen().catch(function(){})}
+    else if(el.webkitRequestFullscreen){el.webkitRequestFullscreen()}
+  }
+  document.getElementById('fs-btn').addEventListener('click',function(e){
+    e.stopPropagation(); // don't also advance the slide
+    toggleFs();
   });
 
   // live sync: photos guests add on the party page join the loop
