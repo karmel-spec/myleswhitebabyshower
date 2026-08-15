@@ -159,6 +159,11 @@
   /* content is doubled, so -50% → 0 loops seamlessly, drifting rightward */
   @keyframes ticker-run{from{transform:translateX(-50%)}to{transform:translateX(0)}}
 
+  /* presentation mode: one tap, everything but the board disappears */
+  .fs{position:fixed;top:12px;left:14px;z-index:60;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1;color:rgba(255,253,246,.45);background:rgba(255,253,246,.06);border:1px solid rgba(255,253,246,.25);border-radius:50%;cursor:pointer;padding:0}
+  .fs:hover,.fs:focus-visible{color:var(--paper);border-color:var(--paper)}
+  :fullscreen .fs{opacity:0;pointer-events:none}
+
   /* ---- celebration overlay ---- */
   #celebrate-layer{position:fixed;inset:0;pointer-events:none;z-index:80;overflow:hidden}
   .confetti{position:absolute;top:-30px;font-size:20px;animation:conf-fall 3.4s linear forwards}
@@ -172,6 +177,7 @@
 </style>
 </head>
 <body>
+<button class="fs" id="fs-btn" type="button" aria-label="Play full screen" title="Full screen (Esc to leave)">⛶</button>
 <header>
   <div class="head-side"></div>
   <div class="brand">
@@ -753,6 +759,16 @@
 
     return JSON.stringify([hairCounts,wAvg,lAvg,dateList.length?dateList[0].label:'']);
   };
+
+  // presentation mode: the ⛶ button (or the F key) takes the board fullscreen
+  var toggleFs=function(){
+    var el=document.documentElement;
+    if(document.fullscreenElement){document.exitFullscreen()}
+    else if(el.requestFullscreen){el.requestFullscreen().catch(function(){})}
+    else if(el.webkitRequestFullscreen){el.webkitRequestFullscreen()}
+  };
+  document.getElementById('fs-btn').addEventListener('click',toggleFs);
+  document.addEventListener('keydown',function(e){if(e.key==='f'||e.key==='F')toggleFs()});
 
   // hold a screen wake lock so the screensaver can't interrupt the board;
   // re-acquire it whenever the tab becomes visible again
