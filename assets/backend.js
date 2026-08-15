@@ -185,8 +185,12 @@
         if(!m||!RECROPPED[m[1]])return u;
         return u.replace(m[1],'crop2-'+m[1].replace(/\.[a-z]+$/i,'.jpg'));
       };
+      // "Nana Maya" RSVP'd her own photos after the hosts had already added
+      // her as "Maya Larson" — hide the duplicate row (the anon key can't
+      // delete it; the pre-party wipe removes it for real)
+      var HIDDEN={'faeb99c5-53ae-4462-a10b-7f65d6d347c6':1};
       return list('faces').then(function(rows){
-        return rows.map(function(r){
+        return rows.filter(function(r){return !HIDDEN[r.id]}).map(function(r){
           r.baby_url=recrop(r.baby_url);
           r.now_url=recrop(r.now_url);
           return r;
