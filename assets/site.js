@@ -1188,38 +1188,31 @@
 
   // --- the games: baby care quiz ------------------------------------------------
   if($('cq-questions')){
-    // Distractors deliberately sit close to the truth — most guests are
-    // mothers, so joke options made it too easy. If you change any `ans`,
-    // update CARE_ANS in leaderboard.html to match.
+    // Abby's twenty, picked Aug 14 from the 68-question bank, in the order
+    // she sent them (bank #s 2,3,4,6,7,8,9,11,12,13,14,15,21,24,25,35,33,
+    // 30,66,68). If you change any `ans`, update CARE_ANS in
+    // leaderboard.html to match — same order, same length.
     var CARE_Q=[
-      {q:'How many hours a day does a brand-new baby sleep (in bits and pieces)?',opts:['11 to 13','14 to 17','18 to 20'],ans:1},
       {q:'The safest way to lay a baby down to sleep is…',opts:['On his back','On his tummy','On his side'],ans:0},
       {q:'How many diapers will he go through in his first month?',opts:['Around 100','Around 200','Around 300'],ans:2},
       {q:'The umbilical cord stump usually falls off after…',opts:['4 or 5 days','1 to 3 weeks','5 to 6 weeks'],ans:1},
-      {q:'Baby bathwater should be right about…',opts:['90 degrees','100 degrees','110 degrees'],ans:1},
       {q:'On day one, a newborn’s tummy is the size of…',opts:['A cherry','A golf ball','A lemon'],ans:0},
       {q:'That first true smile usually arrives around…',opts:['2 to 3 weeks','6 to 8 weeks','3 to 4 months'],ans:1},
       {q:'Which of these can newborns NOT do at first?',opts:['Sneeze','Hiccup','Cry real tears'],ans:2},
       {q:'How much might a newborn cry in an average day, totally normal?',opts:['30 to 60 minutes','1 to 3 hours','4 to 5 hours'],ans:1},
-      {q:'A safe way to burp a baby is…',opts:['Over the shoulder with gentle back pats','Face-up on your knees with soft chest taps','Bouncing him gently on your hip'],ans:0},
       {q:'Most babies start rolling over around…',opts:['2 to 4 months','5 to 7 months','8 to 10 months'],ans:0},
       {q:'A newborn can typically focus his eyes about as far as…',opts:['8 to 12 inches — about your face when nursing','2 to 3 feet — an arm’s length away','6 to 8 feet — across the nursery'],ans:0},
       {q:'Babies usually start sleeping a longer 5–6 hour stretch around…',opts:['6 to 8 weeks','3 to 6 months','9 to 12 months'],ans:1},
       {q:'Tummy time is mainly good for…',opts:['Building neck and shoulder strength','Preventing reflux after feeds','Deepening his daytime naps'],ans:0},
       {q:'Most babies get their first tooth around…',opts:['6 months','9 months','12 months'],ans:0},
-      {q:'A newborn should ride in the car seat…',opts:['Rear-facing','Forward-facing','Rear-facing only until 6 months, then forward'],ans:0},
-      {q:'Cradle cap is…',opts:['Harmless flaky, crusty patches on the scalp','An early form of eczema that needs a prescription','A scalp reaction to bath soap'],ans:0},
-      {q:'Roughly how many diaper changes happen in a baby’s whole first year?',opts:['1,000 to 1,500','2,000 to 3,000','4,000 to 5,000'],ans:1},
-      {q:'Most babies can hold their head up steadily around…',opts:['4 months','6 weeks','7 to 8 months'],ans:0},
-      {q:'A sound babies already recognize from before they’re born is…',opts:['Their mother’s voice','Their own crying','White noise, like the washer'],ans:0},
       {q:'Pediatricians usually recommend starting solid foods around…',opts:['6 months','4 months','9 months'],ans:0},
-      {q:'The “witching hour” new parents talk about is…',opts:['A fussy crying stretch, often in the evening','The late-night feed between midnight and 1 am','The first hour after his morning nap'],ans:0},
-      {q:'Babies often hit their first big growth spurt around…',opts:['2 to 3 weeks old','2 to 3 months old','6 months old'],ans:0},
       {q:'A fontanelle is…',opts:['A soft spot where the skull bones haven’t fused yet','The dimple some babies have at the base of the spine','The little ridge on a newborn’s upper lip'],ans:0},
       {q:'Most babies start babbling — “ba-ba,” “da-da” — around…',opts:['6 months','3 months','12 months'],ans:0},
-      {q:'In the first year, a baby’s head…',opts:['Grows quite a lot — nearly by half again','Grows about 10 percent','Grows fastest in the second year, not the first'],ans:0},
-      {q:'Today’s recommended umbilical cord care is…',opts:['Just keep it clean and dry — no alcohol needed','A dab of rubbing alcohol at every diaper change','A little antibiotic ointment morning and night'],ans:0},
-      {q:'The “rooting reflex” is when a baby…',opts:['Turns toward a touch on the cheek, searching for milk','Curls his toes when you stroke his foot','Grips your finger when you press his palm'],ans:0}
+      {q:'He should be back up to birth weight by about…',opts:['Day 3 or 4','Day 10 to 14','One month'],ans:1},
+      {q:'A newborn’s resting heart rate runs about…',opts:['60 to 100 beats a minute','100 to 160','170 to 220'],ans:1},
+      {q:'How many bones is a baby born with?',opts:['About 200 — same as adults','About 250','About 300 — they fuse over the years'],ans:2},
+      {q:'His hearing is…',opts:['Fully developed at birth — screened before leaving the hospital','Still developing until 3 months','Not fully in until age one'],ans:0},
+      {q:'Some perfectly healthy babies skip which milestone entirely?',opts:['Crawling','Babbling','Teething'],ans:0}
     ];
     var cqPicks=CARE_Q.map(function(){return -1});
     var cqRevealed=CARE_Q.map(function(){return false});
