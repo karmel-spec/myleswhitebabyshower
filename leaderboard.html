@@ -784,11 +784,15 @@
   var boot=function(){
     if(window.SG&&SG.enabled){refresh();setInterval(refresh,6000);}
     else{
-      ['fm-lb','cq-lb','dd-lb','al-lb'].forEach(function(id){
-        fill(document.getElementById(id),[],'connects at the party');
+      ['fm-lb','cq-lb','boa-lb','dd-lb','al-lb'].forEach(function(id){
+        fill(document.getElementById(id),[],'connecting…');
       });
-      document.getElementById('active-lb').innerHTML='<li class="empty">connects at the party</li>';
-      document.getElementById('tc-contrib').innerHTML='<p class="empty">connects at the party</p>';
+      document.getElementById('active-lb').innerHTML='<li class="empty">connecting…</li>';
+      document.getElementById('tc-contrib').innerHTML='<p class="empty">connecting…</p>';
+      // self-heal: if the backend script missed its ride (a wifi blip at
+      // open time), keep reloading until it connects — the board runs
+      // unattended all night and must never strand itself
+      setTimeout(function(){location.reload()},20000);
     }
   };
   boot();
